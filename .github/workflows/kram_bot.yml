@@ -1,0 +1,26 @@
+name: Kram Bot
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 10:00 น. ไทย
+    - cron: "0 11 * * *"  # 18:00 น. ไทย
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai requests
+
+      - name: Run bot
+        env:
+          KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python kram.py
