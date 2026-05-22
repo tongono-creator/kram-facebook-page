@@ -184,9 +184,15 @@ def add_comment(post_id):
     print(f"Waiting {delay0:.0f}s before first comment...")
     time.sleep(delay0)
     for i, msg in enumerate(comments, 1):
+        if isinstance(msg, dict):
+            data = {"access_token": PAGE_ACCESS_TOKEN, "message": msg["message"]}
+            if msg.get("picture_url"):
+                data["attachment_url"] = msg["picture_url"]
+        else:
+            data = {"access_token": PAGE_ACCESS_TOKEN, "message": msg}
         resp = requests.post(
             f"https://graph.facebook.com/v21.0/{post_id}/comments",
-            data={"access_token": PAGE_ACCESS_TOKEN, "message": msg},
+            data=data,
         )
         result = resp.json()
         if "id" in result:

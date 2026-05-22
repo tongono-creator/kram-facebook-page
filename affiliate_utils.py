@@ -31,11 +31,12 @@ def _load_excel():
             no, name, shopee, lazada, active = row[0], row[1], row[2], row[3], row[4]
             desc     = row[5] if len(row) > 5 else ""
             food_raw = row[6] if len(row) > 6 else None
-            # column H=promo_name, I=promo_url, J=promo_active, K=expiry_date
-            promo_name   = row[7]  if len(row) > 7  else None
+            # column H=promo_message, I=promo_url, J=promo_active, K=expiry_date, L=picture_url
+            promo_msg    = row[7]  if len(row) > 7  else None
             promo_url    = row[8]  if len(row) > 8  else None
             promo_active = row[9]  if len(row) > 9  else None
             expiry_raw   = row[10] if len(row) > 10 else None
+            picture_url  = row[11] if len(row) > 11 else None
 
             # product rows (ต้องมี active=yes)
             if str(active).strip().lower() == "yes":
@@ -50,25 +51,13 @@ def _load_excel():
             if food_raw:
                 food_entries.append(str(food_raw).strip())
 
-            # promo links — column H-K, เช็ค expiry อัตโนมัติ
-            if (promo_name and promo_url
-                    and str(promo_active or "").strip().lower() == "yes"):
-                expired = False
-                if expiry_raw:
-                    try:
-                        if hasattr(expiry_raw, "date"):
-                            exp_date = expiry_raw.date()
-                        else:
-                            from datetime import date
-                            exp_date = date.fromisoformat(str(expiry_raw).strip()[:10])
-                        expired = today > exp_date
-                    except Exception:
-                        pass
-                if not expired:
-                    promos.append({
-                        "name": str(promo_name).strip(),
-                        "url":  str(promo_url).strip(),
-                    })
+            # promo — column H-L, active=yes เท่านั้น (expiry ใช้ manual active)
+            if promo_msg and str(promo_active or "").strip().lower() == "yes":
+                promos.append({
+                    "message":     str(promo_msg).strip(),
+                    "url":         str(promo_url or "").strip(),
+                    "picture_url": str(picture_url or "").strip(),
+                })
 
         return products, food_entries, promos
     except Exception as e:
@@ -155,13 +144,12 @@ PROMO_INTROS = [
 ]
 
 def get_promo_comment():
-    """comment โปรโมชั่น — เช็ค expiry อัตโนมัติ"""
+    """comment โปรโมชั่น — ใช้ message จาก Excel โดยตรง (รองรับ picture_url)"""
     _, _, promos = _load_excel()
     if not promos:
         return None
     p = random.choice(promos)
-    template = random.choice(PROMO_INTROS)
-    return template.format(name=p["name"], url=p["url"])
+    return {"message": p["message"], "picture_url": p["picture_url"]}
 
 def get_product_comments():
     """comments สินค้าหมุนเวียน แยก Shopee / Lazada"""
