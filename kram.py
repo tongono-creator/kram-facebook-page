@@ -200,7 +200,7 @@ def post_photo(caption, img_path):
                     "message":      caption,
                     "access_token": PAGE_ACCESS_TOKEN,
                 },
-                files={"source": ("photo" + suffix, f, "image/jpeg")},
+                files={"source": ("photo.jpg", f, "image/jpeg")},
                 timeout=60,
             )
         result = resp.json()
