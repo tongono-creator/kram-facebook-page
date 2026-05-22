@@ -176,17 +176,15 @@ def get_all_comments():
     promo_pool = []
     rest_pool  = []
 
-    # promo — ถ้ามีโปรที่ยังไม่หมดอายุ ใส่ก่อนเป็นอันดับ 1 เสมอ (โอกาส 95%)
-    if random.random() < 0.95:
-        promo = get_promo_comment()
-        if promo:
-            promo_pool.append(promo)
+    # promo — ใส่เสมอถ้ามี (การันตี comment อันดับ 1)
+    promo = get_promo_comment()
+    if promo:
+        promo_pool.append(promo)
 
-    # website comment — โอกาส 85%
-    if random.random() < 0.85:
-        web = _rotate(WEBSITE_VARS)
-        if web:
-            rest_pool.append(web)
+    # website comment — ใส่เสมอ (การันตี minimum 2 comments)
+    web = _rotate(WEBSITE_VARS)
+    if web:
+        rest_pool.append(web)
 
     # food comment — โอกาส 60%
     if random.random() < 0.60:
