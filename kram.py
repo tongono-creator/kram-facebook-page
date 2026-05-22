@@ -12,7 +12,7 @@ PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "AIzaSyCi6AbETW4XTjJpcbRxj2oL3ftEWRbv_xI")
 
 client      = genai.Client(api_key=GEMINI_API_KEY)
-TEXT_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash-preview-05-20"]
+TEXT_MODELS = ["gemini-2.5-flash", "gemini-1.5-flash-latest"]
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
 
@@ -112,18 +112,53 @@ def clean_text(text):
 
 # ── Facebook ──────────────────────────────────────────────────────────
 def post_photo(caption, image_url):
-    # ใช้ url parameter — Facebook download รูปเอง ไม่ต้อง upload ไฟล์
+    # Download รูปก่อน แล้ว upload เป็น multipart
+    # Reddit blocks external URL fetch แต่เราโหลดเองได้
+    MAX_BYTES = 4 * 1024 * 1024  # 4 MB limit
+
+    try:
+        img_resp = requests.get(image_url, headers=HEADERS, timeout=15, stream=True)
+        img_resp.raise_for_status()
+
+        # ตรวจ content-length ก่อน
+        content_length = int(img_resp.headers.get("content-length", 0))
+        if content_length > MAX_BYTES:
+            print(f"Image too large: {content_length} bytes, skipping")
+            return False
+
+        data = b""
+        for chunk in img_resp.iter_content(chunk_size=65536):
+            data += chunk
+            if len(data) > MAX_BYTES:
+                print("Image too large (streaming), skipping")
+                return False
+
+    except Exception as e:
+        print(f"Image download failed: {e}")
+        return False
+
+    suffix = ".jpg"
+    for ext in IMAGE_EXTS:
+        if image_url.lower().split("?")[0].endswith(ext):
+            suffix = ext
+            break
+
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    tmp.write(data)
+    tmp.close()
+
     try:
         api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/photos"
-        resp = requests.post(
-            api_url,
-            data={
-                "message":      caption,
-                "url":          image_url,
-                "access_token": PAGE_ACCESS_TOKEN,
-            },
-            timeout=30,
-        )
+        with open(tmp.name, "rb") as f:
+            resp = requests.post(
+                api_url,
+                data={
+                    "message":      caption,
+                    "access_token": PAGE_ACCESS_TOKEN,
+                },
+                files={"source": ("photo" + suffix, f, "image/jpeg")},
+                timeout=60,
+            )
         result = resp.json()
         if "id" in result:
             print(f"Posted: {result['id']}")
@@ -134,6 +169,8 @@ def post_photo(caption, image_url):
     except Exception as e:
         print(f"Facebook error: {e}")
         return False
+    finally:
+        os.unlink(tmp.name)
 
 
 # ── Main ──────────────────────────────────────────────────────────────
