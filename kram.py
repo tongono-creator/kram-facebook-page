@@ -13,8 +13,9 @@ PAGE_ID           = "116701184708556"
 PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "AIzaSyCi6AbETW4XTjJpcbRxj2oL3ftEWRbv_xI")
 
-client      = genai.Client(api_key=GEMINI_API_KEY)
-TEXT_MODELS = ["gemini-2.5-flash", "gemini-3.5-flash"]
+client       = genai.Client(api_key=GEMINI_API_KEY)
+TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
+ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
 
@@ -106,6 +107,28 @@ def analyze_image(img_path):
         except Exception as e:
             print(f"[{model}] vision failed: {e}")
     return None
+
+
+def generate_hook(image_desc, subreddit):
+    """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay"""
+    prompt = (
+        f"รูปจาก r/{subreddit} เห็น: {image_desc}\n"
+        "เขียน hook text สั้นๆ ภาษาไทย สำหรับใส่บนรูป\n"
+        "บรรทัด 1: hook 3-6 คำ น่าตกใจ/น่าสนใจ หยุดนิ้วได้ทันที\n"
+        "บรรทัด 2: คำถาม/ประโยคเสริม สั้น 4-8 คำ\n"
+        "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี **"
+    )
+    for model in TEXT_MODELS:
+        try:
+            resp = client.models.generate_content(model=model, contents=prompt)
+            lines = clean_text(resp.text.strip()).split("\n")
+            lines = [l.strip() for l in lines if l.strip()]
+            line1 = lines[0] if len(lines) > 0 else image_desc[:20]
+            line2 = lines[1] if len(lines) > 1 else ""
+            return line1, line2
+        except Exception as e:
+            print(f"[{model}] hook failed: {e}")
+    return image_desc[:20], ""
 
 
 def make_caption(image_desc, subreddit):
@@ -239,7 +262,7 @@ def main():
         print("No suitable post found after 5 attempts")
         return
 
-    # Download รูปก่อน → Vision → caption
+    # Download รูปก่อน → Vision → hook + caption → overlay → post
     img_path = download_image(post["url"])
     if not img_path:
         print("Image download failed")
@@ -247,8 +270,20 @@ def main():
 
     image_desc = analyze_image(img_path)
     if not image_desc or "ไม่เกี่ยว" in image_desc:
-        print(f"Vision: not relevant, using Reddit title as fallback")
+        print("Vision: not relevant, using Reddit title as fallback")
         image_desc = post["title"]
+
+    line1, line2 = generate_hook(image_desc, post["subreddit"])
+    print(f"Hook: {line1} | {line2}")
+
+    # PIL overlay
+    try:
+        from overlay_utils import add_overlay
+        overlaid = add_overlay(img_path, line1, line2, ACCENT_COLOR)
+        os.unlink(img_path)
+        img_path = overlaid
+    except Exception as e:
+        print(f"Overlay failed (using original): {e}")
 
     caption = make_caption(image_desc, post["subreddit"])
     caption += f"\n📷 via r/{post['subreddit']}"

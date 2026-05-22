@@ -1,17 +1,17 @@
-name: Kram Bot
+﻿name: Kram Bot
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # 08:00 น. ไทย
-    - cron: "0 3 * * *"   # 10:00 น. ไทย
-    - cron: "0 5 * * *"   # 12:00 น. ไทย
-    - cron: "0 7 * * *"   # 14:00 น. ไทย
-    - cron: "0 9 * * *"   # 16:00 น. ไทย
-    - cron: "0 11 * * *"  # 18:00 น. ไทย
-    - cron: "0 12 * * *"  # 19:00 น. ไทย
-    - cron: "0 13 * * *"  # 20:00 น. ไทย
-    - cron: "0 14 * * *"  # 21:00 น. ไทย
-    - cron: "0 15 * * *"  # 22:00 น. ไทย
+    - cron: "0 1 * * *"
+    - cron: "0 3 * * *"
+    - cron: "0 5 * * *"
+    - cron: "0 7 * * *"
+    - cron: "0 9 * * *"
+    - cron: "0 11 * * *"
+    - cron: "0 12 * * *"
+    - cron: "0 13 * * *"
+    - cron: "0 14 * * *"
+    - cron: "0 15 * * *"
   workflow_dispatch:
 
 jobs:
@@ -19,14 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install dependencies
-        run: pip install google-genai requests openpyxl
-
+        run: pip install google-genai requests openpyxl Pillow
       - name: Run bot
         env:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
