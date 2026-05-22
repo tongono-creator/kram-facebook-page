@@ -13,7 +13,7 @@ PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "AIzaSyCi6AbETW4XTjJpcbRxj2oL3ftEWRbv_xI")
 
 client      = genai.Client(api_key=GEMINI_API_KEY)
-TEXT_MODELS = ["gemini-2.5-flash", "gemini-1.5-flash-latest"]
+TEXT_MODELS = ["gemini-2.5-flash", "gemini-3.5-flash"]
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
 
