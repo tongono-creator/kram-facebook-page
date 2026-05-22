@@ -149,7 +149,10 @@ def get_promo_comment():
     if not promos:
         return None
     p = random.choice(promos)
-    return {"message": p["message"], "picture_url": p["picture_url"]}
+    msg = p["message"]
+    if p.get("url"):
+        msg += f"\n{p['url']}"
+    return {"message": msg, "picture_url": p["picture_url"]}
 
 def get_product_comments():
     """comments สินค้าหมุนเวียน แยก Shopee / Lazada"""
