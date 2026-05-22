@@ -3,6 +3,7 @@ import re
 import random
 import requests
 import tempfile
+import xml.etree.ElementTree as ET
 from google import genai
 
 # ── Config ───────────────────────────────────────────────────────────
@@ -36,41 +37,44 @@ IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".gif", ".webp")
 # ── Reddit ────────────────────────────────────────────────────────────
 def get_reddit_post():
     subreddit = random.choice(SUBREDDITS)
-    sort      = random.choice(["hot", "top"])
-    params    = {"limit": 25, "t": "week"}
-    url       = f"https://www.reddit.com/r/{subreddit}/{sort}.json"
+    # RSS feed — ไม่โดน block เหมือน JSON API
+    url = f"https://www.reddit.com/r/{subreddit}/hot.rss"
 
     try:
-        resp = requests.get(url, headers=HEADERS, params=params, timeout=10)
+        resp = requests.get(url, headers=HEADERS, timeout=10)
         resp.raise_for_status()
-        posts = resp.json()["data"]["children"]
+
+        root = ET.fromstring(resp.content)
+        ns   = {"atom": "http://www.w3.org/2005/Atom"}
+        entries = root.findall("atom:entry", ns)
 
         image_posts = []
-        for p in posts:
-            d = p["data"]
-            if d.get("is_video") or d.get("is_self"):
-                continue
-            post_url = d.get("url", "")
-            has_image = (
-                any(post_url.lower().endswith(ext) for ext in IMAGE_EXTS)
-                or ("imgur.com" in post_url and not post_url.endswith(".gifv"))
-                or ("i.redd.it" in post_url)
-            )
-            if has_image:
-                image_posts.append(d)
+        for entry in entries:
+            title   = entry.findtext("atom:title", "", ns).strip()
+            content = entry.findtext("atom:content", "", ns)
+            link_el = entry.find("atom:link", ns)
+            post_link = link_el.get("href", "") if link_el is not None else ""
+
+            # ดึง image URL จาก content HTML
+            img_urls = re.findall(r'https?://[^\s"<>]+\.(?:jpg|jpeg|png|gif|webp)', content or "")
+            # กรอง reddit preview / thumbnail ออก เอาแค่ i.redd.it หรือ imgur
+            good_imgs = [u for u in img_urls if "i.redd.it" in u or "imgur.com" in u]
+
+            if good_imgs and title:
+                image_posts.append({
+                    "title":     title,
+                    "url":       good_imgs[0],
+                    "subreddit": subreddit,
+                })
 
         if not image_posts:
-            print(f"[{subreddit}] no image posts found")
+            print(f"[{subreddit}] no image posts in RSS")
             return None
 
         post = random.choice(image_posts[:10])
-        print(f"[{subreddit}] picked: {post['title'][:60]} ({post['score']} pts)")
-        return {
-            "title":     post["title"],
-            "url":       post["url"],
-            "subreddit": post["subreddit"],
-            "score":     post["score"],
-        }
+        print(f"[{subreddit}] picked: {post['title'][:60]}")
+        return post
+
     except Exception as e:
         print(f"Reddit error ({subreddit}): {e}")
         return None
