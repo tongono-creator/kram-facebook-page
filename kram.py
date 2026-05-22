@@ -12,7 +12,7 @@ PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "AIzaSyCi6AbETW4XTjJpcbRxj2oL3ftEWRbv_xI")
 
 client      = genai.Client(api_key=GEMINI_API_KEY)
-TEXT_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"]
+TEXT_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash-preview-05-20"]
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
 
@@ -112,35 +112,18 @@ def clean_text(text):
 
 # ── Facebook ──────────────────────────────────────────────────────────
 def post_photo(caption, image_url):
-    try:
-        img_resp = requests.get(image_url, headers=HEADERS, timeout=15)
-        img_resp.raise_for_status()
-    except Exception as e:
-        print(f"Image download failed: {e}")
-        return False
-
-    suffix = ".jpg"
-    for ext in IMAGE_EXTS:
-        if image_url.lower().endswith(ext):
-            suffix = ext
-            break
-
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
-    tmp.write(img_resp.content)
-    tmp.close()
-
+    # ใช้ url parameter — Facebook download รูปเอง ไม่ต้อง upload ไฟล์
     try:
         api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/photos"
-        with open(tmp.name, "rb") as f:
-            resp = requests.post(
-                api_url,
-                data={
-                    "message":      caption,
-                    "access_token": PAGE_ACCESS_TOKEN,
-                },
-                files={"source": f},
-                timeout=30,
-            )
+        resp = requests.post(
+            api_url,
+            data={
+                "message":      caption,
+                "url":          image_url,
+                "access_token": PAGE_ACCESS_TOKEN,
+            },
+            timeout=30,
+        )
         result = resp.json()
         if "id" in result:
             print(f"Posted: {result['id']}")
@@ -151,8 +134,6 @@ def post_photo(caption, image_url):
     except Exception as e:
         print(f"Facebook error: {e}")
         return False
-    finally:
-        os.unlink(tmp.name)
 
 
 # ── Main ──────────────────────────────────────────────────────────────
