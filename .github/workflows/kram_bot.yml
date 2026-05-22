@@ -17,7 +17,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install google-genai requests
+        run: pip install google-genai requests openpyxl
 
       - name: Run bot
         env:

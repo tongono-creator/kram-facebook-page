@@ -1,6 +1,7 @@
 import os
 import re
 import random
+import time
 import requests
 import tempfile
 import xml.etree.ElementTree as ET
@@ -161,7 +162,9 @@ def post_photo(caption, image_url):
             )
         result = resp.json()
         if "id" in result:
-            print(f"Posted: {result['id']}")
+            post_id = result.get("post_id") or result["id"]
+            print(f"Posted: {post_id}")
+            add_comment(post_id)
             return True
         else:
             print(f"Post failed: {result}")
@@ -171,6 +174,27 @@ def post_photo(caption, image_url):
         return False
     finally:
         os.unlink(tmp.name)
+
+
+# ── Comment ───────────────────────────────────────────────────────────
+def add_comment(post_id):
+    from affiliate_utils import get_all_comments
+    comments = get_all_comments()
+    delay0 = random.uniform(60, 180)
+    print(f"Waiting {delay0:.0f}s before first comment...")
+    time.sleep(delay0)
+    for i, msg in enumerate(comments, 1):
+        resp = requests.post(
+            f"https://graph.facebook.com/v21.0/{post_id}/comments",
+            data={"access_token": PAGE_ACCESS_TOKEN, "message": msg},
+        )
+        result = resp.json()
+        if "id" in result:
+            print(f"Comment {i} added: {result['id']}")
+        else:
+            print(f"Comment {i} error: {result}")
+        if i < len(comments):
+            time.sleep(random.uniform(30, 90))
 
 
 # ── Main ──────────────────────────────────────────────────────────────
