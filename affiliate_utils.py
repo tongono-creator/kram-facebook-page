@@ -22,31 +22,58 @@ def _load_excel():
         import openpyxl
         wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
         ws = wb.active
-        products, food_entries = [], []
+        products, food_entries, promos = [], [], []
+        today = _now_bkk().date()
+
         for row in ws.iter_rows(min_row=2, values_only=True):
             if len(row) < 5:
                 continue
             no, name, shopee, lazada, active = row[0], row[1], row[2], row[3], row[4]
-            desc = row[5] if len(row) > 5 else ""
+            desc     = row[5] if len(row) > 5 else ""
             food_raw = row[6] if len(row) > 6 else None
+            # column H=promo_name, I=promo_url, J=promo_active, K=expiry_date
+            promo_name   = row[7]  if len(row) > 7  else None
+            promo_url    = row[8]  if len(row) > 8  else None
+            promo_active = row[9]  if len(row) > 9  else None
+            expiry_raw   = row[10] if len(row) > 10 else None
 
             # product rows (ต้องมี active=yes)
             if str(active).strip().lower() == "yes":
                 products.append({
-                    "name": str(name or "").strip(),
+                    "name":   str(name or "").strip(),
                     "shopee": str(shopee or "").strip(),
                     "lazada": str(lazada or "").strip(),
-                    "desc": str(desc or "").strip(),
+                    "desc":   str(desc or "").strip(),
                 })
 
             # food links — เก็บทุก row ที่มีค่า column G
             if food_raw:
                 food_entries.append(str(food_raw).strip())
 
-        return products, food_entries
+            # promo links — column H-K, เช็ค expiry อัตโนมัติ
+            if (promo_name and promo_url
+                    and str(promo_active or "").strip().lower() == "yes"):
+                expired = False
+                if expiry_raw:
+                    try:
+                        if hasattr(expiry_raw, "date"):
+                            exp_date = expiry_raw.date()
+                        else:
+                            from datetime import date
+                            exp_date = date.fromisoformat(str(expiry_raw).strip()[:10])
+                        expired = today > exp_date
+                    except Exception:
+                        pass
+                if not expired:
+                    promos.append({
+                        "name": str(promo_name).strip(),
+                        "url":  str(promo_url).strip(),
+                    })
+
+        return products, food_entries, promos
     except Exception as e:
         print(f"Excel read error: {e}")
-        return [], []
+        return [], [], []
 
 def _parse_food(raw):
     """แยก shop_name + url จาก 'ลองเข้ามาดู ShopName ที่ Shopee! https://...'"""
@@ -100,7 +127,7 @@ def get_standard_comments():
 
 def get_food_comment():
     """comment Shopee Food หมุนเวียนทุกร้าน"""
-    _, food_entries = _load_excel()
+    _, food_entries, _ = _load_excel()
     raw = _rotate(food_entries, extra_salt=3)
     if not raw:
         return None
@@ -119,9 +146,26 @@ PRODUCT_HOOKS = [
     "คุ้มมากถ้าตอนนี้",
 ]
 
+PROMO_INTROS = [
+    "🔥 โปรโมชั่นพิเศษ! {name}\nรีบคว้าก่อนหมด → {url}",
+    "⚡ Flash Deal วันนี้เท่านั้น {name}\nกดซื้อเลย → {url}",
+    "🎯 ดีลเด็ด {name}\nราคาพิเศษจำกัดเวลา → {url}",
+    "💥 โปรแรง {name}\nอย่าพลาด → {url}",
+    "🛒 ส่วนลดพิเศษ {name}\nก่อนโปรหมด → {url}",
+]
+
+def get_promo_comment():
+    """comment โปรโมชั่น — เช็ค expiry อัตโนมัติ"""
+    _, _, promos = _load_excel()
+    if not promos:
+        return None
+    p = random.choice(promos)
+    template = random.choice(PROMO_INTROS)
+    return template.format(name=p["name"], url=p["url"])
+
 def get_product_comments():
     """comments สินค้าหมุนเวียน แยก Shopee / Lazada"""
-    products, _ = _load_excel()
+    products, _, _ = _load_excel()
     active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"]]
     if not active:
         return []
@@ -151,6 +195,12 @@ def get_all_comments():
         food = get_food_comment()
         if food:
             pool.append(food)
+
+    # promo comment — โอกาส 90% ถ้ามีโปร (priority สูงเพราะจำกัดเวลา)
+    if random.random() < 0.90:
+        promo = get_promo_comment()
+        if promo:
+            pool.append(promo)
 
     # product comments — โอกาส 70%, ถ้ามีทั้ง shopee+lazada สุ่มว่าจะเอาแค่อันเดียวหรือทั้งคู่
     if random.random() < 0.70:
