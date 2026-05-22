@@ -181,40 +181,43 @@ def get_product_comments():
     return comments
 
 def get_all_comments():
-    """รวม comments — สุ่มลำดับ + สุ่มว่าจะโพสแต่ละ type ไหม (ดูเหมือนคนโพสเอง)"""
-    pool = []
+    """รวม comments — promo มาก่อนเสมอ ที่เหลือสุ่มลำดับ"""
+    promo_pool = []
+    rest_pool  = []
 
-    # website comment — โอกาส 85% (บางทีข้ามเพื่อไม่ให้ดู bot)
+    # promo — ถ้ามีโปรที่ยังไม่หมดอายุ ใส่ก่อนเป็นอันดับ 1 เสมอ (โอกาส 95%)
+    if random.random() < 0.95:
+        promo = get_promo_comment()
+        if promo:
+            promo_pool.append(promo)
+
+    # website comment — โอกาส 85%
     if random.random() < 0.85:
         web = _rotate(WEBSITE_VARS)
         if web:
-            pool.append(web)
+            rest_pool.append(web)
 
     # food comment — โอกาส 60%
     if random.random() < 0.60:
         food = get_food_comment()
         if food:
-            pool.append(food)
+            rest_pool.append(food)
 
-    # promo comment — โอกาส 90% ถ้ามีโปร (priority สูงเพราะจำกัดเวลา)
-    if random.random() < 0.90:
-        promo = get_promo_comment()
-        if promo:
-            pool.append(promo)
-
-    # product comments — โอกาส 70%, ถ้ามีทั้ง shopee+lazada สุ่มว่าจะเอาแค่อันเดียวหรือทั้งคู่
+    # product comments — โอกาส 70%
     if random.random() < 0.70:
         products = get_product_comments()
         if len(products) == 2 and random.random() < 0.40:
-            # 40% เอาแค่อันเดียว (สุ่มว่า shopee หรือ lazada)
-            pool.append(random.choice(products))
+            rest_pool.append(random.choice(products))
         else:
-            pool.extend(products)
+            rest_pool.extend(products)
 
-    # สุ่มลำดับทั้งหมด
-    random.shuffle(pool)
+    # สุ่มลำดับเฉพาะส่วนที่เหลือ
+    random.shuffle(rest_pool)
 
-    # ถ้าสุ่มออกมาว่างเปล่า (ซวยทุกโอกาส) ใส่ website backup
+    # รวม: promo ก่อน → ที่เหลือตามหลัง
+    pool = promo_pool + rest_pool
+
+    # backup ถ้าว่างทั้งหมด
     if not pool:
         web = _rotate(WEBSITE_VARS)
         if web:
