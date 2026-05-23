@@ -48,9 +48,12 @@ def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
     """ถ้า line สุดท้ายสั้นเกิน (orphan) — merge 2 บรรทัดสุดท้ายแล้ว re-wrap ให้สมดุล"""
     if len(lines) <= 1:
         return lines
-    last_w = draw.textbbox((0, 0), lines[-1], font=font)[2]
-    prev_w = draw.textbbox((0, 0), lines[-2], font=font)[2]
-    if last_w >= prev_w * min_ratio:
+    last_text = lines[-1].strip()
+    last_w    = draw.textbbox((0, 0), last_text, font=font)[2]
+    prev_w    = draw.textbbox((0, 0), lines[-2], font=font)[2]
+    # trigger ถ้า: pixel ratio ต่ำ หรือ char น้อยมาก (เลขเดี่ยว %, 0, บาท ฯลฯ)
+    is_orphan = (last_w < prev_w * min_ratio) or (len(last_text) <= 3)
+    if not is_orphan:
         return lines  # สมดุลแล้ว
     # merge 2 บรรทัดสุดท้าย → re-wrap ด้วย target_w ที่แคบลง
     merged   = lines[-2] + lines[-1]
