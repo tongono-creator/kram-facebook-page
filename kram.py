@@ -2,6 +2,7 @@ import os
 import re
 import random
 import time
+import subprocess
 import requests
 import tempfile
 import xml.etree.ElementTree as ET
@@ -35,6 +36,18 @@ SUBREDDITS = [
 ]
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".gif", ".webp")
+
+# subreddits ที่มี video เยอะ (ใช้สำหรับ video mode เพิ่มเติม)
+VIDEO_SUBREDDITS = [
+    "Unexpected",
+    "AnimalsBeingDerps",
+    "AnimalsBeingBros",
+    "WhatsWrongWithYourCat",
+    "NatureIsFuckingLit",
+    "nextfuckinglevel",
+    "oddlyterrifying",
+    "aww",
+]
 
 
 # ── Reddit ────────────────────────────────────────────────────────────
@@ -81,6 +94,145 @@ def get_reddit_post():
     except Exception as e:
         print(f"Reddit error ({subreddit}): {e}")
         return None
+
+
+def get_reddit_video_post():
+    """หา video post จาก Reddit RSS — ดึง v.redd.it ID"""
+    subreddit = random.choice(VIDEO_SUBREDDITS)
+    url = f"https://www.reddit.com/r/{subreddit}/hot.rss"
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=10)
+        resp.raise_for_status()
+        root = ET.fromstring(resp.content)
+        ns   = {"atom": "http://www.w3.org/2005/Atom"}
+        entries = root.findall("atom:entry", ns)
+
+        video_posts = []
+        for entry in entries:
+            title   = entry.findtext("atom:title", "", ns).strip()
+            content = entry.findtext("atom:content", "", ns) or ""
+            # หา v.redd.it ID จาก content HTML
+            vid_ids = re.findall(r'https://v\.redd\.it/([a-zA-Z0-9]+)', content)
+            if vid_ids and title:
+                video_posts.append({
+                    "title":     title,
+                    "video_id":  vid_ids[0],
+                    "subreddit": subreddit,
+                })
+
+        if not video_posts:
+            print(f"[{subreddit}] no video posts in RSS")
+            return None
+
+        post = random.choice(video_posts[:10])
+        print(f"[{subreddit}] video: {post['title'][:60]}")
+        return post
+
+    except Exception as e:
+        print(f"Reddit video error ({subreddit}): {e}")
+        return None
+
+
+def download_video_with_audio(video_id):
+    """Download v.redd.it video + audio แล้ว merge ด้วย ffmpeg"""
+    MAX_BYTES = 80 * 1024 * 1024  # 80MB limit
+    video_url = f"https://v.redd.it/{video_id}/DASH_720.mp4"
+    audio_url = f"https://v.redd.it/{video_id}/DASH_audio.mp4"
+
+    # Download video track
+    try:
+        v_resp = requests.get(video_url, headers=HEADERS, timeout=30, stream=True)
+        v_resp.raise_for_status()
+        v_data = b""
+        for chunk in v_resp.iter_content(65536):
+            v_data += chunk
+            if len(v_data) > MAX_BYTES:
+                print("Video too large, skipping")
+                return None
+    except Exception as e:
+        print(f"Video track download failed: {e}")
+        return None
+
+    v_tmp = tempfile.NamedTemporaryFile(suffix="_v.mp4", delete=False)
+    v_tmp.write(v_data)
+    v_tmp.close()
+
+    # Download audio track (optional — ไม่ใช่ทุก post มี audio)
+    a_tmp_name = None
+    try:
+        a_resp = requests.get(audio_url, headers=HEADERS, timeout=15, stream=True)
+        a_resp.raise_for_status()
+        a_data = b""
+        for chunk in a_resp.iter_content(65536):
+            a_data += chunk
+        a_tmp = tempfile.NamedTemporaryFile(suffix="_a.mp4", delete=False)
+        a_tmp.write(a_data)
+        a_tmp.close()
+        a_tmp_name = a_tmp.name
+        print(f"Audio downloaded: {len(a_data)} bytes")
+    except Exception:
+        print("No audio track (silent video)")
+
+    # Merge ด้วย ffmpeg
+    out_tmp = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+    out_tmp.close()
+
+    if a_tmp_name:
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", v_tmp.name,
+            "-i", a_tmp_name,
+            "-c:v", "copy", "-c:a", "aac",
+            "-shortest",
+            out_tmp.name,
+        ]
+    else:
+        cmd = ["ffmpeg", "-y", "-i", v_tmp.name, "-c", "copy", out_tmp.name]
+
+    result = subprocess.run(cmd, capture_output=True, timeout=120)
+    os.unlink(v_tmp.name)
+    if a_tmp_name:
+        os.unlink(a_tmp_name)
+
+    if result.returncode != 0:
+        print(f"ffmpeg failed: {result.stderr.decode()[:300]}")
+        os.unlink(out_tmp.name)
+        return None
+
+    size = os.path.getsize(out_tmp.name)
+    print(f"Video ready: {size / 1024 / 1024:.1f} MB")
+    return out_tmp.name
+
+
+def post_video(caption, video_path):
+    """โพส video ลง Facebook page"""
+    try:
+        api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/videos"
+        with open(video_path, "rb") as f:
+            resp = requests.post(
+                api_url,
+                data={
+                    "description":  caption,
+                    "access_token": PAGE_ACCESS_TOKEN,
+                },
+                files={"source": ("video.mp4", f, "video/mp4")},
+                timeout=180,
+            )
+        result = resp.json()
+        if "id" in result:
+            post_id = result.get("post_id") or result["id"]
+            print(f"Video Posted: {post_id}")
+            add_comment(post_id)
+            return True
+        else:
+            print(f"Video post failed: {result}")
+            return False
+    except Exception as e:
+        print(f"Facebook video error: {e}")
+        return False
+    finally:
+        if video_path and os.path.exists(video_path):
+            os.unlink(video_path)
 
 
 # ── Gemini ────────────────────────────────────────────────────────────
@@ -251,6 +403,36 @@ def add_comment(post_id):
 def main():
     print("=== กรามค้าง Bot ===")
 
+    # 40% video mode / 60% image mode
+    use_video = random.random() < 0.40
+    print(f"Mode: {'VIDEO' if use_video else 'IMAGE'}")
+
+    # ── VIDEO MODE ───────────────────────────────────────────────────
+    if use_video:
+        video_post = None
+        for attempt in range(3):
+            video_post = get_reddit_video_post()
+            if video_post:
+                break
+            print(f"Video retry {attempt + 1}/3...")
+
+        if video_post:
+            video_path = download_video_with_audio(video_post["video_id"])
+            if video_path:
+                image_desc = video_post["title"]
+                caption = make_caption(image_desc, video_post["subreddit"])
+                caption += f"\n📷 via r/{video_post['subreddit']}"
+                print(f"Caption:\n{caption}\n")
+                success = post_video(caption, video_path)
+                if success:
+                    return
+                print("Video post failed, falling back to image mode")
+            else:
+                print("Video download failed, falling back to image mode")
+        else:
+            print("No video post found, falling back to image mode")
+
+    # ── IMAGE MODE ───────────────────────────────────────────────────
     post = None
     for attempt in range(5):
         post = get_reddit_post()

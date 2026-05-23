@@ -23,7 +23,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install google-genai requests openpyxl Pillow
+        run: |
+          sudo apt-get install -y ffmpeg
+          pip install google-genai requests openpyxl Pillow
       - name: Run bot
         env:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
