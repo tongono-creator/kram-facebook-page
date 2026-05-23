@@ -243,12 +243,16 @@ def post_video(caption, video_path):
 
 # ── Gemini ────────────────────────────────────────────────────────────
 def analyze_image(img_path):
-    """Vision วิเคราะห์รูปว่าเห็นอะไร — สัตว์/ธรรมชาติ"""
+    """Vision ดูรูปแบบคนเล่นโซเชียล — คืน (subject, vibe) tuple"""
     with open(img_path, "rb") as f:
         img_data = f.read()
     prompt = (
-        "ดูรูปนี้แล้วอธิบายสั้นๆ ภาษาไทย ว่าเห็นอะไรในรูป 1-2 ประโยค "
-        "เน้นสัตว์หรือธรรมชาติที่เห็น ถ้าไม่มีสัตว์หรือธรรมชาติเลย ตอบว่า 'ไม่เกี่ยว'"
+        "ดูรูปนี้เหมือนคนไทยที่เล่น Facebook/Twitter ไม่ใช่ AI วิเคราะห์ภาพ\n"
+        "ตอบ 2 อย่าง แยกด้วย | :\n"
+        "1. เห็นอะไร (สัตว์/เหตุการณ์/ของแปลก) สั้นๆ 1-5 คำ\n"
+        "2. ความรู้สึกแรก/มุกที่คนไทยน่าจะเล่น เช่น: "
+        "'เหมือนพนักงานโดนเรียกโอที', 'หน้าเบื่องาน monday', 'rich kid', 'เด็กดื้อที่แม่รัก', 'ดราม่ามาก'\n"
+        "ถ้าไม่มีอะไรน่าสนใจเลย ตอบว่า: ไม่เกี่ยว|ไม่เกี่ยว"
     )
     for model in TEXT_MODELS:
         try:
@@ -261,18 +265,34 @@ def analyze_image(img_path):
             )
             result = resp.text.strip()
             print(f"Vision: {result}")
-            return result
+            # parse subject|vibe format
+            if "|" in result:
+                parts = result.split("|", 1)
+                subject = parts[0].strip()
+                vibe    = parts[1].strip()
+            else:
+                subject = result
+                vibe    = ""
+            return subject, vibe
         except Exception as e:
             print(f"[{model}] vision failed: {e}")
-    return None
+    return None, None
 
 
-def generate_hook(image_desc, subreddit):
-    """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay"""
+def generate_hook(subject, vibe, subreddit):
+    """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay — ใช้ internet brain"""
+    vibe_line = f"ฟีล: {vibe}" if vibe else ""
     prompt = (
-        f"รูปจาก r/{subreddit} เห็น: {image_desc}\n"
-        "เขียน hook text สั้นๆ ภาษาไทย สำหรับใส่บนรูป\n"
-        "บรรทัด 1: hook 3-6 คำ น่าตกใจ/น่าสนใจ หยุดนิ้วได้ทันที\n"
+        f"รูปจาก r/{subreddit}\n"
+        f"เห็น: {subject}\n"
+        f"{vibe_line}\n\n"
+        "คิด 4 ข้อนี้ก่อน (ไม่ต้องตอบ):\n"
+        "1. ภาพนี้เหมือนคนประเภทไหน\n"
+        "2. คนเห็นแล้วนึกถึงสถานการณ์อะไร\n"
+        "3. มุกที่คนไทยน่าจะเล่นคืออะไร\n"
+        "4. ถ้าโพสต์นี้อยู่ในเพจไวรัลไทย จะเขียนยังไง\n\n"
+        "แล้วเขียน hook text สำหรับใส่บนรูป:\n"
+        "บรรทัด 1: hook 3-6 คำ หยุดนิ้วได้ทันที (เล่นมุก/ชั้วๆ/ตรงใจ)\n"
         "บรรทัด 2: คำถาม/ประโยคเสริม สั้น 4-8 คำ\n"
         "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี **"
     )
@@ -281,22 +301,28 @@ def generate_hook(image_desc, subreddit):
             resp = client.models.generate_content(model=model, contents=prompt)
             lines = clean_text(resp.text.strip()).split("\n")
             lines = [l.strip() for l in lines if l.strip()]
-            line1 = lines[0] if len(lines) > 0 else image_desc[:20]
+            line1 = lines[0] if len(lines) > 0 else subject[:20]
             line2 = lines[1] if len(lines) > 1 else ""
             return line1, line2
         except Exception as e:
             print(f"[{model}] hook failed: {e}")
-    return image_desc[:20], ""
+    return subject[:20], ""
 
 
-def make_caption(image_desc, subreddit):
+def make_caption(subject, vibe, subreddit):
+    vibe_line = f"ฟีล: {vibe}" if vibe else ""
     prompt = (
-        f"รูปจาก r/{subreddit} เห็น: {image_desc}\n\n"
-        "เขียน Facebook caption ภาษาไทย สำหรับเพจข่าวสัตว์/ธรรมชาติ ชื่อ 'กรามค้าง'\n"
-        "บรรทัด 1: หัวข้อสั้น กระชับ ทำให้คนอยากดู ไม่เกิน 50 ตัวอักษร\n"
-        "บรรทัด 2: อธิบายสั้นๆ 1-2 ประโยค ตรงกับรูปที่เห็น\n"
+        f"รูปจาก r/{subreddit}\n"
+        f"เห็น: {subject}\n"
+        f"{vibe_line}\n\n"
+        "คิดเหมือนคนไถ Facebook จริงๆ ไม่ใช่นักการตลาด\n"
+        "วิเคราะห์อารมณ์จากภาพ เดาความรู้สึกแรกที่คนเห็น\n"
+        "ถ้ามีฟีลตลก/แปลก/awkward → เล่นมุกได้เลย ห้ามอวยอัตโนมัติ\n\n"
+        "เขียน Facebook caption สำหรับเพจ 'กรามค้าง' (สัตว์/ธรรมชาติ/น่าทึ่ง):\n"
+        "บรรทัด 1: hook ที่คนอยากอ่านต่อ (เล่นมุกหรือตรงใจก็ได้)\n"
+        "บรรทัด 2: อธิบาย 1-2 ประโยค ตรงกับรูปที่เห็น\n"
         "บรรทัด 3: hashtag 3-5 อัน\n"
-        "ห้ามใช้ ** markdown ตอบแค่ caption เลย"
+        "ห้าม ** markdown ตอบแค่ caption"
     )
     for model in TEXT_MODELS:
         try:
@@ -304,7 +330,7 @@ def make_caption(image_desc, subreddit):
             return clean_text(resp.text.strip())
         except Exception as e:
             print(f"[{model}] caption failed: {e}")
-    return clean_text(image_desc)
+    return clean_text(subject)
 
 
 def clean_text(text):
@@ -425,8 +451,7 @@ def main():
         if video_post:
             video_path = download_video_with_audio(video_post["video_id"])
             if video_path:
-                image_desc = video_post["title"]
-                caption = make_caption(image_desc, video_post["subreddit"])
+                caption = make_caption(video_post["title"], "", video_post["subreddit"])
                 caption += f"\n📷 via r/{video_post['subreddit']}"
                 print(f"Caption:\n{caption}\n")
                 success = post_video(caption, video_path)
@@ -456,12 +481,14 @@ def main():
         print("Image download failed")
         return
 
-    image_desc = analyze_image(img_path)
-    if not image_desc or "ไม่เกี่ยว" in image_desc:
+    subject, vibe = analyze_image(img_path)
+    if not subject or "ไม่เกี่ยว" in subject:
         print("Vision: not relevant, using Reddit title as fallback")
-        image_desc = post["title"]
+        subject = post["title"]
+        vibe    = ""
 
-    line1, line2 = generate_hook(image_desc, post["subreddit"])
+    print(f"Subject: {subject} | Vibe: {vibe}")
+    line1, line2 = generate_hook(subject, vibe, post["subreddit"])
     print(f"Hook: {line1} | {line2}")
 
     # PIL overlay
@@ -473,7 +500,7 @@ def main():
     except Exception as e:
         print(f"Overlay failed (using original): {e}")
 
-    caption = make_caption(image_desc, post["subreddit"])
+    caption = make_caption(subject, vibe, post["subreddit"])
     caption += f"\n📷 via r/{post['subreddit']}"
     print(f"Caption:\n{caption}\n")
 
