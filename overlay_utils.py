@@ -29,6 +29,7 @@ def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
     while size >= min_size:
         font  = ImageFont.truetype(FONT_PATH, size)
         lines = _wrap_text(draw, text, font, max_width)
+        lines = _balance_wrap(draw, lines, font, max_width)  # ป้องกัน orphan
         line_h = draw.textbbox((0, 0), "กA", font=font)[3]
         gap    = max(6, size // 8)
         total  = line_h * len(lines) + gap * (len(lines) - 1)
@@ -37,9 +38,29 @@ def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
         size -= 2
     font   = ImageFont.truetype(FONT_PATH, min_size)
     lines  = _wrap_text(draw, text, font, max_width)
+    lines  = _balance_wrap(draw, lines, font, max_width)
     line_h = draw.textbbox((0, 0), "กA", font=font)[3]
     gap    = max(6, min_size // 8)
     return font, min_size, lines, line_h, gap
+
+
+def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
+    """ถ้า line สุดท้ายสั้นเกิน (orphan) — merge 2 บรรทัดสุดท้ายแล้ว re-wrap ให้สมดุล"""
+    if len(lines) <= 1:
+        return lines
+    last_w = draw.textbbox((0, 0), lines[-1], font=font)[2]
+    prev_w = draw.textbbox((0, 0), lines[-2], font=font)[2]
+    if last_w >= prev_w * min_ratio:
+        return lines  # สมดุลแล้ว
+    # merge 2 บรรทัดสุดท้าย → re-wrap ด้วย target_w ที่แคบลง
+    merged   = lines[-2] + lines[-1]
+    total_w  = draw.textbbox((0, 0), merged, font=font)[2]
+    target_w = min(max_width, int(total_w * 0.55))  # ทำให้แตกเป็น ~2 บรรทัดที่เท่าๆ กัน
+    rebalanced = _wrap_text(draw, merged, font, target_w)
+    # ตรวจว่าทุก line ไม่เกิน max_width (ไม่ overflow)
+    if all(draw.textbbox((0, 0), l, font=font)[2] <= max_width for l in rebalanced):
+        return lines[:-2] + rebalanced
+    return lines  # rebalance ไม่ได้ — คืนค่าเดิม
 
 
 def _draw_lines(draw, lines, font, line_h, gap, y_start, W, fill, shadow=(0, 0, 0)):
