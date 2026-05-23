@@ -67,13 +67,15 @@ def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
 
 
 def _draw_lines(draw, lines, font, line_h, gap, y_start, W, fill, shadow=(0, 0, 0)):
-    """วาด wrapped lines กึ่งกลาง พร้อม shadow"""
+    """วาด wrapped lines กึ่งกลาง พร้อม 8-direction outline (อ่านได้ทุกพื้นหลัง)"""
     y = y_start
     for line in lines:
         bw = draw.textbbox((0, 0), line, font=font)[2]
         x  = (W - bw) // 2
-        draw.text((x + 2, y + 2), line, font=font, fill=shadow)
-        draw.text((x,     y    ), line, font=font, fill=fill)
+        # 8-direction outline — ทำให้อ่านได้แม้พื้นหลังสีใกล้เคียงตัวอักษร
+        for dx, dy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
+            draw.text((x + dx, y + dy), line, font=font, fill=shadow)
+        draw.text((x, y), line, font=font, fill=fill)
         y += line_h + gap
     return y  # y หลังบรรทัดสุดท้าย
 

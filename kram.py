@@ -12,7 +12,7 @@ from google.genai import types
 # ── Config ───────────────────────────────────────────────────────────
 PAGE_ID           = "116701184708556"
 PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
-GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "AIzaSyCi6AbETW4XTjJpcbRxj2oL3ftEWRbv_xI")
+GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "")
 
 client       = genai.Client(api_key=GEMINI_API_KEY)
 TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
@@ -279,6 +279,12 @@ def analyze_image(img_path):
     return None, None
 
 
+def strip_emoji(text):
+    """ลบ emoji/สัญลักษณ์พิเศษที่ Kanit font ไม่รองรับ — เหลือแค่ไทย + ASCII"""
+    import re
+    return re.sub(r'[^฀-๿\x20-\x7E]', '', text).strip()
+
+
 REALISM_FILTER = (
     "เขียนเหมือนคนพิมพ์เองใน Facebook ไม่ใช่นักการตลาด\n"
     "ภาษาพูดธรรมดา ความคิดแรกที่นึกได้ ง่ายๆ ตรงๆ\n"
@@ -303,16 +309,23 @@ def generate_hook(subject, vibe, subreddit):
         "4. ถ้าโพสต์นี้อยู่ในเพจไวรัลไทย จะเขียนยังไง\n\n"
         + REALISM_FILTER +
         "เขียน hook text สำหรับใส่บนรูป:\n"
-        "บรรทัด 1: hook 3-6 คำ หยุดนิ้วได้ทันที\n"
-        "บรรทัด 2: คำถาม/ประโยคเสริม สั้น 4-8 คำ\n"
-        "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี **"
+        "บรรทัด 1: hook 3-5 คำ หยุดนิ้วได้ทันที ลงท้ายด้วย ..\n"
+        "บรรทัด 2: คำถาม/ประโยคเสริม สั้น 4-8 คำ ไม่ต้องลงท้าย ..\n"
+        "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label หรือหัวข้อนำหน้า"
     )
+    # keywords ที่เป็น prompt echo — ต้องกรองทิ้ง
+    ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
     for model in TEXT_MODELS:
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             lines = clean_text(resp.text.strip()).split("\n")
             lines = [l.strip() for l in lines if l.strip()]
-            line1 = lines[0] if len(lines) > 0 else subject[:20]
+            # กรอง prompt echo ออก
+            lines = [l for l in lines if not any(kw in l for kw in ECHO_KEYWORDS)]
+            # ลบ emoji ก่อนส่ง overlay
+            lines = [strip_emoji(l) for l in lines]
+            lines = [l for l in lines if l]  # กรองบรรทัดว่างหลัง strip
+            line1 = lines[0] if len(lines) > 0 else strip_emoji(subject[:20])
             line2 = lines[1] if len(lines) > 1 else ""
             return line1, line2
         except Exception as e:
@@ -320,18 +333,22 @@ def generate_hook(subject, vibe, subreddit):
     return subject[:20], ""
 
 
-def make_caption(subject, vibe, subreddit):
+def make_caption(subject, vibe, subreddit, reddit_title=""):
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
+    title_line = f"ชื่อโพสต์ต้นฉบับ: {reddit_title}" if reddit_title else ""
     prompt = (
         f"รูปจาก r/{subreddit}\n"
         f"เห็น: {subject}\n"
-        f"{vibe_line}\n\n"
+        f"{vibe_line}\n"
+        f"{title_line}\n\n"
         + REALISM_FILTER +
         "ถ้ามีฟีลตลก/แปลก/awkward → เล่นมุกง่ายๆ ได้ ห้ามอวยอัตโนมัติ\n\n"
-        "เขียน Facebook caption สำหรับเพจ 'กรามค้าง' (สัตว์/ธรรมชาติ/น่าทึ่ง):\n"
-        "บรรทัด 1: hook ที่คนอยากอ่านต่อ ตรงใจ ไม่ประดิษฐ์\n"
-        "บรรทัด 2: อธิบาย 1-2 ประโยค ตรงกับรูปที่เห็น\n"
-        "บรรทัด 3: hashtag 3-5 อัน\n"
+        "เขียน Facebook caption สไตล์เพจไวรัลไทย (เช่น Bright TV, เพจสัตว์ดัง):\n"
+        "บรรทัด 1: hook สั้น 1 ประโยค ชวนอ่านต่อ\n"
+        "บรรทัด 2-3: เล่าเรื่องที่เห็นในรูป — บริบท ทำไมน่าสนใจ ทำไม viral\n"
+        "  ถ้ามีชื่อโพสต์ต้นฉบับ → ใช้เป็น context เพิ่ม แต่แปลเป็นไทยและเล่าใหม่\n"
+        "บรรทัด 4: hashtag 3-5 อัน\n"
+        "ความยาวรวม: 3-5 ประโยค (ไม่นับ hashtag) เล่าเรื่องได้ครบ ไม่ยาวเกินไป\n"
         "ห้าม ** markdown ตอบแค่ caption"
     )
     for model in TEXT_MODELS:
@@ -461,7 +478,7 @@ def main():
         if video_post:
             video_path = download_video_with_audio(video_post["video_id"])
             if video_path:
-                caption = make_caption(video_post["title"], "", video_post["subreddit"])
+                caption = make_caption(video_post["title"], "", video_post["subreddit"], video_post["title"])
                 caption += f"\n📷 via r/{video_post['subreddit']}"
                 print(f"Caption:\n{caption}\n")
                 success = post_video(caption, video_path)
@@ -510,7 +527,7 @@ def main():
     except Exception as e:
         print(f"Overlay failed (using original): {e}")
 
-    caption = make_caption(subject, vibe, post["subreddit"])
+    caption = make_caption(subject, vibe, post["subreddit"], post.get("title", ""))
     caption += f"\n📷 via r/{post['subreddit']}"
     print(f"Caption:\n{caption}\n")
 
