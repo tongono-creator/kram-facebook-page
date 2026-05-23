@@ -163,10 +163,17 @@ def get_promo_comment():
     if not promos:
         return None
     p = random.choice(promos)
-    msg = p["message"]
+    msg = p["message"].strip()
+    if not msg:
+        print("Promo skipped: empty message")
+        return None
     if p.get("url"):
         msg += f"\n{p['url']}"
-    return {"message": msg, "picture_url": p["picture_url"]}
+    pic = p.get("picture_url", "").strip()
+    # ตรวจว่าเป็น URL จริง ไม่ใช่ชื่อตัวแปรหรือ placeholder
+    if not pic.startswith("http"):
+        pic = ""
+    return {"message": msg, "picture_url": pic}
 
 def get_product_comments():
     """comments สินค้าหมุนเวียน แยก Shopee / Lazada"""
