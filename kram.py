@@ -33,6 +33,12 @@ SUBREDDITS = [
     "Unexpected",
     "oddlyterrifying",
     "mildlyinteresting",
+    "Damnthatsinteresting",
+    "AbsoluteUnits",
+    "educationalgifs",
+    "Whatcouldgowrong",
+    "ThatsInsane",
+    "BeAmazed",
 ]
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".gif", ".webp")
