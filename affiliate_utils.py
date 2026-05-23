@@ -51,8 +51,22 @@ def _load_excel():
             if food_raw:
                 food_entries.append(str(food_raw).strip())
 
-            # promo — column H-L, active=yes เท่านั้น (expiry ใช้ manual active)
-            if promo_msg and str(promo_active or "").strip().lower() == "yes":
+            # promo — column H-L, active=yes + ยังไม่หมดอายุ
+            promo_ok = str(promo_active or "").strip().lower() == "yes"
+            if promo_ok and expiry_raw:
+                try:
+                    from datetime import date as _date
+                    if hasattr(expiry_raw, "date"):
+                        exp = expiry_raw.date()
+                    else:
+                        exp = datetime.strptime(str(expiry_raw).strip()[:10], "%Y-%m-%d").date()
+                    if today > exp:
+                        promo_ok = False
+                        print(f"Promo expired ({exp}): {str(promo_msg or '')[:40]}")
+                except Exception:
+                    pass  # parse ไม่ได้ → ไม่ block
+
+            if promo_msg and promo_ok:
                 promos.append({
                     "message":     str(promo_msg).strip(),
                     "url":         str(promo_url or "").strip(),
