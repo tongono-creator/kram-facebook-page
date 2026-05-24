@@ -285,6 +285,13 @@ def strip_emoji(text):
     return re.sub(r'[^฀-๿\x20-\x7E]', '', text).strip()
 
 
+# subreddits ที่เป็น animal content → ใช้ animal formula
+ANIMAL_SUBS = {
+    "aww", "AnimalsBeingBros", "rarepuppers",
+    "WhatsWrongWithYourCat", "AnimalsBeingDerps",
+}
+
+
 REALISM_FILTER = (
     "เขียนเหมือนคนพิมพ์เองใน Facebook ไม่ใช่นักการตลาด\n"
     "ภาษาพูดธรรมดา ความคิดแรกที่นึกได้ ง่ายๆ ตรงๆ\n"
@@ -296,19 +303,37 @@ REALISM_FILTER = (
 
 
 def generate_hook(subject, vibe, subreddit):
-    """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay — style animal inner monologue"""
+    """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
+    - สัตว์ → inner monologue (สัตว์พูดในหัว)
+    - ว้าว/น่าทึ่ง → discovery headline (ทำให้คนต้องหยุดดู)
+    """
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
-    prompt = (
-        f"รูปจาก r/{subreddit}\n"
-        f"เห็น: {subject}\n"
-        f"{vibe_line}\n\n"
-        + REALISM_FILTER +
-        "เขียน hook text บนรูป — เหมือนสัตว์/ตัวเอกในรูปกำลังพูดในหัว (inner monologue):\n"
-        "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึก 3-6 คำ ลงท้ายด้วย .. (ยังไม่จบ)\n"
-        "บรรทัด 2: twist หรือ punchline 4-8 คำ — reveal ที่ทำให้ขำหรือ relatable\n"
-        "มุมมองสัตว์พูดเอง ไม่ใช่คนบรรยาย ภาษาพูดธรรมดา\n"
-        "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label ไม่มีเครื่องหมายคำพูด"
-    )
+    is_animal = subreddit in ANIMAL_SUBS
+
+    if is_animal:
+        prompt = (
+            f"รูปสัตว์จาก r/{subreddit}\n"
+            f"เห็น: {subject}\n"
+            f"{vibe_line}\n\n"
+            + REALISM_FILTER +
+            "เขียน hook text บนรูป — เหมือนสัตว์ในรูปกำลังพูดในหัว (inner monologue):\n"
+            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึก 3-6 คำ ลงท้ายด้วย .. (ยังไม่จบ)\n"
+            "บรรทัด 2: twist หรือ punchline 4-8 คำ — reveal ที่ทำให้ขำหรือ relatable\n"
+            "มุมมองสัตว์พูดเอง ไม่ใช่คนบรรยาย ภาษาพูดธรรมดา\n"
+            "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label ไม่มีเครื่องหมายคำพูด"
+        )
+    else:
+        prompt = (
+            f"รูปน่าทึ่งจาก r/{subreddit}\n"
+            f"เห็น: {subject}\n"
+            f"{vibe_line}\n\n"
+            + REALISM_FILTER +
+            "เขียน hook text headline บนรูป — ทำให้คนต้องหยุดนิ้วทันที:\n"
+            "บรรทัด 1: claim หลักที่ว้าวที่สุด 4-7 คำ ลงท้ายด้วย ..\n"
+            "บรรทัด 2: ข้อมูลเสริมหรือ why it matters สั้น 4-8 คำ\n"
+            "ใช้ตัวเลขถ้ามี เน้นความเป็นครั้งแรก/ใหญ่ที่สุด/แปลกที่สุด\n"
+            "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label"
+        )
     # keywords ที่เป็น prompt echo — ต้องกรองทิ้ง
     ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
     for model in TEXT_MODELS:
@@ -332,26 +357,47 @@ def generate_hook(subject, vibe, subreddit):
 def make_caption(subject, vibe, subreddit, reddit_title=""):
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
     title_line = f"ชื่อโพสต์ต้นฉบับ: {reddit_title}" if reddit_title else ""
-    prompt = (
-        f"รูปจาก r/{subreddit}\n"
-        f"เห็น: {subject}\n"
-        f"{vibe_line}\n"
-        f"{title_line}\n\n"
-        + REALISM_FILTER +
-        "เขียน Facebook caption สไตล์เพจสัตว์ไวรัลไทย (ตามติดชีวิต animal, Bright TV)\n"
-        "ใช้ 5 ชั้นนี้ตามลำดับ:\n\n"
-        "ชั้น 1 — False flip (1 บรรทัด): 2 คำ contrast สั้นๆ ใช้ ✅ ❌\n"
-        "  เช่น 'รังเกียจ ❌  กลัวสกปรก ✅' หรือ 'โกรธ ❌  ห่วงใย ✅'\n"
-        "  เลือก contrast ที่ตรงกับ vibe ของรูป\n\n"
-        "ชั้น 2 — Setup (1-2 ประโยค): เมื่อ... + เหตุการณ์ที่ไม่คาดคิด บอก context\n\n"
-        "ชั้น 3 — Narrate (2-3 ประโยค): เล่าเหมือนผู้บรรยายละคร dramatic\n"
-        "  บอกว่าเกิดอะไร ทำอะไร แสดงออกยังไง ทำไมน่าสนใจ\n\n"
-        "ชั้น 4 — Inner voice (1-2 ประโยค): ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง\n"
-        "  เช่น \"ฉันรักเธอนะ แต่เธอสกปรกมากเลย ไปอาบน้ำก่อนได้ไหม\"\n\n"
-        "ชั้น 5 — Punchline (1 ประโยค): บทสรุปตลกๆ หรือ life lesson\n\n"
-        "จบด้วย hashtag 3-4 อัน\n"
-        "ห้าม ** markdown ห้ามอวยเกินจริง เขียนให้คนอยากกด share ทันที ตอบแค่ caption"
-    )
+    is_animal = subreddit in ANIMAL_SUBS
+
+    if is_animal:
+        # ─── Animal formula (5 layers) ───────────────────────────────
+        prompt = (
+            f"รูปสัตว์จาก r/{subreddit}\n"
+            f"เห็น: {subject}\n"
+            f"{vibe_line}\n"
+            f"{title_line}\n\n"
+            + REALISM_FILTER +
+            "เขียน Facebook caption สไตล์เพจสัตว์ไวรัลไทย (ตามติดชีวิต animal, Bright TV)\n"
+            "ใช้ 5 ชั้นนี้ตามลำดับ:\n\n"
+            "ชั้น 1 — False flip (1 บรรทัด): 2 คำ contrast ใช้ ✅ ❌\n"
+            "  เลือก contrast ที่ตรงกับ vibe เช่น 'รังเกียจ ❌  กลัวสกปรก ✅'\n\n"
+            "ชั้น 2 — Setup (1-2 ประโยค): เมื่อ... + เหตุการณ์ที่ไม่คาดคิด\n\n"
+            "ชั้น 3 — Narrate (2-3 ประโยค): เล่าเหมือนผู้บรรยายละคร dramatic\n\n"
+            "ชั้น 4 — Inner voice (1-2 ประโยค): ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง\n\n"
+            "ชั้น 5 — Punchline (1 ประโยค): บทสรุปตลกๆ หรือ life lesson\n\n"
+            "จบด้วย hashtag 3-4 อัน\n"
+            "ห้าม ** markdown ห้ามอวยเกินจริง ตอบแค่ caption"
+        )
+    else:
+        # ─── Discovery formula (ว้าว/น่าทึ่ง) ───────────────────────
+        prompt = (
+            f"รูปน่าทึ่งจาก r/{subreddit}\n"
+            f"เห็น: {subject}\n"
+            f"{vibe_line}\n"
+            f"{title_line}\n\n"
+            + REALISM_FILTER +
+            "เขียน Facebook caption สไตล์เพจ 'รู้รอบโลก' / 'ไวรัลโลก' — ข่าว/ความรู้น่าทึ่ง\n"
+            "ใช้ 4 ชั้นนี้:\n\n"
+            "ชั้น 1 — Headline hook (1 ประโยค): claim ที่ทำให้หยุดนิ้วทันที เน้นคำว่า\n"
+            "  'แห่งแรก', 'ใหญ่ที่สุด', 'ไม่เคยมีใครทำ', ใช้ตัวเลขถ้ามี\n\n"
+            "ชั้น 2 — Context (1-2 ประโยค): ที่ไหน ใคร เกิดอะไร\n\n"
+            "ชั้น 3 — Explain (2-3 ประโยค): มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ\n"
+            "  ถ้ามีตัวเลขน่าทึ่ง → ใส่ด้วย (เช่น ดักจับ CO2 ได้เท่ากับต้นไม้ X ต้น)\n\n"
+            "ชั้น 4 — Wow closer (1 ประโยค): ข้อเท็จจริงที่ทำให้คนร้อง 'โอ้โห'\n"
+            "  หรือ reflection ว่าโลกกำลังเปลี่ยนแปลงอย่างไร\n\n"
+            "จบด้วย hashtag 3-4 อัน\n"
+            "ห้าม ** markdown เขียนให้คนอยากกด share ทันที ตอบแค่ caption"
+        )
     for model in TEXT_MODELS:
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
