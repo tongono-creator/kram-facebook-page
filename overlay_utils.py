@@ -1,4 +1,4 @@
-# overlay_utils.py — PIL text overlay for Facebook bot images
+﻿# overlay_utils.py â€” PIL text overlay for Facebook bot images
 
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -7,7 +7,7 @@ FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
 
 
 def _wrap_text(draw, text, font, max_width):
-    """แบ่ง text เป็นหลาย line ให้พอดีกับ max_width (รองรับภาษาไทยที่ไม่มี space)"""
+    """à¹à¸šà¹ˆà¸‡ text à¹€à¸›à¹‡à¸™à¸«à¸¥à¸²à¸¢ line à¹ƒà¸«à¹‰à¸žà¸­à¸”à¸µà¸à¸±à¸š max_width (à¸£à¸­à¸‡à¸£à¸±à¸šà¸ à¸²à¸©à¸²à¹„à¸—à¸¢à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸¡à¸µ space)"""
     lines = []
     current = ""
     for char in text:
@@ -24,13 +24,13 @@ def _wrap_text(draw, text, font, max_width):
 
 
 def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
-    """หา font size + wrapped lines ที่พอดีกับ max_total_h"""
+    """à¸«à¸² font size + wrapped lines à¸—à¸µà¹ˆà¸žà¸­à¸”à¸µà¸à¸±à¸š max_total_h"""
     size = start
     while size >= min_size:
         font  = ImageFont.truetype(FONT_PATH, size)
         lines = _wrap_text(draw, text, font, max_width)
-        lines = _balance_wrap(draw, lines, font, max_width)  # ป้องกัน orphan
-        line_h = draw.textbbox((0, 0), "กA", font=font)[3]
+        lines = _balance_wrap(draw, lines, font, max_width)  # à¸›à¹‰à¸­à¸‡à¸à¸±à¸™ orphan
+        line_h = draw.textbbox((0, 0), "à¸A", font=font)[3]
         gap    = max(6, size // 8)
         total  = line_h * len(lines) + gap * (len(lines) - 1)
         if total <= max_total_h:
@@ -39,58 +39,58 @@ def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
     font   = ImageFont.truetype(FONT_PATH, min_size)
     lines  = _wrap_text(draw, text, font, max_width)
     lines  = _balance_wrap(draw, lines, font, max_width)
-    line_h = draw.textbbox((0, 0), "กA", font=font)[3]
+    line_h = draw.textbbox((0, 0), "à¸A", font=font)[3]
     gap    = max(6, min_size // 8)
     return font, min_size, lines, line_h, gap
 
 
 def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
-    """ถ้า line สุดท้ายสั้นเกิน (orphan) — merge 2 บรรทัดสุดท้ายแล้ว re-wrap ให้สมดุล"""
+    """à¸–à¹‰à¸² line à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢à¸ªà¸±à¹‰à¸™à¹€à¸à¸´à¸™ (orphan) â€” merge 2 à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢à¹à¸¥à¹‰à¸§ re-wrap à¹ƒà¸«à¹‰à¸ªà¸¡à¸”à¸¸à¸¥"""
     if len(lines) <= 1:
         return lines
     last_text = lines[-1].strip()
     last_w    = draw.textbbox((0, 0), last_text, font=font)[2]
     prev_w    = draw.textbbox((0, 0), lines[-2], font=font)[2]
-    # trigger ถ้า: pixel ratio ต่ำ หรือ char น้อยมาก (เลขเดี่ยว %, 0, บาท ฯลฯ)
+    # trigger à¸–à¹‰à¸²: pixel ratio à¸•à¹ˆà¸³ à¸«à¸£à¸·à¸­ char à¸™à¹‰à¸­à¸¢à¸¡à¸²à¸ (à¹€à¸¥à¸‚à¹€à¸”à¸µà¹ˆà¸¢à¸§ %, 0, à¸šà¸²à¸— à¸¯à¸¥à¸¯)
     is_orphan = (last_w < prev_w * min_ratio) or (len(last_text) <= 3)
     if not is_orphan:
-        return lines  # สมดุลแล้ว
-    # merge 2 บรรทัดสุดท้าย → re-wrap ด้วย target_w ที่แคบลง
+        return lines  # à¸ªà¸¡à¸”à¸¸à¸¥à¹à¸¥à¹‰à¸§
+    # merge 2 à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ â†’ re-wrap à¸”à¹‰à¸§à¸¢ target_w à¸—à¸µà¹ˆà¹à¸„à¸šà¸¥à¸‡
     merged   = lines[-2] + lines[-1]
     total_w  = draw.textbbox((0, 0), merged, font=font)[2]
-    target_w = min(max_width, int(total_w * 0.55))  # ทำให้แตกเป็น ~2 บรรทัดที่เท่าๆ กัน
+    target_w = min(max_width, int(total_w * 0.55))  # à¸—à¸³à¹ƒà¸«à¹‰à¹à¸•à¸à¹€à¸›à¹‡à¸™ ~2 à¸šà¸£à¸£à¸—à¸±à¸”à¸—à¸µà¹ˆà¹€à¸—à¹ˆà¸²à¹† à¸à¸±à¸™
     rebalanced = _wrap_text(draw, merged, font, target_w)
-    # ตรวจว่าทุก line ไม่เกิน max_width (ไม่ overflow)
+    # à¸•à¸£à¸§à¸ˆà¸§à¹ˆà¸²à¸—à¸¸à¸ line à¹„à¸¡à¹ˆà¹€à¸à¸´à¸™ max_width (à¹„à¸¡à¹ˆ overflow)
     if all(draw.textbbox((0, 0), l, font=font)[2] <= max_width for l in rebalanced):
         return lines[:-2] + rebalanced
-    return lines  # rebalance ไม่ได้ — คืนค่าเดิม
+    return lines  # rebalance à¹„à¸¡à¹ˆà¹„à¸”à¹‰ â€” à¸„à¸·à¸™à¸„à¹ˆà¸²à¹€à¸”à¸´à¸¡
 
 
 def _draw_lines(draw, lines, font, line_h, gap, y_start, W, fill, shadow=(0, 0, 0)):
-    """วาด wrapped lines กึ่งกลาง พร้อม 8-direction outline (อ่านได้ทุกพื้นหลัง)"""
+    """à¸§à¸²à¸” wrapped lines à¸à¸¶à¹ˆà¸‡à¸à¸¥à¸²à¸‡ à¸žà¸£à¹‰à¸­à¸¡ 8-direction outline (à¸­à¹ˆà¸²à¸™à¹„à¸”à¹‰à¸—à¸¸à¸à¸žà¸·à¹‰à¸™à¸«à¸¥à¸±à¸‡)"""
     y = y_start
     for line in lines:
         bw = draw.textbbox((0, 0), line, font=font)[2]
         x  = (W - bw) // 2
-        # 8-direction outline — ทำให้อ่านได้แม้พื้นหลังสีใกล้เคียงตัวอักษร
+        # 8-direction outline â€” à¸—à¸³à¹ƒà¸«à¹‰à¸­à¹ˆà¸²à¸™à¹„à¸”à¹‰à¹à¸¡à¹‰à¸žà¸·à¹‰à¸™à¸«à¸¥à¸±à¸‡à¸ªà¸µà¹ƒà¸à¸¥à¹‰à¹€à¸„à¸µà¸¢à¸‡à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£
         for dx, dy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
             draw.text((x + dx, y + dy), line, font=font, fill=shadow)
         draw.text((x, y), line, font=font, fill=fill)
         y += line_h + gap
-    return y  # y หลังบรรทัดสุดท้าย
+    return y  # y à¸«à¸¥à¸±à¸‡à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢
 
 
 def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     """
-    วาง text 2 บรรทัด (พร้อม word-wrap) ทับรูป:
-      line1 — สี accent_color (hook หลัก)
-      line2 — สีขาว (เสริม/คำถาม)
-    คืน path รูปใหม่
+    à¸§à¸²à¸‡ text 2 à¸šà¸£à¸£à¸—à¸±à¸” (à¸žà¸£à¹‰à¸­à¸¡ word-wrap) à¸—à¸±à¸šà¸£à¸¹à¸›:
+      line1 â€” à¸ªà¸µ accent_color (hook à¸«à¸¥à¸±à¸)
+      line2 â€” à¸ªà¸µà¸‚à¸²à¸§ (à¹€à¸ªà¸£à¸´à¸¡/à¸„à¸³à¸–à¸²à¸¡)
+    à¸„à¸·à¸™ path à¸£à¸¹à¸›à¹ƒà¸«à¸¡à¹ˆ
     """
     img = Image.open(img_path).convert("RGB")
     w, h = img.size
 
-    # Crop เป็น square แล้ว resize 1080x1080
+    # Crop à¹€à¸›à¹‡à¸™ square à¹à¸¥à¹‰à¸§ resize 1080x1080
     size = min(w, h)
     left = (w - size) // 2
     top  = (h - size) // 2
@@ -98,7 +98,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     img  = img.resize((1080, 1080), Image.LANCZOS)
     W, H = 1080, 1080
 
-    # Dark gradient ล่าง 45%
+    # Dark gradient à¸¥à¹ˆà¸²à¸‡ 45%
     grad_h   = int(H * 0.45)
     gradient = Image.new("RGBA", (W, grad_h), (0, 0, 0, 0))
     gd       = ImageDraw.Draw(gradient)
@@ -110,14 +110,14 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     img = img_rgba.convert("RGB")
 
     draw  = ImageDraw.Draw(img)
-    PAD   = 55          # ระยะห่างขอบ left/right/bottom
-    max_w = W - PAD * 2  # ความกว้างสูงสุดของ text
+    PAD   = 55          # à¸£à¸°à¸¢à¸°à¸«à¹ˆà¸²à¸‡à¸‚à¸­à¸š left/right/bottom
+    max_w = W - PAD * 2  # à¸„à¸§à¸²à¸¡à¸à¸§à¹‰à¸²à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸‚à¸­à¸‡ text
 
-    # พื้นที่ทั้งหมดสำหรับ text (อยู่ใน gradient zone)
-    text_zone_h = grad_h - PAD - 20  # เว้น 20px บน gradient
-    BLOCK_GAP   = 16  # ช่องว่างระหว่าง line1 block กับ line2 block
+    # à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ªà¸³à¸«à¸£à¸±à¸š text (à¸­à¸¢à¸¹à¹ˆà¹ƒà¸™ gradient zone)
+    text_zone_h = grad_h - PAD - 20  # à¹€à¸§à¹‰à¸™ 20px à¸šà¸™ gradient
+    BLOCK_GAP   = 16  # à¸Šà¹ˆà¸­à¸‡à¸§à¹ˆà¸²à¸‡à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡ line1 block à¸à¸±à¸š line2 block
 
-    # แบ่งพื้นที่: line1 ได้ ~58%, line2 ได้ ~42%
+    # à¹à¸šà¹ˆà¸‡à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆ: line1 à¹„à¸”à¹‰ ~58%, line2 à¹„à¸”à¹‰ ~42%
     h1_budget = int(text_zone_h * 0.58)
     h2_budget = int(text_zone_h * 0.42) - BLOCK_GAP
 
@@ -137,10 +137,10 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     total_h = total_h1 + (BLOCK_GAP + total_h2 if line2 else 0)
     y_start = H - PAD - total_h
 
-    # Draw line1 — accent color
+    # Draw line1 â€” accent color
     y_after1 = _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color)
 
-    # Draw line2 — white
+    # Draw line2 â€” white
     if line2:
         _draw_lines(draw, lines2, font2, lh2, gap2, y_after1 + BLOCK_GAP, W, fill=(255, 255, 255))
 
@@ -150,3 +150,4 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
 
     img.save(out_path, "JPEG", quality=92)
     return out_path
+
