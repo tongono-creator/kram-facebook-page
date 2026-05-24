@@ -93,6 +93,17 @@ def _draw_lines(draw, lines, font, line_h, gap, y_start, W, fill, shadow=(0, 0, 
     return y  # y à¸«à¸¥à¸±à¸‡à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢
 
 
+def _remove_black_bars(img, threshold=20):
+    """Remove solid black pillarbox/letterbox borders from image"""
+    gray = img.convert("L")
+    mask = gray.point(lambda p: 255 if p > threshold else 0)
+    bbox = mask.getbbox()
+    if bbox and (bbox[0] > 5 or bbox[1] > 5 or
+                 img.width - bbox[2] > 5 or img.height - bbox[3] > 5):
+        return img.crop(bbox)
+    return img
+
+
 def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     """
     à¸§à¸²à¸‡ text 2 à¸šà¸£à¸£à¸—à¸±à¸” (à¸žà¸£à¹‰à¸­à¸¡ word-wrap) à¸—à¸±à¸šà¸£à¸¹à¸›:
@@ -101,6 +112,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     à¸„à¸·à¸™ path à¸£à¸¹à¸›à¹ƒà¸«à¸¡à¹ˆ
     """
     img = Image.open(img_path).convert("RGB")
+    img = _remove_black_bars(img)
     w, h = img.size
 
     # Crop à¹€à¸›à¹‡à¸™ square à¹à¸¥à¹‰à¸§ resize 1080x1080
