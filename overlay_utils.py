@@ -5,6 +5,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
 
+_LEADING_VOWELS  = set('เแโใไ')
+_COMBINING_CHARS = set('่้๊๋์ิีึืุูัํ็')
+
 
 def _wrap_text(draw, text, font, max_width):
     """à¹à¸šà¹ˆà¸‡ text à¹€à¸›à¹‡à¸™à¸«à¸¥à¸²à¸¢ line à¹ƒà¸«à¹‰à¸žà¸­à¸”à¸µà¸à¸±à¸š max_width (à¸£à¸­à¸‡à¸£à¸±à¸šà¸ à¸²à¸©à¸²à¹„à¸—à¸¢à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸¡à¸µ space)"""
@@ -12,12 +15,22 @@ def _wrap_text(draw, text, font, max_width):
     current = ""
     for char in text:
         test = current + char
-        if draw.textbbox((0, 0), test, font=font)[2] <= max_width:
+        fits = draw.textbbox((0, 0), test, font=font)[2] <= max_width
+        if fits or char in _COMBINING_CHARS:
             current = test
         else:
             if current:
-                lines.append(current)
-            current = char
+                if current[-1] in _LEADING_VOWELS:
+                    orphan  = current[-1]
+                    current = current[:-1]
+                    if current:
+                        lines.append(current)
+                    current = orphan + char
+                else:
+                    lines.append(current)
+                    current = char
+            else:
+                current = char
     if current:
         lines.append(current)
     return lines or [text]
@@ -52,7 +65,7 @@ def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
     last_w    = draw.textbbox((0, 0), last_text, font=font)[2]
     prev_w    = draw.textbbox((0, 0), lines[-2], font=font)[2]
     # trigger à¸–à¹‰à¸²: pixel ratio à¸•à¹ˆà¸³ à¸«à¸£à¸·à¸­ char à¸™à¹‰à¸­à¸¢à¸¡à¸²à¸ (à¹€à¸¥à¸‚à¹€à¸”à¸µà¹ˆà¸¢à¸§ %, 0, à¸šà¸²à¸— à¸¯à¸¥à¸¯)
-    is_orphan = (last_w < prev_w * min_ratio) or (len(last_text) <= 3)
+    is_orphan = (last_w < prev_w * min_ratio) or (len(last_text) <= 4)
     if not is_orphan:
         return lines  # à¸ªà¸¡à¸”à¸¸à¸¥à¹à¸¥à¹‰à¸§
     # merge 2 à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ â†’ re-wrap à¸”à¹‰à¸§à¸¢ target_w à¸—à¸µà¹ˆà¹à¸„à¸šà¸¥à¸‡
@@ -99,23 +112,19 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     W, H = 1080, 1080
 
     # Dark gradient à¸¥à¹ˆà¸²à¸‡ 45%
-    grad_h   = int(H * 0.45)
-    gradient = Image.new("RGBA", (W, grad_h), (0, 0, 0, 0))
-    gd       = ImageDraw.Draw(gradient)
-    for i in range(grad_h):
-        alpha = int(220 * (i / grad_h))
-        gd.rectangle([(0, i), (W, i + 1)], fill=(0, 0, 0, alpha))
+    BAR_H    = 260
     img_rgba = img.convert("RGBA")
-    img_rgba.paste(gradient, (0, H - grad_h), gradient)
-    img = img_rgba.convert("RGB")
+    bar      = Image.new("RGBA", (W, BAR_H), (0, 0, 0, 255))
+    img_rgba.paste(bar, (0, H - BAR_H))
+    img      = img_rgba.convert("RGB")
 
     draw  = ImageDraw.Draw(img)
-    PAD   = 55          # à¸£à¸°à¸¢à¸°à¸«à¹ˆà¸²à¸‡à¸‚à¸­à¸š left/right/bottom
+    PAD   = 44          # à¸£à¸°à¸¢à¸°à¸«à¹ˆà¸²à¸‡à¸‚à¸­à¸š left/right/bottom
     max_w = W - PAD * 2  # à¸„à¸§à¸²à¸¡à¸à¸§à¹‰à¸²à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸‚à¸­à¸‡ text
 
     # à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ªà¸³à¸«à¸£à¸±à¸š text (à¸­à¸¢à¸¹à¹ˆà¹ƒà¸™ gradient zone)
-    text_zone_h = grad_h - PAD - 20  # à¹€à¸§à¹‰à¸™ 20px à¸šà¸™ gradient
-    BLOCK_GAP   = 16  # à¸Šà¹ˆà¸­à¸‡à¸§à¹ˆà¸²à¸‡à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡ line1 block à¸à¸±à¸š line2 block
+    text_zone_h = BAR_H - PAD * 2  # à¹€à¸§à¹‰à¸™ 20px à¸šà¸™ gradient
+    BLOCK_GAP   = 14  # à¸Šà¹ˆà¸­à¸‡à¸§à¹ˆà¸²à¸‡à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡ line1 block à¸à¸±à¸š line2 block
 
     # à¹à¸šà¹ˆà¸‡à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆ: line1 à¹„à¸”à¹‰ ~58%, line2 à¹„à¸”à¹‰ ~42%
     h1_budget = int(text_zone_h * 0.58)
@@ -135,14 +144,20 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
         total_h2 = 0
 
     total_h = total_h1 + (BLOCK_GAP + total_h2 if line2 else 0)
-    y_start = H - PAD - total_h
+    bar_top = H - BAR_H
+    y_start = bar_top + (BAR_H - total_h) // 2
 
-    # Draw line1 â€” accent color
-    y_after1 = _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color)
+    # Draw line1 — accent color
+    _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color)
 
-    # Draw line2 â€” white
+    # Draw line2 — white (pixel-exact gap: BLOCK_GAP px between bottom of line1 and top of line2)
     if line2:
-        _draw_lines(draw, lines2, font2, lh2, gap2, y_after1 + BLOCK_GAP, W, fill=(255, 255, 255))
+        n1 = len(lines1)
+        b1 = draw.textbbox((0, 0), lines1[-1], font=font1)
+        pixel_bottom1 = y_start + lh1 * (n1 - 1) + gap1 * (n1 - 1) + b1[3]
+        b2 = draw.textbbox((0, 0), lines2[0], font=font2)
+        y2 = pixel_bottom1 + BLOCK_GAP - b2[1]
+        _draw_lines(draw, lines2, font2, lh2, gap2, y2, W, fill=(255, 255, 255))
 
     if not out_path:
         base     = img_path.rsplit(".", 1)[0]

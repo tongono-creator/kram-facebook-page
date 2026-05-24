@@ -242,11 +242,13 @@ def post_video(caption, video_path):
 
 
 # ── Gemini ────────────────────────────────────────────────────────────
-def analyze_image(img_path):
+def analyze_image(img_path, reddit_title=""):
     """Vision ดูรูปแบบคนเล่นโซเชียล — คืน (subject, vibe) tuple"""
     with open(img_path, "rb") as f:
         img_data = f.read()
+    title_ctx = f'ชื่อโพสต์ต้นฉบับ: "{reddit_title}"\n' if reddit_title else ""
     prompt = (
+        f"{title_ctx}"
         "ดูรูปนี้เหมือนคนไทยที่เล่น Facebook/Twitter ไม่ใช่ AI วิเคราะห์ภาพ\n"
         "ตอบ 2 อย่าง แยกด้วย | :\n"
         "1. เห็นอะไร (สัตว์/เหตุการณ์/ของแปลก) สั้นๆ 1-5 คำ\n"
@@ -299,6 +301,11 @@ REALISM_FILTER = (
     "prioritize: relatable, ความจริงของมนุษย์, มุกที่คนพูดจริงๆ, ตรงใจ\n"
     "ตัวอย่างโทนที่ถูก: 'หน้าเบื่องาน monday', 'เด็กดื้อที่แม่รัก', 'rich kid พันธุ์แท้'\n"
     "ตัวอย่างโทนที่ผิด: punchline ประดิษฐ์, คำเปรียบเทียบไม่เกี่ยวกับรูป\n"
+    "\n"
+    "CRITICAL — exotic animal rule:\n"
+    "ถ้า subject เป็นสัตว์เลื้อยคลาน สัตว์ป่า หรือสัตว์แปลก (ตะกวด, งู, จระเข้, แมงป่อง, นกล่าเหยื่อ ฯลฯ)\n"
+    "ห้ามใช้คำเหล่านี้เด็ดขาด: ขี้อ้อน, เป็นมิตร, น่าเลี้ยง, น่ารัก, ซื่อสัตย์, ชอบอยู่กับคน\n"
+    "คำเหล่านี้คือนิสัยหมาแมว ไม่ใช่ข้อเท็จจริงของสัตว์ป่า — ใช้แทนด้วย: ขนาด, ความน่าทึ่ง, สถิติ, พฤติกรรมจริงในธรรมชาติ\n"
 )
 
 
@@ -360,41 +367,40 @@ def make_caption(subject, vibe, subreddit, reddit_title=""):
     is_animal = subreddit in ANIMAL_SUBS
 
     if is_animal:
-        # ─── Animal formula (5 layers) ───────────────────────────────
+        # ─── Animal formula — ▪️ bullet narrative ────────────────────
         prompt = (
             f"รูปสัตว์จาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
             f"{vibe_line}\n"
             f"{title_line}\n\n"
             + REALISM_FILTER +
-            "เขียน Facebook caption สไตล์เพจสัตว์ไวรัลไทย (ตามติดชีวิต animal, Bright TV)\n"
-            "ใช้ 5 ชั้นนี้ตามลำดับ:\n\n"
-            "ชั้น 1 — False flip (1 บรรทัด): 2 คำ contrast ใช้ ✅ ❌\n"
-            "  เลือก contrast ที่ตรงกับ vibe เช่น 'รังเกียจ ❌  กลัวสกปรก ✅'\n\n"
-            "ชั้น 2 — Setup (1-2 ประโยค): เมื่อ... + เหตุการณ์ที่ไม่คาดคิด\n\n"
-            "ชั้น 3 — Narrate (2-3 ประโยค): เล่าเหมือนผู้บรรยายละคร dramatic\n\n"
-            "ชั้น 4 — Inner voice (1-2 ประโยค): ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง\n\n"
-            "ชั้น 5 — Punchline (1 ประโยค): บทสรุปตลกๆ หรือ life lesson\n\n"
+            "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจสัตว์ไวรัลไทย\n"
+            "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
+            "โครงสร้าง:\n"
+            "▪️ 1-2: Setup — เหตุการณ์ที่เห็นในรูป สัตว์ทำอะไร สถานการณ์คืออะไร\n"
+            "▪️ 3-4: Narrate — เล่าเหมือนผู้บรรยายละคร dramatic ใส่ความรู้สึก\n"
+            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight\n"
+            "▪️ 7-8: Engage — punchline ตลกๆ หรือ life lesson + คำถามชวน comment\n"
+            "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา relatable\n"
             "จบด้วย hashtag 3-4 อัน\n"
             "ห้าม ** markdown ห้ามอวยเกินจริง ตอบแค่ caption"
         )
     else:
-        # ─── Discovery formula (ว้าว/น่าทึ่ง) ───────────────────────
+        # ─── Discovery formula — ▪️ bullet narrative ──────────────────
         prompt = (
             f"รูปน่าทึ่งจาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
             f"{vibe_line}\n"
             f"{title_line}\n\n"
             + REALISM_FILTER +
-            "เขียน Facebook caption สไตล์เพจ 'รู้รอบโลก' / 'ไวรัลโลก' — ข่าว/ความรู้น่าทึ่ง\n"
-            "ใช้ 4 ชั้นนี้:\n\n"
-            "ชั้น 1 — Headline hook (1 ประโยค): claim ที่ทำให้หยุดนิ้วทันที เน้นคำว่า\n"
-            "  'แห่งแรก', 'ใหญ่ที่สุด', 'ไม่เคยมีใครทำ', ใช้ตัวเลขถ้ามี\n\n"
-            "ชั้น 2 — Context (1-2 ประโยค): ที่ไหน ใคร เกิดอะไร\n\n"
-            "ชั้น 3 — Explain (2-3 ประโยค): มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ\n"
-            "  ถ้ามีตัวเลขน่าทึ่ง → ใส่ด้วย (เช่น ดักจับ CO2 ได้เท่ากับต้นไม้ X ต้น)\n\n"
-            "ชั้น 4 — Wow closer (1 ประโยค): ข้อเท็จจริงที่ทำให้คนร้อง 'โอ้โห'\n"
-            "  หรือ reflection ว่าโลกกำลังเปลี่ยนแปลงอย่างไร\n\n"
+            "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจ 'รู้รอบโลก' / 'ไวรัลโลก'\n"
+            "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
+            "โครงสร้าง:\n"
+            "▪️ 1-2: Hook — claim ที่ทำให้หยุดนิ้วทันที + context ที่ไหน ใคร เกิดอะไร\n"
+            "▪️ 3-4: Explain — มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ ใส่ตัวเลขถ้ามี\n"
+            "▪️ 5-6: Wow facts — ข้อเท็จจริงที่ทำให้ร้อง 'โอ้โห' เปรียบเทียบให้เห็นภาพ\n"
+            "▪️ 7-8: Engage — reflection โลกกำลังเปลี่ยนอย่างไร + คำถามชวน comment\n"
+            "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา\n"
             "จบด้วย hashtag 3-4 อัน\n"
             "ห้าม ** markdown เขียนให้คนอยากกด share ทันที ตอบแค่ caption"
         )
@@ -555,7 +561,7 @@ def main():
         print("Image download failed")
         return
 
-    subject, vibe = analyze_image(img_path)
+    subject, vibe = analyze_image(img_path, reddit_title=post["title"])
     if not subject or "ไม่เกี่ยว" in subject:
         print("Vision: not relevant, using Reddit title as fallback")
         subject = post["title"]
