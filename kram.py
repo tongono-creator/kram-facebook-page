@@ -39,6 +39,8 @@ SUBREDDITS = [
     "Whatcouldgowrong",
     "ThatsInsane",
     "BeAmazed",
+    "technology",
+    "todayilearned",
 ]
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".gif", ".webp")
@@ -356,18 +358,17 @@ def generate_hook(subject, vibe, subreddit):
         )
     else:
         prompt = (
-            f"รูปน่าทึ่งจาก r/{subreddit}\n"
-            f"เห็น: {subject}\n"
+            f"Interesting fact/news post from r/{subreddit}\n"
+            f"Subject visible: {subject}\n"
             f"{vibe_line}\n\n"
             + REALISM_FILTER +
-            "\nเขียน hook text headline สั้นๆ บนรูป — ทำให้คนต้องหยุดนิ้วทันที:\n"
-            "บรรทัด 1: claim หลักที่ว้าวที่สุด 4-7 คำ ลงท้ายด้วย ..\n"
-            "บรรทัด 2: ข้อมูลเสริมหรือ why it matters สั้น 4-8 คำ\n"
-            "ใช้ตัวเลขถ้ามี เน้นความเป็นครั้งแรก/ใหญ่ที่สุด/แปลกที่สุด\n\n"
-            "⚠️ กฎสำคัญมาก:\n"
-            "1. ห้ามเขียนป้ายกำกับเช่น 'บรรทัด 1:', 'ข้อความในโพสต์ Facebook:', 'Hook:' เด็ดขาด\n"
-            "2. ห้ามเขียนคำนำ อารัมภบท หรือสรุปใดๆ ตอบเฉพาะข้อความ 2 บรรทัดเท่านั้น\n"
-            "3. รักษาความยาวให้สั้นกระชับตามที่กำหนด (บรรทัดละไม่เกิน 6-8 คำ)"
+            "\nWrite a very punchy, eye-catching 2-line Thai headline for this image:\n"
+            "Line 1: Main shocking claim or viral news headline (4-8 Thai words. Must be bold, jaw-dropping, e.g. 'บิลค่า AI แพงกว่าที่คิด บริษัทใหญ่เริ่มบ่น AI แพง').\n"
+            "Line 2: Supporting fact, background context, or why it matters (6-12 Thai words. Explains/clarifies Line 1, e.g. 'Microsoft เริ่มยกเลิก Claude Code licenses...').\n"
+            "Keep it extremely clean, exciting, and easy to read. Do not use any emoji on these overlay lines.\n\n"
+            "⚠️ CRITICAL RULES:\n"
+            "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros. Output ONLY the 2 lines of text.\n"
+            "2. Keep the length short enough to fit on the image overlay."
         )
     # keywords ที่เป็น prompt echo — ต้องกรองทิ้งเพิ่มเติม
     ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
@@ -415,21 +416,22 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
     else:
         # ─── Discovery formula — ▪️ bullet narrative ──────────────────
         prompt = (
-            f"รูปน่าทึ่งจาก r/{subreddit}\n"
-            f"เห็น: {subject}\n"
+            f"Interesting fact/news post from r/{subreddit}\n"
+            f"Subject visible: {subject}\n"
             f"{vibe_line}\n"
             f"{title_line}\n\n"
             + REALISM_FILTER +
-            "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจ 'รู้รอบโลก' / 'ไวรัลโลก'\n"
-            "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
-            "โครงสร้าง:\n"
-            "▪️ 1-2: Hook — claim ที่ทำให้หยุดนิ้วทันที + context ที่ไหน ใคร เกิดอะไร (วิเคราะห์ชื่อโพสต์ต้นฉบับประกอบรูปภาพเพื่อค้นหาข้อเท็จจริงจริง)\n"
-            "▪️ 3-4: Explain — มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ อ้างอิงจากความรู้จริงในประวัติศาสตร์/วิทยาศาสตร์/ภูมิศาสตร์ พร้อมใส่ตัวเลขประกอบจริง\n"
-            "▪️ 5-6: Wow facts — ข้อเท็จจริงที่ทำให้ร้อง 'โอ้โห' เปรียบเทียบให้เห็นภาพโดยละเอียด\n"
-            "▪️ 7-8: Engage — reflection โลกกำลังเปลี่ยนอย่างไร + คำถามชวน comment\n"
-            "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา\n"
-            "จบด้วย hashtag 3-4 อัน\n"
-            "ห้าม ** markdown เขียนให้คนอยากกด share ทันที ตอบแค่ caption"
+            "Write a high-engagement Facebook caption in THAI based on this fact/news. Use a '▪️ bullet narrative' style:\n"
+            "Start each bullet point with a ▪️ emoji. Generate 6-8 bullet points in total. 1-2 sentences per bullet.\n"
+            "Structure of the narrative:\n"
+            "▪️ 1-2: Hook — A shocking claim, modern tech news, or fascinating fact to stop the user from scrolling. Introduce who, what, and where (based on the image and original post title).\n"
+            "▪️ 3-4: Context & Explanation — How it works, the background details, or why this happened. Bring in real-world facts (tech, science, history, or business details depending on the post topic).\n"
+            "▪️ 5-6: Wow details — Mind-blowing statistics, comparisons, or details that make people say 'wow'.\n"
+            "▪️ 7-8: Relatable Engagement — Connect this fact/news to a funny, sarcastic, or relatable human angle (e.g. office syndrome, manager struggles, money wastage, or daily life habits) to stimulate comments and shares.\n\n"
+            "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา ทั่วไป ไม่เป็นทางการ ไม่เก๊กเท่, เหมือนคนทั่วไปบ่นหรือเล่าเรื่องฮาๆ ให้ฟัง).\n"
+            "Do not use markdown like ** or bolding in the caption.\n"
+            "End the caption with 3-4 relevant hashtags.\n"
+            "Output ONLY the caption."
         )
     for model in TEXT_MODELS:
         try:
