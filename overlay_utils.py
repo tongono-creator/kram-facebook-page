@@ -11,6 +11,13 @@ _COMBINING_CHARS = set('่้๊๋์ิีึืุูัํ็')
 
 def _wrap_text(draw, text, font, max_width):
     """à¹à¸šà¹ˆà¸‡ text à¹€à¸›à¹‡à¸™à¸«à¸¥à¸²à¸¢ line à¹ƒà¸«à¹‰à¸žà¸­à¸”à¸µà¸à¸±à¸š max_width (à¸£à¸­à¸‡à¸£à¸±à¸šà¸ à¸²à¸©à¸²à¹„à¸—à¸¢à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸¡à¸µ space)"""
+    if draw.textbbox((0, 0), text, font=font)[2] <= max_width:
+        return [text]
+    if " " in text.strip():
+        return _wrap_words(draw, text, font, max_width)
+    if getattr(font, "size", 99) > 42:
+        return [text]
+
     lines = []
     current = ""
     for char in text:
@@ -36,6 +43,24 @@ def _wrap_text(draw, text, font, max_width):
     return lines or [text]
 
 
+def _wrap_words(draw, text, font, max_width):
+    words = [w for w in text.split(" ") if w]
+    if not words:
+        return [text]
+    lines, current = [], ""
+    for word in words:
+        test = word if not current else current + " " + word
+        if draw.textbbox((0, 0), test, font=font)[2] <= max_width:
+            current = test
+            continue
+        if current:
+            lines.append(current)
+        current = word
+    if current:
+        lines.append(current)
+    return lines
+
+
 def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
     """à¸«à¸² font size + wrapped lines à¸—à¸µà¹ˆà¸žà¸­à¸”à¸µà¸à¸±à¸š max_total_h"""
     size = start
@@ -46,7 +71,8 @@ def _fit_wrapped(draw, text, max_width, max_total_h, start=88, min_size=24):
         line_h = draw.textbbox((0, 0), "à¸A", font=font)[3]
         gap    = max(6, size // 8)
         total  = line_h * len(lines) + gap * (len(lines) - 1)
-        if total <= max_total_h:
+        width_ok = all(draw.textbbox((0, 0), l, font=font)[2] <= max_width for l in lines)
+        if total <= max_total_h and width_ok:
             return font, size, lines, line_h, gap
         size -= 2
     font   = ImageFont.truetype(FONT_PATH, min_size)
@@ -69,7 +95,7 @@ def _balance_wrap(draw, lines, font, max_width, min_ratio=0.42):
     if not is_orphan:
         return lines  # à¸ªà¸¡à¸”à¸¸à¸¥à¹à¸¥à¹‰à¸§
     # merge 2 à¸šà¸£à¸£à¸—à¸±à¸”à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ â†’ re-wrap à¸”à¹‰à¸§à¸¢ target_w à¸—à¸µà¹ˆà¹à¸„à¸šà¸¥à¸‡
-    merged   = lines[-2] + lines[-1]
+    merged   = lines[-2] + " " + lines[-1]
     total_w  = draw.textbbox((0, 0), merged, font=font)[2]
     target_w = min(max_width, int(total_w * 0.55))  # à¸—à¸³à¹ƒà¸«à¹‰à¹à¸•à¸à¹€à¸›à¹‡à¸™ ~2 à¸šà¸£à¸£à¸—à¸±à¸”à¸—à¸µà¹ˆà¹€à¸—à¹ˆà¸²à¹† à¸à¸±à¸™
     rebalanced = _wrap_text(draw, merged, font, target_w)
@@ -177,4 +203,3 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
 
     img.save(out_path, "JPEG", quality=92)
     return out_path
-
