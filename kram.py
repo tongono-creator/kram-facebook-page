@@ -309,6 +309,28 @@ REALISM_FILTER = (
 )
 
 
+def clean_hook_lines(raw_text):
+    text = clean_text(raw_text)
+    
+    # Check if we should split by pipe or newline
+    if "|" in text:
+        parts = text.split("|")
+    else:
+        parts = text.split("\n")
+        
+    # Pattern to strip prefixes like "บรรทัด 1: ", "ข้อความในโพสต์ Facebook: ", "1. ", etc.
+    label_pattern = r'^(ข้อความในโพสต์\s*Facebook|ข้อความบนรูป|ข้อความในรูป|ข้อความ|คำบรรยาย|คำอธิบาย|บรรทัดที่\s*\d+|บรรทัด\s*\d+|ประโยคที่\s*\d+|ประโยค\s*\d+|Hook\s*text|Hook|Line\s*\d+|[L|l]ine\s*\d+|\d+)\s*[:\-\.\s]\s*'
+    
+    cleaned_lines = []
+    for part in parts:
+        cleaned = re.sub(label_pattern, '', part, flags=re.IGNORECASE).strip()
+        cleaned = cleaned.strip('"\'“”‘’')
+        if cleaned:
+            cleaned_lines.append(cleaned)
+            
+    return cleaned_lines
+
+
 def generate_hook(subject, vibe, subreddit):
     """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
     - สัตว์ → inner monologue (สัตว์พูดในหัว)
@@ -323,11 +345,14 @@ def generate_hook(subject, vibe, subreddit):
             f"เห็น: {subject}\n"
             f"{vibe_line}\n\n"
             + REALISM_FILTER +
-            "เขียน hook text บนรูป — เหมือนสัตว์ในรูปกำลังพูดในหัว (inner monologue):\n"
+            "\nเขียน hook text สั้นๆ บนรูป — เหมือนสัตว์ในรูปกำลังพูดในหัว (inner monologue):\n"
             "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึก 3-6 คำ ลงท้ายด้วย .. (ยังไม่จบ)\n"
             "บรรทัด 2: twist หรือ punchline 4-8 คำ — reveal ที่ทำให้ขำหรือ relatable\n"
-            "มุมมองสัตว์พูดเอง ไม่ใช่คนบรรยาย ภาษาพูดธรรมดา\n"
-            "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label ไม่มีเครื่องหมายคำพูด"
+            "มุมมองสัตว์พูดเอง ไม่ใช่คนบรรยาย ภาษาพูดธรรมดา\n\n"
+            "⚠️ กฎสำคัญมาก:\n"
+            "1. ห้ามเขียนป้ายกำกับเช่น 'บรรทัด 1:', 'ข้อความในโพสต์ Facebook:', 'Hook:' เด็ดขาด\n"
+            "2. ห้ามเขียนคำนำ อารัมภบท หรือสรุปใดๆ ตอบเฉพาะข้อความ 2 บรรทัดเท่านั้น\n"
+            "3. รักษาความยาวให้สั้นกระชับตามที่กำหนด (บรรทัดละไม่เกิน 6-8 คำ)"
         )
     else:
         prompt = (
@@ -335,19 +360,21 @@ def generate_hook(subject, vibe, subreddit):
             f"เห็น: {subject}\n"
             f"{vibe_line}\n\n"
             + REALISM_FILTER +
-            "เขียน hook text headline บนรูป — ทำให้คนต้องหยุดนิ้วทันที:\n"
+            "\nเขียน hook text headline สั้นๆ บนรูป — ทำให้คนต้องหยุดนิ้วทันที:\n"
             "บรรทัด 1: claim หลักที่ว้าวที่สุด 4-7 คำ ลงท้ายด้วย ..\n"
             "บรรทัด 2: ข้อมูลเสริมหรือ why it matters สั้น 4-8 คำ\n"
-            "ใช้ตัวเลขถ้ามี เน้นความเป็นครั้งแรก/ใหญ่ที่สุด/แปลกที่สุด\n"
-            "ตอบแค่ 2 บรรทัด ไม่มี hashtag ไม่มี ** ไม่มี label"
+            "ใช้ตัวเลขถ้ามี เน้นความเป็นครั้งแรก/ใหญ่ที่สุด/แปลกที่สุด\n\n"
+            "⚠️ กฎสำคัญมาก:\n"
+            "1. ห้ามเขียนป้ายกำกับเช่น 'บรรทัด 1:', 'ข้อความในโพสต์ Facebook:', 'Hook:' เด็ดขาด\n"
+            "2. ห้ามเขียนคำนำ อารัมภบท หรือสรุปใดๆ ตอบเฉพาะข้อความ 2 บรรทัดเท่านั้น\n"
+            "3. รักษาความยาวให้สั้นกระชับตามที่กำหนด (บรรทัดละไม่เกิน 6-8 คำ)"
         )
-    # keywords ที่เป็น prompt echo — ต้องกรองทิ้ง
+    # keywords ที่เป็น prompt echo — ต้องกรองทิ้งเพิ่มเติม
     ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
     for model in TEXT_MODELS:
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
-            lines = clean_text(resp.text.strip()).split("\n")
-            lines = [l.strip() for l in lines if l.strip()]
+            lines = clean_hook_lines(resp.text)
             # กรอง prompt echo ออก
             lines = [l for l in lines if not any(kw in l for kw in ECHO_KEYWORDS)]
             # ลบ emoji ก่อนส่ง overlay
@@ -361,7 +388,7 @@ def generate_hook(subject, vibe, subreddit):
     return subject[:20], ""
 
 
-def make_caption(subject, vibe, subreddit, reddit_title=""):
+def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
     title_line = f"ชื่อโพสต์ต้นฉบับ: {reddit_title}" if reddit_title else ""
     is_animal = subreddit in ANIMAL_SUBS
@@ -379,7 +406,7 @@ def make_caption(subject, vibe, subreddit, reddit_title=""):
             "โครงสร้าง:\n"
             "▪️ 1-2: Setup — เหตุการณ์ที่เห็นในรูป สัตว์ทำอะไร สถานการณ์คืออะไร\n"
             "▪️ 3-4: Narrate — เล่าเหมือนผู้บรรยายละคร dramatic ใส่ความรู้สึก\n"
-            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight\n"
+            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight โดยอ้างอิงและบรรยายสิ่งที่เห็นเด่นชัดในรูปภาพจริง\n"
             "▪️ 7-8: Engage — punchline ตลกๆ หรือ life lesson + คำถามชวน comment\n"
             "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา relatable\n"
             "จบด้วย hashtag 3-4 อัน\n"
@@ -396,9 +423,9 @@ def make_caption(subject, vibe, subreddit, reddit_title=""):
             "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจ 'รู้รอบโลก' / 'ไวรัลโลก'\n"
             "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
             "โครงสร้าง:\n"
-            "▪️ 1-2: Hook — claim ที่ทำให้หยุดนิ้วทันที + context ที่ไหน ใคร เกิดอะไร\n"
-            "▪️ 3-4: Explain — มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ ใส่ตัวเลขถ้ามี\n"
-            "▪️ 5-6: Wow facts — ข้อเท็จจริงที่ทำให้ร้อง 'โอ้โห' เปรียบเทียบให้เห็นภาพ\n"
+            "▪️ 1-2: Hook — claim ที่ทำให้หยุดนิ้วทันที + context ที่ไหน ใคร เกิดอะไร (วิเคราะห์ชื่อโพสต์ต้นฉบับประกอบรูปภาพเพื่อค้นหาข้อเท็จจริงจริง)\n"
+            "▪️ 3-4: Explain — มันคืออะไร ทำงานยังไง ทำไมถึงสำคัญ อ้างอิงจากความรู้จริงในประวัติศาสตร์/วิทยาศาสตร์/ภูมิศาสตร์ พร้อมใส่ตัวเลขประกอบจริง\n"
+            "▪️ 5-6: Wow facts — ข้อเท็จจริงที่ทำให้ร้อง 'โอ้โห' เปรียบเทียบให้เห็นภาพโดยละเอียด\n"
             "▪️ 7-8: Engage — reflection โลกกำลังเปลี่ยนอย่างไร + คำถามชวน comment\n"
             "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา\n"
             "จบด้วย hashtag 3-4 อัน\n"
@@ -406,7 +433,16 @@ def make_caption(subject, vibe, subreddit, reddit_title=""):
         )
     for model in TEXT_MODELS:
         try:
-            resp = client.models.generate_content(model=model, contents=prompt)
+            if img_path and os.path.exists(img_path):
+                with open(img_path, "rb") as f:
+                    img_data = f.read()
+                contents = [
+                    types.Part.from_bytes(data=img_data, mime_type="image/jpeg"),
+                    types.Part.from_text(text=prompt)
+                ]
+            else:
+                contents = [prompt]
+            resp = client.models.generate_content(model=model, contents=contents)
             return clean_text(resp.text.strip())
         except Exception as e:
             print(f"[{model}] caption failed: {e}")
@@ -531,7 +567,7 @@ def main():
         if video_post:
             video_path = download_video_with_audio(video_post["video_id"])
             if video_path:
-                caption = make_caption(video_post["title"], "", video_post["subreddit"], video_post["title"])
+                caption = make_caption(None, video_post["title"], "", video_post["subreddit"], video_post["title"])
                 caption += f"\n📷 via r/{video_post['subreddit']}"
                 print(f"Caption:\n{caption}\n")
                 success = post_video(caption, video_path)
@@ -580,7 +616,7 @@ def main():
     except Exception as e:
         print(f"Overlay failed (using original): {e}")
 
-    caption = make_caption(subject, vibe, post["subreddit"], post.get("title", ""))
+    caption = make_caption(img_path, subject, vibe, post["subreddit"], post.get("title", ""))
     caption += f"\n📷 via r/{post['subreddit']}"
     print(f"Caption:\n{caption}\n")
 
