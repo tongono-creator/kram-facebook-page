@@ -164,31 +164,52 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     img = canvas
 
     draw  = ImageDraw.Draw(img)
-    PAD   = 44          # à¸£à¸°à¸¢à¸°à¸«à¹ˆà¸²à¸‡à¸‚à¸­à¸š left/right/bottom
-    max_w = W - PAD * 2  # à¸„à¸§à¸²à¸¡à¸ à¸§à¹‰à¸²à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸‚à¸­à¸‡ text
+    PAD_X = 50           # Horizontal padding
+    PAD_Y = 25           # Vertical padding inside the black bar
+    max_w = W - PAD_X * 2  # 980px
+    text_zone_h = BAR_H - PAD_Y * 2  # 210px
+    BLOCK_GAP   = 16
 
-    # à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ªà¸³à¸«à¸£à¸±à¸š text (à¸­à¸¢à¸¹à¹ˆà¹ƒà¸™ gradient zone)
-    text_zone_h = BAR_H - PAD * 2  # à¹€à¸§à¹‰à¸™ 20px à¸šà¸™ gradient
-    BLOCK_GAP   = 14  # à¸Šà¹ˆà¸­à¸‡à¸§à¹ˆà¸²à¸‡à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡ line1 block à¸à¸±à¸š line2 block
+    # Start size fitting proportionally (line2 is ~70% of line1 size)
+    size1 = 80
+    size2 = 56 if line2 else 0
 
-    # à¹à¸šà¹ˆà¸‡à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆ: line1 à¹„à¸”à¹‰ ~58%, line2 à¹„à¸”à¹‰ ~42%
-    h1_budget = int(text_zone_h * 0.58)
-    h2_budget = int(text_zone_h * 0.42) - BLOCK_GAP
+    while size1 >= 32:
+        font1 = ImageFont.truetype(FONT_PATH, size1)
+        font2 = ImageFont.truetype(FONT_PATH, size2) if line2 else None
 
-    # Fit line1
-    font1, sz1, lines1, lh1, gap1 = _fit_wrapped(draw, line1, max_w, h1_budget, start=88)
-    total_h1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
+        # Wrap lines for line1
+        lines1 = _wrap_text(draw, line1, font1, max_w)
+        lines1 = _balance_wrap(draw, lines1, font1, max_w)
+        lh1 = draw.textbbox((0, 0), "ก A", font=font1)[3]
+        gap1 = max(6, size1 // 8)
+        total_h1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
 
-    # Fit line2
-    if line2:
-        font2, sz2, lines2, lh2, gap2 = _fit_wrapped(
-            draw, line2, max_w, h2_budget, start=max(24, sz1 - 20)
-        )
-        total_h2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
-    else:
-        total_h2 = 0
+        # Wrap lines for line2
+        if line2:
+            lines2 = _wrap_text(draw, line2, font2, max_w)
+            lines2 = _balance_wrap(draw, lines2, font2, max_w)
+            lh2 = draw.textbbox((0, 0), "ก A", font=font2)[3]
+            gap2 = max(6, size2 // 8)
+            total_h2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
+            total_h = total_h1 + BLOCK_GAP + total_h2
+        else:
+            total_h = total_h1
+            total_h2 = 0
 
-    total_h = total_h1 + (BLOCK_GAP + total_h2 if line2 else 0)
+        # Check if text fits inside boundaries
+        width_ok = all(draw.textbbox((0, 0), l, font=font1)[2] <= max_w for l in lines1)
+        if line2:
+            width_ok = width_ok and all(draw.textbbox((0, 0), l, font=font2)[2] <= max_w for l in lines2)
+
+        if total_h <= text_zone_h and width_ok:
+            break
+
+        # Decrement size proportionally
+        size1 -= 4
+        if line2:
+            size2 = max(24, int(size1 * 0.7))
+
     bar_top = H - BAR_H
     y_start = bar_top + (BAR_H - total_h) // 2
 
