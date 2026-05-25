@@ -1,4 +1,4 @@
-﻿# overlay_utils.py â€” PIL text overlay for Facebook bot images
+# overlay_utils.py â€” PIL text overlay for Facebook bot images
 
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -141,24 +141,31 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     img = _remove_black_bars(img)
     w, h = img.size
 
-    # Crop à¹€à¸›à¹‡à¸™ square à¹à¸¥à¹‰à¸§ resize 1080x1080
-    size = min(w, h)
-    left = (w - size) // 2
-    top  = (h - size) // 2
-    img  = img.crop((left, top, left + size, top + size))
-    img  = img.resize((1080, 1080), Image.LANCZOS)
     W, H = 1080, 1080
+    BAR_H = 260
+    avail_h = H - BAR_H  # 820
 
-    # Dark gradient à¸¥à¹ˆà¸²à¸‡ 45%
-    BAR_H    = 260
-    img_rgba = img.convert("RGBA")
-    bar      = Image.new("RGBA", (W, BAR_H), (0, 0, 0, 255))
-    img_rgba.paste(bar, (0, H - BAR_H))
-    img      = img_rgba.convert("RGB")
+    # Crop image to 1080:820 aspect ratio and resize to 1080x820
+    target_ratio = W / avail_h
+    if w / h > target_ratio:
+        new_w = int(h * target_ratio)
+        left = (w - new_w) // 2
+        img = img.crop((left, 0, left + new_w, h))
+    else:
+        new_h = int(w / target_ratio)
+        top = (h - new_h) // 2
+        img = img.crop((0, top, w, top + new_h))
+
+    img = img.resize((W, avail_h), Image.LANCZOS)
+
+    # Create 1080x1080 black canvas and paste image at the top
+    canvas = Image.new("RGB", (W, H), (0, 0, 0))
+    canvas.paste(img, (0, 0))
+    img = canvas
 
     draw  = ImageDraw.Draw(img)
     PAD   = 44          # à¸£à¸°à¸¢à¸°à¸«à¹ˆà¸²à¸‡à¸‚à¸­à¸š left/right/bottom
-    max_w = W - PAD * 2  # à¸„à¸§à¸²à¸¡à¸à¸§à¹‰à¸²à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸‚à¸­à¸‡ text
+    max_w = W - PAD * 2  # à¸„à¸§à¸²à¸¡à¸ à¸§à¹‰à¸²à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸‚à¸­à¸‡ text
 
     # à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ªà¸³à¸«à¸£à¸±à¸š text (à¸­à¸¢à¸¹à¹ˆà¹ƒà¸™ gradient zone)
     text_zone_h = BAR_H - PAD * 2  # à¹€à¸§à¹‰à¸™ 20px à¸šà¸™ gradient
