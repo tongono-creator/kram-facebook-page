@@ -130,51 +130,52 @@ def _remove_black_bars(img, threshold=20):
     return img
 
 
+def _apply_bottom_gradient(img, start_y, end_y, max_alpha=230):
+    w, h = img.size
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    for y in range(start_y, end_y):
+        t = (y - start_y) / (end_y - start_y)
+        alpha = int(max_alpha * t)
+        draw.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
+    return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
+
 def add_overlay(img_path, line1, line2, accent_color, out_path=None):
     """
-    à¸§à¸²à¸‡ text 2 à¸šà¸£à¸£à¸—à¸±à¸” (à¸žà¸£à¹‰à¸­à¸¡ word-wrap) à¸—à¸±à¸šà¸£à¸¹à¸›:
-      line1 â€” à¸ªà¸µ accent_color (hook à¸«à¸¥à¸±à¸)
-      line2 â€” à¸ªà¸µà¸‚à¸²à¸§ (à¹€à¸ªà¸£à¸´à¸¡/à¸„à¸³à¸–à¸²à¸¡)
-    à¸„à¸·à¸™ path à¸£à¸¹à¸›à¹ƒà¸«à¸¡à¹ˆ
+    Overlays text directly on the image with a smooth black gradient at the bottom.
+    No solid black bar is appended, maximizing image visual space (Matichon Style).
     """
-    img = Image.open(img_path).convert("RGB")
-    img = _remove_black_bars(img)
-    w, h = img.size
-
     W, H = 1080, 1080
-    BAR_H = 260
-    avail_h = H - BAR_H  # 820
-
-    # Crop image to 1080:820 aspect ratio and resize to 1080x820
-    target_ratio = W / avail_h
-    if w / h > target_ratio:
-        new_w = int(h * target_ratio)
-        left = (w - new_w) // 2
-        img = img.crop((left, 0, left + new_w, h))
+    
+    if img_path and os.path.exists(img_path):
+        img = Image.open(img_path).convert("RGB")
+        img = _remove_black_bars(img)
+        w, h = img.size
+        # Crop to square
+        side = min(w, h)
+        img = img.crop(((w - side) // 2, (h - side) // 2, (w + side) // 2, (h + side) // 2))
+        img = img.resize((W, H), Image.LANCZOS)
     else:
-        new_h = int(w / target_ratio)
-        top = (h - new_h) // 2
-        img = img.crop((0, top, w, top + new_h))
+        # Fallback to solid dark background
+        img = Image.new("RGB", (W, H), (15, 15, 20))
 
-    img = img.resize((W, avail_h), Image.LANCZOS)
+    # Apply bottom gradient overlay (from y=650 to y=1080)
+    start_y = 650
+    img = _apply_bottom_gradient(img, start_y, H)
 
-    # Create 1080x1080 black canvas and paste image at the top
-    canvas = Image.new("RGB", (W, H), (0, 0, 0))
-    canvas.paste(img, (0, 0))
-    img = canvas
-
-    draw  = ImageDraw.Draw(img)
-    PAD_X = 50           # Horizontal padding
-    PAD_Y = 25           # Vertical padding inside the black bar
-    max_w = W - PAD_X * 2  # 980px
-    text_zone_h = BAR_H - PAD_Y * 2  # 210px
-    BLOCK_GAP   = 16
+    draw = ImageDraw.Draw(img)
+    PAD_X = 60
+    PAD_Y = 40
+    max_w = W - PAD_X * 2  # 960px
+    text_zone_h = H - start_y - PAD_Y * 2  # 350px
+    BLOCK_GAP = 12
 
     # Start size fitting proportionally (line2 is ~70% of line1 size)
-    size1 = 80
-    size2 = 56 if line2 else 0
+    # 110px starting size allows extremely large headlines!
+    size1 = 110
+    size2 = 76 if line2 else 0
 
-    while size1 >= 32:
+    while size1 >= 40:
         font1 = ImageFont.truetype(FONT_PATH, size1)
         font2 = ImageFont.truetype(FONT_PATH, size2) if line2 else None
 
@@ -210,8 +211,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
         if line2:
             size2 = max(24, int(size1 * 0.7))
 
-    bar_top = H - BAR_H
-    y_start = bar_top + (BAR_H - total_h) // 2
+    y_start = start_y + (H - start_y - total_h) // 2
 
     # Draw line1 — accent color
     _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color)
@@ -226,7 +226,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None):
         _draw_lines(draw, lines2, font2, lh2, gap2, y2, W, fill=(255, 255, 255))
 
     if not out_path:
-        base     = img_path.rsplit(".", 1)[0]
+        base     = img_path.rsplit(".", 1)[0] if img_path else "overlay"
         out_path = base + "_overlay.jpg"
 
     img.save(out_path, "JPEG", quality=92)
