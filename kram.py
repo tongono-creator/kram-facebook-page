@@ -230,7 +230,7 @@ def post_video(caption, video_path):
         if "id" in result:
             post_id = result.get("post_id") or result["id"]
             print(f"Video Posted: {post_id}")
-            add_comment(post_id)
+            add_comment(post_id, caption=caption, img_path=None)
             return True
         else:
             print(f"Video post failed: {result}")
@@ -509,7 +509,7 @@ def post_photo(caption, img_path):
         if "id" in result:
             post_id = result.get("post_id") or result["id"]
             print(f"Posted: {post_id}")
-            add_comment(post_id)
+            add_comment(post_id, caption=caption, img_path=img_path)
             return True
         else:
             print(f"Post failed: {result}")
@@ -523,9 +523,9 @@ def post_photo(caption, img_path):
 
 
 # ── Comment ───────────────────────────────────────────────────────────
-def add_comment(post_id):
+def add_comment(post_id, caption=None, img_path=None):
     from affiliate_utils import get_all_comments
-    comments = get_all_comments()
+    comments = get_all_comments(caption=caption, img_path=img_path)
     delay0 = random.uniform(60, 180)
     print(f"Waiting {delay0:.0f}s before first comment...")
     time.sleep(delay0)

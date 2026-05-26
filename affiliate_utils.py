@@ -175,13 +175,99 @@ def get_promo_comment():
         pic = ""
     return {"message": msg, "picture_url": pic}
 
-def get_product_comments():
-    """comments สินค้าหมุนเวียน แยก Shopee / Lazada"""
+def select_product_with_ai(products, caption=None, img_path=None):
+    """ใช้ Gemini เพื่อวิเคราะห์ความเชื่อมโยงของโพสต์กับสินค้าสปอนเซอร์"""
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        print("AI Product Selector: No API key found. Falling back to random selection.")
+        return None
+
+    try:
+        from google import genai
+        from google.genai import types
+
+        client = genai.Client(api_key=api_key)
+        
+        # จัดเตรียมรายการสินค้าที่มีในระบบ
+        product_list_str = ""
+        for idx, p in enumerate(products):
+            product_list_str += f"[{idx}] Name: {p.get('name', '')}, Desc: {p.get('desc', '')}\n"
+
+        prompt = (
+            "คุณคือผู้ช่วยระบบ AI Product Selector สำหรับหน้าเพจโซเชียลมีเดียในไทย\n"
+            "กรุณาวิเคราะห์ภาพถ่าย และ/หรือ ข้อความแคปชั่นของโพสต์นี้ เพื่อจับคู่เลือกสินค้าสปอนเซอร์ (Affiliate Product) ที่เหมาะสมและเนียนที่สุดจากรายการด้านล่าง:\n"
+        )
+        if caption:
+            prompt += f"ข้อความแคปชั่นโพสต์:\n\"\"\"\n{caption}\n\"\"\"\n\n"
+
+        prompt += (
+            "และนี่คือรายการสินค้าสปอนเซอร์ที่มีในระบบ:\n"
+            f"{product_list_str}\n"
+            "กฎการเลือกสินค้า:\n"
+            "- วิเคราะห์โพสต์/รูปภาพเพื่อเลือกสินค้าที่เกี่ยวข้องกันมากที่สุด เช่น โพสต์เรื่องสัตว์เลี้ยงควรคู่กับสินค้าสัตว์เลี้ยง, โพสต์มนุษย์ออฟฟิศ/ปวดหลัง/ทำงานหนักควรคู่กับเบาะรองนั่ง/แผ่นแปะแก้ปวด/แว่นสายตา/ลูทีนบำรุงสายตา, โพสต์อาหารคาวหรือกินเผ็ดร้อนควรคู่กับยาลดกรดหรืออาหารแก้เผ็ด\n"
+            "- ให้เลือกดัชนีของสินค้ามาเพียงชิ้นเดียวเท่านั้น\n"
+            "- ตอบกลับเป็นดัชนีของสินค้าในเครื่องหมายวงเล็บเหลี่ยมเท่านั้น เช่น [3] (ห้ามเขียนบรรยายความรู้สึกหรือเหตุผล ห้ามมีข้อความอื่นปน)\n"
+            "- หากวิเคราะห์แล้วไม่มีสินค้าใดเหมาะสมหรือใกล้เคียงเลย ให้ตอบว่า [None]"
+        )
+
+        contents = []
+        if img_path and os.path.exists(img_path):
+            try:
+                with open(img_path, "rb") as f:
+                    img_data = f.read()
+                ext = os.path.splitext(img_path)[1].lower()
+                mime_type = "image/jpeg"
+                if ext == ".png":
+                    mime_type = "image/png"
+                elif ext == ".webp":
+                    mime_type = "image/webp"
+                elif ext == ".gif":
+                    mime_type = "image/gif"
+                contents.append(types.Part.from_bytes(data=img_data, mime_type=mime_type))
+            except Exception as img_err:
+                print(f"AI Product Selector image read error: {img_err}")
+
+        contents.append(prompt)
+
+        # เรียกใช้ Gemini-2.5-flash (เร็วและประหยัด)
+        resp = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=contents
+        )
+
+        result = resp.text.strip()
+        print(f"AI Product Selector response: {result}")
+
+        match = re.search(r'\[(\d+)\]', result)
+        if match:
+            idx = int(match.group(1))
+            if 0 <= idx < len(products):
+                return products[idx]
+        elif "[None]" in result or "None" in result:
+            print("AI Product Selector: Decided no product is relevant.")
+    except Exception as e:
+        print(f"AI Product Selector error: {e}")
+
+    return None
+
+def get_product_comments(caption=None, img_path=None):
+    """comments สินค้าหมุนเวียน แยก Shopee / Lazada (ใช้ AI วิเคราะห์และเลือก)"""
     products, _, _ = _load_excel()
     active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"]]
     if not active:
         return []
-    p = random.choice(active)
+    
+    selected_p = None
+    if caption or img_path:
+        selected_p = select_product_with_ai(active, caption=caption, img_path=img_path)
+        
+    if not selected_p:
+        selected_p = random.choice(active)
+        print("AI Selector: Fallback to random product.")
+    else:
+        print(f"AI Selector: Selected product -> {selected_p['name']}")
+
+    p = selected_p
     hook = random.choice(PRODUCT_HOOKS)
     vi = random.randrange(len(SHOPEE_INTROS))
     desc_line = f"\n✨ {hook}"
@@ -192,7 +278,7 @@ def get_product_comments():
         comments.append(LAZADA_INTROS[vi].format(name=p["name"] or "สินค้าแนะนำ", desc=desc_line, url=p["lazada"]))
     return comments
 
-def get_all_comments():
+def get_all_comments(caption=None, img_path=None):
     """รวม comments — promo มาก่อนเสมอ ที่เหลือสุ่มลำดับ"""
     promo_pool = []
     rest_pool  = []
@@ -215,7 +301,7 @@ def get_all_comments():
 
     # product comments — โอกาส 70%
     if random.random() < 0.70:
-        products = get_product_comments()
+        products = get_product_comments(caption=caption, img_path=img_path)
         if len(products) == 2 and random.random() < 0.40:
             rest_pool.append(random.choice(products))
         else:
