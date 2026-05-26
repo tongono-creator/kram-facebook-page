@@ -1,8 +1,8 @@
-﻿name: Kram Bot
+name: Kram Bot
 
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 22 * * *"
     - cron: "0 3 * * *"
     - cron: "0 5 * * *"
     - cron: "0 7 * * *"
