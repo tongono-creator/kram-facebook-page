@@ -144,6 +144,7 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
     lazada_line = f"\n🛍️ Lazada → {lazada}" if lazada and "xxx" not in lazada else ""
     prompt = (
         f"เขียน Facebook post ภาษาไทยรีวิวสินค้าอย่างตรงไปตรงมาและน่าอ่าน สไตล์เพจรีวิวชื่อดัง (เช่น CatDumb)\n"
+        "เขียนด้วยบุคลิกแอดมินผู้ชาย (ใช้คำลงท้ายว่า 'ครับ' และแทนตัวว่า 'ผม' หรือ 'พี่' เท่านั้น)\n"
         f"รายละเอียดสินค้า:\n{detail}\n\n"
         f"จุดเด่นสินค้า:\n{highlights}\n\n"
         f"โครงสร้างคำตอบที่ต้องการ:\n"
