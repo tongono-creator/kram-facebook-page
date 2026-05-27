@@ -97,56 +97,30 @@ WEBSITE_VARS = [
 ]
 
 # ─── Food comment variations ─────────────────────────────────────
-FOOD_INTROS = [
-    "🍜 หิวแล้วสั่งเลย! {name}\nส่งถึงบ้าน → {url}",
-    "🍱 แนะนำร้านนี้เลย {name}\nสั่งผ่าน Shopee Food → {url}",
-    "🔖 โปรเด็ดวันนี้! {name}\nคลิกสั่งได้เลย → {url}",
-    "🛵 อยากกิน {name} ไหม?\nสั่งง่ายๆ → {url}",
-    "🍔 มื้อนี้ลอง {name} ดูไหม?\nส่งถึงที่ → {url}",
-    "⭐ {name} ร้านนี้ดีมาก\nสั่งผ่าน Shopee Food → {url}",
-]
+# Templates will be dynamically selected and structured in get_food_comment()
 
-# ─── Shopee product comment variations ───────────────────────────
+# ─── Shopee / Lazada fallback comment templates (3-Step: Hook -> Story -> CTA) ───────────────────────────
 SHOPEE_INTROS = [
-    "🛒 {name}{desc}\nซื้อได้บน Shopee → {url}",
-    "🔥 ถ้ากำลังมองหา {name} อยู่{desc}\nที่นี่เลย → {url}",
-    "💡 {name}{desc}\nราคาดีบน Shopee → {url}",
-    "✅ {name}{desc}\nลองดูก่อนตัดสินใจ Shopee → {url}",
-    "👀 {name}{desc}\nน่าสนใจมาก Shopee → {url}",
+    "🛒 {hook}\n✨ {desc}\n👉 มีโปรเด็ดลดราคาอยู่นะ สนใจกดตะกร้าสั่งซื้อด่วนเลย{ending} → {url}",
+    "🔥 {hook}\n✨ {desc}\n👉 ของมันต้องมี คุ้มราคาขนาดนี้รีบกดตะกร้าเลย มีโปรดีลดเยอะมาก{ending} → {url}",
+    "💡 {hook}\n✨ {desc}\n👉 ชี้เป้าตัวช่วยดีๆ ราคาคุ้มค่าจัดโปรลดหนักอยู่ กดตะกร้าจัดได้เลย{ending} → {url}",
 ]
 
 LAZADA_INTROS = [
-    "🛍️ {name}{desc}\nซื้อได้บน Lazada → {url}",
-    "🔥 ถ้ากำลังมองหา {name} อยู่{desc}\nที่นี่เลย → {url}",
-    "💡 {name}{desc}\nราคาดีบน Lazada → {url}",
-    "✅ {name}{desc}\nลองดูก่อนตัดสินใจ Lazada → {url}",
-    "👀 {name}{desc}\nน่าสนใจมาก Lazada → {url}",
+    "🛍️ {hook}\n✨ {desc}\n👉 มีโปรเด็ดลดราคาอยู่นะ สนใจกดตะกร้าสั่งซื้อด่วนเลย{ending} → {url}",
+    "🔥 {hook}\n✨ {desc}\n👉 ของมันต้องมี คุ้มราคาขนาดนี้รีบกดตะกร้าเลย มีโปรดีลดเยอะมาก{ending} → {url}",
+    "💡 {hook}\n✨ {desc}\n👉 ชี้เป้าตัวช่วยดีๆ ราคาคุ้มค่าจัดโปรลดหนักอยู่ กดตะกร้าจัดได้เลย{ending} → {url}",
 ]
 
-# ─── Public API ───────────────────────────────────────────────────
-def get_standard_comments():
-    """comment เว็บ shopee-ranking (หมุน variations)"""
-    return [_rotate(WEBSITE_VARS)]
-
-def get_food_comment():
-    """comment Shopee Food หมุนเวียนทุกร้าน"""
-    _, food_entries, _ = _load_excel()
-    raw = _rotate(food_entries, extra_salt=3)
-    if not raw:
-        return None
-    name, url = _parse_food(raw)
-    template = _rotate(FOOD_INTROS, extra_salt=5)
-    return template.format(name=name, url=url)
-
 PRODUCT_HOOKS = [
-    "ของดีราคาคุ้ม หมดแล้วหมดเลย",
-    "คนซื้อเยอะมาก รีวิวดีทุกอัน",
-    "ตัวนี้ใช้แล้วติดใจเลย",
-    "ราคานี้หาที่ไหนไม่ได้แล้ว",
-    "bestseller ขายดีอันดับต้นๆ",
-    "ลูกค้าให้คะแนน 4.9/5",
-    "ของแท้ 100% ส่งไวมาก",
-    "คุ้มมากถ้าตอนนี้",
+    "เห้ย ตัวนี้เด็ดจริง! คนรีวิวหลักร้อย คะแนนเต็มห้าดาว",
+    "บอกลาปัญหาเดิมๆ ไปได้เลย ตัวนี้เอาอยู่จริง",
+    "ของมันต้องมีในงบประหยัด สารพัดประโยชน์มาก",
+    "ไอเทมลับที่ทุกคนตามหา รีบตำก่อนของหมด",
+    "ใช้แล้วชีวิตดีขึ้น 300% แนะนำสุดๆ เลยตัวนี้",
+    "ขายดีอันดับต้นๆ ในหมวดนี้ รีวิวปังทุกช่องทาง",
+    "ใครไม่มีคือพลาดมาก ตอบโจทย์สุดๆ เลยชิ้นนี้",
+    "การันตีของแท้ 100% ส่งไว ได้ของชัวร์",
 ]
 
 PROMO_INTROS = [
@@ -156,6 +130,100 @@ PROMO_INTROS = [
     "💥 โปรแรง {name}\nอย่าพลาด → {url}",
     "🛒 ส่วนลดพิเศษ {name}\nก่อนโปรหมด → {url}",
 ]
+
+# ─── Public API ───────────────────────────────────────────────────
+def get_standard_comments():
+    """comment เว็บ shopee-ranking (หมุน variations)"""
+    return [_rotate(WEBSITE_VARS)]
+
+def get_persona():
+    """ตรวจจับว่ากำลังรันอยู่ในโฟลเดอร์ของเพจไหนเพื่อเลือกบุคลิกภาพที่ถูกต้อง"""
+    path = os.path.abspath(__file__).replace("\\", "/")
+    if "chowchow" in path:
+        return "chowchow"
+    elif "somtam" in path:
+        return "somtam"
+    elif "kram" in path:
+        return "kram"
+    elif "x-bot" in path:
+        return "xbot"
+    else:
+        return "rocket"
+
+def generate_comment_with_ai(p, platform, persona):
+    """ใช้ Gemini-2.5-flash เขียนคอมเมนต์ 3 ขั้นตอนสไตล์แอดมินตามเพจ"""
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        return None
+
+    # กำหนดบุคลิกตามเพจ
+    if persona == "chowchow":
+        persona_inst = "น้องหมา Chow Chow เพศผู้ (ชื่อแอดมินน้องตูบ) เล่าเรื่องราวแสนซน ขี้อ้อน และตรงไปตรงมา มีคำลงท้ายภาษาตูบตัวผู้เสมอ เช่น ฮะ, ครับ หรือมีเสียงร้อง โฮ่ง บ้าง แทนตัวว่า ผม หรือ น้องตูบ"
+    elif persona == "somtam":
+        persona_inst = "ผู้หญิงที่เป็นกันเอง น่ารัก ตลก และตรงไปตรงมา (เพจชื่อพริก 10 เม็ด) มีคำลงท้ายภาษาผู้หญิงเสมอ เช่น ค่ะ/คะ แทนตัวว่า หนู หรือ เรา"
+    else: # kram, xbot, rocket (ผู้ชาย)
+        persona_inst = "ผู้ชาย สุภาพและเป็นกันเอง ลงท้ายด้วยครับ/ผม หรือพี่"
+
+    name = p.get("name", "สินค้าแนะนำ")
+    desc = p.get("desc", "").strip()
+
+    prompt = (
+        f"คุณคือแอดมินเพจโซเชียลมีเดียที่เป็น: {persona_inst}\n\n"
+        f"ช่วยเขียนคอมเมนต์แนะนำสินค้าเพื่อโปรโมทลิงก์แอฟฟิลิเอต (Affiliate) บน {platform} โดยใช้เทคนิค 3 ขั้นตอนในการเขียน:\n"
+        f"1. เปิดให้น่าสนใจ (Hook): ประโยคเปิดหัวสั้นๆ กระชับ น่าสนใจ ดึงดูดให้อยากอ่านต่อ\n"
+        f"2. เล่าให้เห็นภาพ (Vivid Storytelling): บรรยายให้คนอ่านเห็นภาพการใช้งานจริง หรือประโยชน์เด่นๆ ของสินค้า\n"
+        f"3. ปิดจบต้องบอกว่า 'ควรทำอะไร' (Call to Action): บอกให้กดสั่งซื้อในตะกร้า หรือย้ำว่ามีโปรเด็ด/ลดราคาพิเศษอยู่ บังคับมีคำลงท้ายตามบุคลิกภาพของคุณ\n\n"
+        f"รายละเอียดสินค้า:\n"
+        f"- ชื่อสินค้า: {name}\n"
+        f"- ข้อมูลเด่น: {desc}\n\n"
+        f"กฎการร่างข้อความ:\n"
+        f"- ห้ามใส่ลิงก์เด็ดขาด (ลิงก์จะถูกนำไปต่อท้ายเอง)\n"
+        f"- ความยาวรวมไม่เกิน 2-3 บรรทัด (สั้น กระชับ คล้ายสไตล์คุยกันใต้โพสต์)\n"
+        f"- ห้ามใช้ markdown เช่น ตัวหนา ** หรืออัญประกาศ\n"
+        f"- ตอบเฉพาะตัวข้อความภาษาไทยเท่านั้น"
+    )
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=api_key)
+        resp = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        text = resp.text.strip()
+        # Clean potential echoes
+        text = re.sub(r'^(คอมเมนต์|Comment|ข้อความ|คำอธิบาย)[:\-\s\.]+', '', text, flags=re.IGNORECASE).strip()
+        text = text.strip('"\'“”‘’')
+        return text
+    except Exception as e:
+        print(f"AI Comment generation failed: {e}")
+        return None
+
+def get_food_comment():
+    """comment Shopee Food หมุนเวียนทุกร้าน ตามหลัก 3 ขั้นตอน"""
+    _, food_entries, _ = _load_excel()
+    raw = _rotate(food_entries, extra_salt=3)
+    if not raw:
+        return None
+    name, url = _parse_food(raw)
+    
+    persona = get_persona()
+    if persona == "chowchow":
+        ending = "ฮะ โฮ่ง!"
+    elif persona == "somtam":
+        ending = "ค่ะ"
+    else:
+        ending = "ครับ"
+
+    food_templates = [
+        "🍜 หิวตอนดึกแบบนี้ต้องจัดแล้ว! {name} กลิ่นหอมๆ รสชาติเข้มข้นถึงใจแน่นอน\n👉 มีโปรเด็ดลดราคาอยู่นะ กดตะกร้าสั่งผ่าน Shopee Food ได้เลย{ending} → {url}",
+        "🍱 แนะนำร้านนี้เลย {name} รสเด็ด เมนูเด่น จัดเต็มคำ กินกี่ทีก็ไม่เบื่อ\n👉 กดสั่งในตะกร้าด่วน มีโปรโมชั่นสุดพิเศษรออยู่นะ{ending} → {url}",
+        "🔖 หิวแบบนี้จะพลาดได้ไง! {name} อาหารสดใหม่ รสชาติกลมกล่อมฟินทุกคำ\n👉 กดสั่งทางนี้เลย มีโปรลดจุกๆ วันนี้เท่านั้นนะ{ending} → {url}",
+        "🛵 เมนูนี้ชวนน้ำลายสอเลย! {name} อร่อยร้อนๆ คุ้มค่าสมราคาพร้อมส่งทันที\n👉 อย่ารอช้า กดตะกร้าสั่งได้เลย มีโปรส่งฟรีอยู่นะ{ending} → {url}",
+    ]
+    
+    template = random.choice(food_templates)
+    return template.format(name=name, url=url, ending=ending)
 
 def get_promo_comment():
     """comment โปรโมชั่น — ใช้ message จาก Excel โดยตรง (รองรับ picture_url)"""
@@ -268,14 +336,36 @@ def get_product_comments(caption=None, img_path=None):
         print(f"AI Selector: Selected product -> {selected_p['name']}")
 
     p = selected_p
-    hook = random.choice(PRODUCT_HOOKS)
-    vi = random.randrange(len(SHOPEE_INTROS))
-    desc_line = f"\n✨ {hook}"
+    persona = get_persona()
+    
     comments = []
-    if p.get("shopee") and "xxx" not in p["shopee"]:
-        comments.append(SHOPEE_INTROS[vi].format(name=p["name"] or "สินค้าแนะนำ", desc=desc_line, url=p["shopee"]))
-    if p.get("lazada") and "xxx" not in p["lazada"]:
-        comments.append(LAZADA_INTROS[vi].format(name=p["name"] or "สินค้าแนะนำ", desc=desc_line, url=p["lazada"]))
+    
+    # กำหนดคำลงท้ายสำหรับกรณี Fallback Template
+    if persona == "chowchow":
+        ending = "ฮะ โฮ่ง!"
+    elif persona == "somtam":
+        ending = "ค่ะ"
+    else:
+        ending = "ครับ"
+
+    for platform in ["Shopee", "Lazada"]:
+        url_key = platform.lower()
+        url = p.get(url_key)
+        if url and "xxx" not in url:
+            # 1. ลองใช้ AI เขียนแบบ 3 ขั้นตอนก่อน
+            ai_comment = generate_comment_with_ai(p, platform, persona)
+            if ai_comment:
+                comments.append(f"{ai_comment}\n👉 {platform} → {url}")
+            else:
+                # 2. หาก AI ล้มเหลว หรือไม่มี Key ให้ใช้ Fallback Template
+                hook = random.choice(PRODUCT_HOOKS)
+                desc = p.get("desc", "").strip()
+                if not desc:
+                    desc = f"ตัวนี้เป็น {p.get('name', 'สินค้าแนะนำ')} ยอดฮิต ใช้งานง่ายและตอบโจทย์ชีวิตประจำวันมากๆ"
+                
+                template = random.choice(SHOPEE_INTROS if platform == "Shopee" else LAZADA_INTROS)
+                comments.append(template.format(hook=hook, desc=desc, ending=ending, url=url))
+                
     return comments
 
 def get_all_comments(caption=None, img_path=None):
