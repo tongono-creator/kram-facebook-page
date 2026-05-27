@@ -6,6 +6,9 @@ import subprocess
 import requests
 import tempfile
 import xml.etree.ElementTree as ET
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 from google import genai
 from google.genai import types
 
@@ -336,8 +339,8 @@ def clean_hook_lines(raw_text):
 
 def generate_hook(subject, vibe, subreddit):
     """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
-    - สัตว์ → inner monologue (สัตว์พูดในหัว)
-    - ว้าว/น่าทึ่ง → discovery headline (ทำให้คนต้องหยุดดู)
+    - สัตว์ → inner monologue สั้นๆ
+    - ว้าว/น่าทึ่ง → discovery hook สั้นๆ ดึงดูดความสนใจ (ไม่ใช่ประโยคเล่าเรื่องยาว)
     """
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
     is_animal = subreddit in ANIMAL_SUBS
@@ -347,29 +350,23 @@ def generate_hook(subject, vibe, subreddit):
             f"รูปสัตว์จาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
             f"{vibe_line}\n\n"
-            + REALISM_FILTER +
-            "\nเขียน hook text สั้นๆ บนรูป — เหมือนสัตว์ในรูปกำลังพูดในหัว (inner monologue):\n"
-            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึก 3-6 คำ ลงท้ายด้วย .. (ยังไม่จบ)\n"
-            "บรรทัด 2: twist หรือ punchline 4-8 คำ — reveal ที่ทำให้ขำหรือ relatable\n"
-            "มุมมองสัตว์พูดเอง ไม่ใช่คนบรรยาย ภาษาพูดธรรมดา\n\n"
-            "⚠️ กฎสำคัญมาก:\n"
-            "1. ห้ามเขียนป้ายกำกับเช่น 'บรรทัด 1:', 'ข้อความในโพสต์ Facebook:', 'Hook:' เด็ดขาด\n"
-            "2. ห้ามเขียนคำนำ อารัมภบท หรือสรุปใดๆ ตอบเฉพาะข้อความ 2 บรรทัดเท่านั้น\n"
-            "3. รักษาความยาวให้สั้นกระชับตามที่กำหนด (บรรทัดละไม่เกิน 6-8 คำ)"
+            "เขียน hook text ภาษาไทยสั้นๆ กวนๆ ดึงดูดสายตา 2 บรรทัดบนรูปภาพ (ห้ามยาวเด็ดขาด):\n"
+            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึกสั้นๆ 2-4 คำ ลงท้ายด้วย .. (เช่น 'เอาจริงดิ..', 'เนียนเลยนะ..')\n"
+            "บรรทัด 2: หักมุมหรือความในใจสั้นๆ 3-5 คำ (เช่น 'นึกว่าแม่ไม่เห็น', 'แกล้งหลับแป๊บ')\n"
+            "ใช้ภาษาพูดธรรมดาสั้นๆ ไม่เขียนคำบรรยายยาว ไม่เขียนคำนำหรือป้ายกำกับ"
         )
     else:
         prompt = (
             f"Interesting fact/news post from r/{subreddit}\n"
             f"Subject visible: {subject}\n"
             f"{vibe_line}\n\n"
-            + REALISM_FILTER +
-            "\nWrite a very punchy, eye-catching 2-line Thai headline for this image:\n"
-            "Line 1: Main shocking claim or viral news headline (4-8 Thai words. Must be bold, jaw-dropping, e.g. 'บิลค่า AI แพงกว่าที่คิด บริษัทใหญ่เริ่มบ่น AI แพง').\n"
-            "Line 2: Supporting fact, background context, or why it matters (6-12 Thai words. Explains/clarifies Line 1, e.g. 'Microsoft เริ่มยกเลิก Claude Code licenses...').\n"
-            "Keep it extremely clean, exciting, and easy to read. Do not use any emoji on these overlay lines.\n\n"
+            "Write a very short, punchy, eye-catching 2-line Thai hook for this image (NOT a long sentence or paragraph):\n"
+            "Line 1: Shocking/exciting keyword or brief claim (3-5 Thai words, e.g. 'เรื่องจริงสุดอึ้ง', 'เทคโนโลยีสุดล้ำ', 'ที่แรกในโลก').\n"
+            "Line 2: Core curiosity generator / subject (3-5 Thai words, e.g. 'ศูนย์ข้อมูลใต้น้ำ', 'สิ่งมีชีวิตลึกลับ', 'ภาพถ่ายประวัติศาสตร์').\n"
+            "Absolutely NO long explanations, NO conversational sentences, NO fillers. Keep it extremely short (3-5 words per line) so it renders very large and clear on the image.\n\n"
             "⚠️ CRITICAL RULES:\n"
             "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros. Output ONLY the 2 lines of text.\n"
-            "2. Keep the length short enough to fit on the image overlay."
+            "2. Keep the length extremely short (max 5 words per line)."
         )
     # keywords ที่เป็น prompt echo — ต้องกรองทิ้งเพิ่มเติม
     ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
@@ -552,7 +549,14 @@ def add_comment(post_id, caption=None, img_path=None):
 
 # ── Main ──────────────────────────────────────────────────────────────
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true", help="Run without posting to Facebook")
+    args = parser.parse_args()
+
     print("=== กรามค้าง Bot ===")
+    if args.dry_run:
+        print("[DRY RUN MODE ACTIVE]")
 
     # 40% video mode / 60% image mode
     use_video = random.random() < 0.40
@@ -573,6 +577,9 @@ def main():
                 caption = make_caption(None, video_post["title"], "", video_post["subreddit"], video_post["title"])
                 caption += f"\n📷 via r/{video_post['subreddit']}"
                 print(f"Caption:\n{caption}\n")
+                if args.dry_run:
+                    print(f"[DRY RUN] Would post video. File: {video_path}")
+                    return
                 success = post_video(caption, video_path)
                 if success:
                     return
@@ -622,6 +629,10 @@ def main():
     caption = make_caption(img_path, subject, vibe, post["subreddit"], post.get("title", ""))
     caption += f"\n📷 via r/{post['subreddit']}"
     print(f"Caption:\n{caption}\n")
+
+    if args.dry_run:
+        print(f"[DRY RUN] Would post photo. File: {img_path}")
+        return
 
     success = post_photo(caption, img_path)
     if not success:
