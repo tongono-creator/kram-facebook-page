@@ -339,7 +339,7 @@ def clean_hook_lines(raw_text):
 
 def generate_hook(subject, vibe, subreddit):
     """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
-    - สัตว์ → inner monologue สั้นๆ
+    - สัตว์ → inner monologue สั้นๆ ที่อ่านแล้วเข้าใจได้ทันที ไม่สั้นห้วนจนงง
     - ว้าว/น่าทึ่ง → discovery hook สั้นๆ ดึงดูดความสนใจ (ไม่ใช่ประโยคเล่าเรื่องยาว)
     """
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
@@ -350,10 +350,13 @@ def generate_hook(subject, vibe, subreddit):
             f"รูปสัตว์จาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
             f"{vibe_line}\n\n"
-            "เขียน hook text ภาษาไทยสั้นๆ กวนๆ ดึงดูดสายตา 2 บรรทัดบนรูปภาพ (ห้ามยาวเด็ดขาด):\n"
-            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึกสั้นๆ 2-4 คำ ลงท้ายด้วย .. (เช่น 'เอาจริงดิ..', 'เนียนเลยนะ..')\n"
-            "บรรทัด 2: หักมุมหรือความในใจสั้นๆ 3-5 คำ (เช่น 'นึกว่าแม่ไม่เห็น', 'แกล้งหลับแป๊บ')\n"
-            "ใช้ภาษาพูดธรรมดาสั้นๆ ไม่เขียนคำบรรยายยาว ไม่เขียนคำนำหรือป้ายกำกับ"
+            "เขียน hook text ภาษาไทยสั้นๆ กวนๆ ดึงดูดสายตา 2 บรรทัดบนรูปภาพ (อ่านแล้วเข้าใจมุกได้ทันที ไม่ห้วนจนงง):\n"
+            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึกสั้นๆ 2-5 คำ ลงท้ายด้วย .. (เช่น 'มองแรงขั้นสุด..', 'เนียนเลยนะ..')\n"
+            "บรรทัด 2: หักมุมหรือคำอธิบายความในใจสั้นๆ 4-8 คำ เพื่อให้เข้าใจมุกได้ชัดเจน (เช่น 'เหมือนโดนเรียกทำโอทีวันหยุด', 'นึกว่าแม่ไม่เห็น')\n"
+            "ใช้ภาษาพูดธรรมดาสั้นๆ ไม่เขียนคำบรรยายยาว ไม่เขียนคำนำหรือป้ายกำกับ\n\n"
+            "⚠️ CRITICAL RULES:\n"
+            "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros.\n"
+            "2. DO NOT write any conversational intro or acknowledgment filler like 'แน่นอน!', 'จัดไป!', 'ตามคำขอ', 'ได้เลยครับ' etc. Start directly with the hook lines."
         )
     else:
         prompt = (
@@ -366,10 +369,15 @@ def generate_hook(subject, vibe, subreddit):
             "Absolutely NO long explanations, NO conversational sentences, NO fillers. Keep it extremely short (3-5 words per line) so it renders very large and clear on the image.\n\n"
             "⚠️ CRITICAL RULES:\n"
             "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros. Output ONLY the 2 lines of text.\n"
-            "2. Keep the length extremely short (max 5 words per line)."
+            "2. Keep the length extremely short (max 5 words per line).\n"
+            "3. DO NOT write any conversational intro or acknowledgment filler like 'แน่นอน!', 'จัดไป!', 'ตามคำขอ', 'ได้เลยครับ' etc. Start directly with the hook lines."
         )
-    # keywords ที่เป็น prompt echo — ต้องกรองทิ้งเพิ่มเติม
-    ECHO_KEYWORDS = ["Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text"]
+    # keywords ที่เป็น prompt echo หรือ filler ของโมเดล — ต้องกรองทิ้งเพิ่มเติมเพื่อป้องกันการโพสต์เสียของ
+    ECHO_KEYWORDS = [
+        "Hook text", "บรรทัด", "ตอบแค่", "สำหรับใส่บนรูป", "hook text",
+        "แน่นอน", "จัดไป", "ตามคำขอ", "ได้เลย", "จัดให้", "ยินดี",
+        "นี่คือ", "ข้อความ", "คำโปรย", "คำคม", "หัวข้อ", "ตามคำขอ"
+    ]
     for model in TEXT_MODELS:
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
