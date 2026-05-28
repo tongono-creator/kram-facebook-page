@@ -61,8 +61,33 @@ VIDEO_SUBREDDITS = [
 ]
 
 
+# ── History Helper ───────────────────────────────────────────────────
+HISTORY_FILE = "posted_history.txt"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                return [line.strip() for line in f if line.strip()]
+        except Exception:
+            return []
+    return []
+
+def save_to_history(item):
+    items = load_history()
+    items.append(item)
+    items = items[-500:] # Cap history
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            for it in items:
+                f.write(it + "\n")
+    except Exception as e:
+        print(f"Error saving history: {e}")
+
+
 # ── Reddit ────────────────────────────────────────────────────────────
 def get_reddit_post():
+    history = set(load_history())
     subreddit = random.choice(SUBREDDITS)
     # RSS feed — ไม่โดน block เหมือน JSON API
     url = f"https://www.reddit.com/r/{subreddit}/hot.rss"
@@ -88,14 +113,16 @@ def get_reddit_post():
             good_imgs = [u for u in img_urls if "i.redd.it" in u or "imgur.com" in u]
 
             if good_imgs and title:
-                image_posts.append({
-                    "title":     title,
-                    "url":       good_imgs[0],
-                    "subreddit": subreddit,
-                })
+                url = good_imgs[0]
+                if url not in history:
+                    image_posts.append({
+                        "title":     title,
+                        "url":       url,
+                        "subreddit": subreddit,
+                    })
 
         if not image_posts:
-            print(f"[{subreddit}] no image posts in RSS")
+            print(f"[{subreddit}] no unposted image posts in RSS")
             return None
 
         post = random.choice(image_posts[:10])
@@ -109,6 +136,7 @@ def get_reddit_post():
 
 def get_reddit_video_post():
     """หา video post จาก Reddit RSS — ดึง v.redd.it ID"""
+    history = set(load_history())
     subreddit = random.choice(VIDEO_SUBREDDITS)
     url = f"https://www.reddit.com/r/{subreddit}/hot.rss"
     try:
@@ -125,14 +153,16 @@ def get_reddit_video_post():
             # หา v.redd.it ID จาก content HTML
             vid_ids = re.findall(r'https://v\.redd\.it/([a-zA-Z0-9]+)', content)
             if vid_ids and title:
-                video_posts.append({
-                    "title":     title,
-                    "video_id":  vid_ids[0],
-                    "subreddit": subreddit,
-                })
+                vid_id = vid_ids[0]
+                if vid_id not in history:
+                    video_posts.append({
+                        "title":     title,
+                        "video_id":  vid_id,
+                        "subreddit": subreddit,
+                    })
 
         if not video_posts:
-            print(f"[{subreddit}] no video posts in RSS")
+            print(f"[{subreddit}] no unposted video posts in RSS")
             return None
 
         post = random.choice(video_posts[:10])
@@ -590,6 +620,7 @@ def main():
                     return
                 success = post_video(caption, video_path)
                 if success:
+                    save_to_history(video_post["video_id"])
                     return
                 print("Video post failed, falling back to image mode")
             else:
@@ -645,6 +676,8 @@ def main():
     success = post_photo(caption, img_path)
     if not success:
         print("FAILED")
+    else:
+        save_to_history(post["url"])
 
 
 if __name__ == "__main__":
