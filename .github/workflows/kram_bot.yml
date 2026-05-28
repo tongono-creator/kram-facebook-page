@@ -40,13 +40,4 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f posted_history.txt ]; then
-            git add posted_history.txt
-            if git diff --cached --quiet; then
-              echo "No changes in posted_history.txt"
-            else
-              git commit -m "chore: update posted_history.txt history [skip ci]"
-              git pull --rebase
-              git push
-            fi
-          fi
+          python merge_history.py
