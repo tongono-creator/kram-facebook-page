@@ -185,7 +185,7 @@ def generate_comment_with_ai(p, platform, persona):
 
     try:
         from google import genai
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(api_key=api_key, http_options={'timeout': 90.0})
         resp = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
@@ -254,7 +254,7 @@ def select_product_with_ai(products, caption=None, img_path=None):
         from google import genai
         from google.genai import types
 
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(api_key=api_key, http_options={'timeout': 90.0})
         
         # จัดเตรียมรายการสินค้าที่มีในระบบ
         product_list_str = ""

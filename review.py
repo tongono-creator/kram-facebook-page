@@ -24,7 +24,7 @@ if not GEMINI_API_KEY:
         pass
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-client = genai.Client(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 90.0})
 
 def load_next_product():
     wb = openpyxl.load_workbook(EXCEL_PATH)
@@ -177,7 +177,8 @@ def post_to_page(img_path, caption):
         resp = requests.post(
             f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
             data={"access_token": PAGE_ACCESS_TOKEN, "caption": caption, "published": "true"},
-            files={"source": ("review.png", f, "image/png")}
+            files={"source": ("review.png", f, "image/png")},
+            timeout=60
         )
     result = resp.json()
     if "id" in result:
