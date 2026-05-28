@@ -14,8 +14,8 @@ from google.genai import types
 
 # ── Config ───────────────────────────────────────────────────────────
 PAGE_ID           = "116701184708556"
-PAGE_ACCESS_TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
-GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "")
+PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
+GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
 client       = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 90.0})
 TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
@@ -285,8 +285,10 @@ def analyze_image(img_path, reddit_title=""):
     prompt = (
         f"{title_ctx}"
         "ดูรูปนี้เหมือนคนไทยที่เล่น Facebook/Twitter ไม่ใช่ AI วิเคราะห์ภาพ\n"
+        "เปรียบเทียบชื่อโพสต์ต้นฉบับกับภาพถ่ายที่แนบมาด้วยความระมัดระวัง โดยยึดข้อมูลที่ปรากฏจริงในภาพเป็นหลัก\n"
+        "ห้ามตอบโดยอิงตามชื่อโพสต์อย่างเดียวหากรายละเอียดในรูปภาพขัดแย้งกันอย่างเห็นได้ชัด\n\n"
         "ตอบ 2 อย่าง แยกด้วย | :\n"
-        "1. เห็นอะไร (สัตว์/เหตุการณ์/ของแปลก) สั้นๆ 1-5 คำ\n"
+        "1. เห็นอะไร (สัตว์/เหตุการณ์/ของแปลก) ที่เห็นเด่นชัดจริงๆ ในรูปภาพ สั้นๆ 1-5 คำ (เช่น แมวสีส้ม, สุนัขพันธุ์ไซบีเรียน, โทรศัพท์พัง)\n"
         "2. ความรู้สึกแรก/มุกที่คนไทยน่าจะเล่น เช่น: "
         "'เหมือนพนักงานโดนเรียกโอที', 'หน้าเบื่องาน monday', 'rich kid', 'เด็กดื้อที่แม่รัก', 'ดราม่ามาก'\n"
         "ถ้าไม่มีอะไรน่าสนใจเลย ตอบว่า: ไม่เกี่ยว|ไม่เกี่ยว"
@@ -367,6 +369,45 @@ def clean_hook_lines(raw_text):
     return cleaned_lines
 
 
+def contains_thai(text):
+    if not text:
+        return False
+    return any('\u0e00' <= char <= '\u0e7f' for char in text)
+
+def translate_to_thai(text):
+    if not text or contains_thai(text):
+        return text
+    prompt = f"Translate the following English text into natural, fluent Thai language. Output ONLY the Thai translation, without explanations, notes, or labels:\n\n{text}"
+    for model in TEXT_MODELS:
+        for attempt in range(2):
+            try:
+                resp = client.models.generate_content(model=model, contents=prompt)
+                translated = resp.text.strip()
+                if contains_thai(translated):
+                    return translated
+            except Exception as e:
+                print(f"[{model}] Translation attempt {attempt+1} failed: {e}")
+                time.sleep(2)
+    return text
+
+FALLBACK_POSTS = [
+    {
+        "hook1": "ความลับสุดทึ่ง..",
+        "hook2": "ปลาโลมาสามารถหลับตาข้างเดียวได้ครับ",
+        "caption": "▪️ รู้หรือไม่ครับว่าปลาโลมาเป็นสัตว์ที่มีระบบการนอนที่มหัศจรรย์มาก\n▪️ พวกมันจะหลับตาข้างเดียวและพักสมองทีละซีก เพื่อคอยระวังภัยขณะนอนหลับ\n▪️ สมองซีกที่เหลือจะคอยสั่งการให้หายใจและพยุงตัวไม่ให้จมน้ำครับ\n▪️ ใครเห็นแล้วประทับใจความฉลาดของโลมาบ้าง ลองคอมเมนต์คุยกันหน่อยครับ\n\n#ปลาโลมา #เรื่องน่ารู้ #สัตว์โลกน่ารัก #ธรรมชาติ"
+    },
+    {
+        "hook1": "เห็ดเรืองแสงได้..",
+        "hook2": "พบเห็นได้จริงในป่าลึกตอนกลางคืนครับ",
+        "caption": "▪️ ธรรมชาติในป่าลึกช่วงหน้าฝนมีความลับที่ชวนขนลุกและมหัศจรรย์ปะปนอยู่ครับ\n▪️ เห็ดเรืองแสงบางชนิดสามารถปล่อยแสงสีเขียวเข้มออกมาท่ามกลางความมืดมิด\n▪️ เพื่อล่อแมลงให้มาตอมและช่วยกระจายสปอร์ในการขยายพันธุ์ต่อไปครับ\n▪️ ใครเคยไปเดินป่าแล้วเจอสิ่งมหัศจรรย์แบบนี้บ้าง มาแชร์ประสบการณ์กันได้เลยครับ\n\n#เห็ดเรืองแสง #ธรรมชาติบำบัด #เรื่องแปลก #เดินป่า"
+    },
+    {
+        "hook1": "หัวใจดวงใหญ่ยักษ์..",
+        "hook2": "วาฬสีน้ำเงินมีหัวใจใหญ่เท่ารถยนต์คันเล็กครับ",
+        "caption": "▪️ วาฬสีน้ำเงินคือสิ่งมีชีวิตที่มีขนาดใหญ่ที่สุดเท่าที่โลกเคยมีมาครับ\n▪️ หัวใจของมันเพียงห้องเดียวก็มีน้ำหนักมากถึง 180 กิโลกรัมแล้ว\n▪️ และเส้นเลือดใหญ่ของมันก็กว้างพอที่จะให้มนุษย์ตัวเล็กๆ ลงไปว่ายน้ำได้สบายๆ ครับ\n▪️ ธรรมชาติช่างน่าทึ่งจริงๆ ใครชอบเรื่องของวาฬยักษ์พิมพ์คอมเมนต์กันมาหน่อยครับ\n\n#วาฬสีน้ำเงิน #สัตว์ทะเล #เรื่องน่าทึ่ง #โลกใต้ทะเล"
+    }
+]
+
 def generate_hook(subject, vibe, subreddit):
     """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
     - สัตว์ → inner monologue สั้นๆ ที่อ่านแล้วเข้าใจได้ทันที ไม่สั้นห้วนจนงง
@@ -419,10 +460,19 @@ def generate_hook(subject, vibe, subreddit):
             lines = [l for l in lines if l]  # กรองบรรทัดว่างหลัง strip
             line1 = lines[0] if len(lines) > 0 else strip_emoji(subject[:20])
             line2 = lines[1] if len(lines) > 1 else ""
+            
+            if not contains_thai(line1):
+                line1 = translate_to_thai(line1)
+            if line2 and not contains_thai(line2):
+                line2 = translate_to_thai(line2)
             return line1, line2
         except Exception as e:
             print(f"[{model}] hook failed: {e}")
-    return subject[:20], ""
+            
+    fallback_subject = strip_emoji(subject[:20])
+    if not contains_thai(fallback_subject):
+        fallback_subject = translate_to_thai(fallback_subject)
+    return fallback_subject, ""
 
 
 def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
@@ -437,13 +487,17 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             f"เห็น: {subject}\n"
             f"{vibe_line}\n"
             f"{title_line}\n\n"
+            "Strict Chain of Thought (CoT) Caption Consistency:\n"
+            "  1. Read the Original Post Title to understand the context.\n"
+            "  2. Look at the attached image carefully: Prioritize what animal, pose, object, and environment are ACTUALLY visible in the image. Do not assume or hallucinate details that are not there.\n"
+            "  3. Write the caption ensuring it matches the actual visual evidence shown in the image.\n\n"
             + REALISM_FILTER +
             "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจสัตว์ไวรัลไทย\n"
             "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
             "โครงสร้าง:\n"
-            "▪️ 1-2: Setup — เหตุการณ์ที่เห็นในรูป สัตว์ทำอะไร สถานการณ์คืออะไร\n"
-            "▪️ 3-4: Narrate — เล่าเหมือนผู้บรรยายละคร dramatic ใส่ความรู้สึก\n"
-            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight โดยอ้างอิงและบรรยายสิ่งที่เห็นเด่นชัดในรูปภาพจริง\n"
+            "▪️ 1-2: Setup — เหตุการณ์ที่เห็นในรูป สัตว์ทำอะไร สถานการณ์คืออะไร (อิงตามรูปภาพจริงเท่านั้น)\n"
+            "▪️ 3-4: Narrate — เล่าเหมือนผู้บรรยายละคร dramatic ใส่ความรู้สึกตามท่าทางจริงของสัตว์ในรูป\n"
+            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight โดยอ้างอิงและบรรยายสิ่งที่เห็นเด่นชัดในรูปภาพจริงเท่านั้น\n"
             "▪️ 7-8: Engage — punchline ตลกๆ หรือ life lesson + คำถามชวน comment\n"
             "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา relatable\n"
             "จบด้วย hashtag 3-4 อัน\n"
@@ -456,12 +510,16 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             f"Subject visible: {subject}\n"
             f"{vibe_line}\n"
             f"{title_line}\n\n"
+            "Strict Chain of Thought (CoT) Caption Consistency:\n"
+            "  1. Read the Original Post Title and Context to understand what this post is historically about.\n"
+            "  2. Look at the attached image carefully: Prioritize what objects, actions, and details are ACTUALLY visible in the image. Do not assume or hallucinate details that are not there.\n"
+            "  3. Write the caption ensuring it matches the actual visual evidence shown in the image.\n\n"
             + REALISM_FILTER +
             "Write a high-engagement Facebook caption in THAI based on this fact/news. Use a '▪️ bullet narrative' style:\n"
             "Start each bullet point with a ▪️ emoji. Generate 6-8 bullet points in total. 1-2 sentences per bullet.\n"
             "Structure of the narrative:\n"
-            "▪️ 1-2: Hook — A shocking claim, modern tech news, or fascinating fact to stop the user from scrolling. Introduce who, what, and where (based on the image and original post title).\n"
-            "▪️ 3-4: Context & Explanation — How it works, the background details, or why this happened. Bring in real-world facts (tech, science, history, or business details depending on the post topic).\n"
+            "▪️ 1-2: Hook — A shocking claim, modern tech news, or fascinating fact. Introduce who, what, and where strictly based on what is visible in the image and original post title.\n"
+            "▪️ 3-4: Context & Explanation — How it works, the background details, or why this happened (consistent with the image contents).\n"
             "▪️ 5-6: Wow details — Mind-blowing statistics, comparisons, or details that make people say 'wow'.\n"
             "▪️ 7-8: Relatable Engagement — Connect this fact/news to a funny, sarcastic, or relatable human angle (e.g. office syndrome, manager struggles, money wastage, or daily life habits) to stimulate comments and shares.\n\n"
             "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา ทั่วไป ไม่เป็นทางการ ไม่เก๊กเท่, เหมือนคนทั่วไปบ่นหรือเล่าเรื่องฮาๆ ให้ฟัง).\n"
@@ -481,10 +539,17 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             else:
                 contents = [prompt]
             resp = client.models.generate_content(model=model, contents=contents)
-            return clean_text(resp.text.strip())
+            caption = clean_text(resp.text.strip())
+            if not contains_thai(caption):
+                caption = translate_to_thai(caption)
+            return caption
         except Exception as e:
             print(f"[{model}] caption failed: {e}")
-    return clean_text(subject)
+            
+    fallback_caption = clean_text(subject)
+    if not contains_thai(fallback_caption):
+        fallback_caption = translate_to_thai(fallback_caption)
+    return fallback_caption
 
 
 def clean_text(text):
@@ -613,8 +678,13 @@ def main():
         if video_post:
             video_path = download_video_with_audio(video_post["video_id"])
             if video_path:
-                caption = make_caption(None, video_post["title"], "", video_post["subreddit"], video_post["title"])
-                caption += f"\n📷 via r/{video_post['subreddit']}"
+                title_th = translate_to_thai(video_post["title"])
+                caption = make_caption(None, title_th, "", video_post["subreddit"], title_th)
+                if not caption or not contains_thai(caption):
+                    fallback = random.choice(FALLBACK_POSTS)
+                    caption = fallback["caption"]
+                else:
+                    caption += f"\n📷 via r/{video_post['subreddit']}"
                 print(f"Caption:\n{caption}\n")
                 if args.dry_run:
                     print(f"[DRY RUN] Would post video. File: {video_path}")
@@ -653,8 +723,40 @@ def main():
         subject = post["title"]
         vibe    = ""
 
-    print(f"Subject: {subject} | Vibe: {vibe}")
-    line1, line2 = generate_hook(subject, vibe, post["subreddit"])
+    # Translate title and subject to Thai before using them in prompts
+    title_th = translate_to_thai(post["title"])
+    subject_th = translate_to_thai(subject)
+
+    print(f"Subject (Thai): {subject_th} | Vibe: {vibe}")
+    
+    try:
+        line1, line2 = generate_hook(subject_th, vibe, post["subreddit"])
+        if not contains_thai(line1):
+            line1 = translate_to_thai(line1)
+        if line2 and not contains_thai(line2):
+            line2 = translate_to_thai(line2)
+    except Exception as e:
+        print(f"Generate hook failed: {e}")
+        line1, line2 = "", ""
+
+    try:
+        caption = make_caption(img_path, subject_th, vibe, post["subreddit"], title_th)
+        if not contains_thai(caption):
+            caption = translate_to_thai(caption)
+    except Exception as e:
+        print(f"Make caption failed: {e}")
+        caption = ""
+
+    # Validate output has Thai
+    if not line1 or not contains_thai(line1) or not caption or not contains_thai(caption):
+        print("Safeguard triggered: missing Thai content. Using FALLBACK_POSTS.")
+        fallback = random.choice(FALLBACK_POSTS)
+        line1 = fallback["hook1"]
+        line2 = fallback["hook2"]
+        caption = fallback["caption"]
+    else:
+        caption += f"\n📷 via r/{post['subreddit']}"
+
     print(f"Hook: {line1} | {line2}")
 
     # PIL overlay
@@ -666,8 +768,6 @@ def main():
     except Exception as e:
         print(f"Overlay failed (using original): {e}")
 
-    caption = make_caption(img_path, subject, vibe, post["subreddit"], post.get("title", ""))
-    caption += f"\n📷 via r/{post['subreddit']}"
     print(f"Caption:\n{caption}\n")
 
     if args.dry_run:
