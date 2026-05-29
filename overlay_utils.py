@@ -14,8 +14,17 @@ def _wrap_text(draw, text, font, max_width):
     if draw.textbbox((0, 0), text, font=font)[2] <= max_width:
         return [text]
     if " " in text.strip():
-        return _wrap_words(draw, text, font, max_width)
-    if getattr(font, "size", 99) > 42:
+        lines = _wrap_words(draw, text, font, max_width)
+        if getattr(font, "size", 99) <= 75:
+            new_lines = []
+            for l in lines:
+                if draw.textbbox((0, 0), l, font=font)[2] > max_width:
+                    new_lines.extend(_wrap_text(draw, l, font, max_width))
+                else:
+                    new_lines.append(l)
+            lines = new_lines
+        return lines
+    if getattr(font, "size", 99) > 75:
         return [text]
 
     lines = []
