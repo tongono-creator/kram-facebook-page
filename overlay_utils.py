@@ -10,9 +10,27 @@ _COMBINING_CHARS = set('่้๊๋์ิีึืุูัํ็')
 
 
 def _wrap_text(draw, text, font, max_width):
-    """à¹à¸šà¹ˆà¸‡ text à¹€à¸›à¹‡à¸™à¸«à¸¥à¸²à¸¢ line à¹ƒà¸«à¹‰à¸žà¸­à¸”à¸µà¸à¸±à¸š max_width (à¸£à¸­à¸‡à¸£à¸±à¸šà¸ à¸²à¸©à¸²à¹„à¸—à¸¢à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸¡à¸µ space)"""
+    """แบ่ง text เป็นหลาย line ให้พอดีกับ max_width (รองรับภาษาไทยที่ไม่มี space)"""
     if draw.textbbox((0, 0), text, font=font)[2] <= max_width:
         return [text]
+    if '\u200b' in text or '\\u200b' in text:
+        text = text.replace('\\u200b', '\u200b')
+        tokens = text.split('\u200b')
+        lines, current = [], ""
+        for token in tokens:
+            test = current + token
+            if draw.textbbox((0, 0), test, font=font)[2] <= max_width:
+                current = test
+            else:
+                if current:
+                    lines.append(current)
+                    current = token
+                else:
+                    current = token
+        if current:
+            lines.append(current)
+        return lines
+
     if " " in text.strip():
         lines = _wrap_words(draw, text, font, max_width)
         if getattr(font, "size", 99) <= 75:
