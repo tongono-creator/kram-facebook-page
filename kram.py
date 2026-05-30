@@ -11,6 +11,7 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 from google import genai
 from google.genai import types
+from google.genai.types import HttpOptions
 
 # ── Config ───────────────────────────────────────────────────────────
 PAGE_ID           = "116701184708556"
@@ -18,7 +19,7 @@ PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
 API_ENABLED  = True
-client       = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 15000.0})
+client       = genai.Client(api_key=GEMINI_API_KEY, http_options=HttpOptions(timeout=300000))
 TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
 ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
 
