@@ -28,7 +28,7 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: |
-          sudo apt-get install -y ffmpeg
+          sudo apt-get update && sudo apt-get install -y ffmpeg
           pip install google-genai requests openpyxl Pillow
       - name: Run bot
         env:
