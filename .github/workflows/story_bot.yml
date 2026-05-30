@@ -1,0 +1,35 @@
+name: Story Bot (Reddit Drama)
+
+on:
+  schedule:
+    - cron: "0 4 * * *"   # BKK 11:00
+    - cron: "0 10 * * *"  # BKK 17:00
+    - cron: "0 14 * * *"  # BKK 21:00
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install google-genai requests openpyxl Pillow
+      - name: Run story bot
+        env:
+          KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python story.py
+      - name: Save story history
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add story_history.txt || true
+          git diff --cached --quiet || git commit -m "Update story history"
+          git push || true
