@@ -17,7 +17,8 @@ PAGE_ID           = "116701184708556"
 PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
-client       = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 90.0})
+API_ENABLED  = True
+client       = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 15000.0})
 TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
 ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
 
@@ -374,6 +375,158 @@ def contains_thai(text):
         return False
     return any('\u0e00' <= char <= '\u0e7f' for char in text)
 
+_LEADING_VOWELS  = set('เแโใไ')
+_COMBINING_CHARS = set('่้๊๋์ิีึืุูัํ็')
+
+THAI_WORDS = [
+    "รายละเอียด", "โปรโมชั่น", "เครื่องมือ", "คอมพิวเตอร์", "แอปพลิเคชัน", "เก็บเงินปลายทาง",
+    "โทรศัพท์", "แบตเตอรี่", "บัตรเครดิต", "พร้อมส่ง", "จัดส่ง", "ต่างประเทศ",
+    "พรีออเดอร์", "ประหยัด", "ปลอดภัย", "คุ้มค่า", "สะดวกสบาย", "ธรรมชาติ",
+    "คุณภาพ", "ภาพถ่าย", "พลาสติก", "ของแท้", "รับประกัน", "ลิขสิทธิ์",
+    "แนะนำ", "สินค้า", "รีวิว", "สุดยอด", "ดีที่สุด", "สะดวก", "สบาย", "ง่ายดาย",
+    "รวดเร็ว", "โปรโมชั่", "ส่วนลด", "คูปอง", "จัดส่ง", "ประกัน",
+    "ชาร์จ", "หน้าจอ", "ลำโพง", "หูฟัง", "กล้อง", "เลนส์", "มือถือ", "ปุ่มกด",
+    "สำหรับ", "เกี่ยวกับ", "อย่างไร", "เมื่อไหร่", "ที่ไหน", "เท่าไหร่",
+    "ทุกคน", "ทุกวัน", "ทุกคืน", "สุดท้าย", "แรกเริ่ม", "จริงจัง",
+    "สวัสดี", "ขอบคุณ", "ขอโทษ", "ยินดี", "หัวเราะ", "ร้องไห้",
+    "ทำงาน", "พักผ่อน", "ออกกำลัง", "ท่องเที่ยว", "เดินทาง",
+    "เก้าอี้", "โต๊ะทำงาน", "เบาะรอง", "พิงหลัง", "สายรัด", "การ์ตูน",
+    "กระเป๋า", "รองเท้า", "เสื้อผ้า", "กางเกง", "นาฬิกา", "แว่นตา", "เครื่อง", "ระบบ",
+    "ความสุข", "ร่างกาย", "สุขภาพ", "ออกกำลัง", "อาหาร", "ผลไม้", "น้ำดื่ม", "กาแฟ",
+    "ราคา", "พิเศษ", "ทั่วไป", "ส่งฟรี", "ลดราคา", "ของแถม", "ปลายทาง",
+    "ชั่วโมง", "นาที", "วินาที", "สัปดาห์", "ปีใหม่", "วันนี้", "พรุ่งนี้", "เมื่อวาน",
+    "ใครก็ตาม", "สิ่งใด", "ทั้งหมด", "บางส่วน", "ประเภท", "รูปแบบ",
+    "ติดตาม", "กดไลก์", "แชร์โพส", "คอมเมนต์", "คลิกลิงก์", "พิกัด", "ชี้เป้า",
+    "ค่ะ", "ครับ", "ผม", "เรา", "คุณ", "ท่าน",
+    "พี่", "น้อง", "พ่อ", "แม่", "เพื่อน", "บ้าน", "เมือง", "เวลา", "ดีใจ", "เสียใจ", 
+    "รัก", "ชอบ", "เกลียด", "กลัว", "โกรธ", "ทำ", "กิน", "นอน", "เดิน", "วิ่ง", "นั่ง", 
+    "ยืน", "พูด", "ฟัง", "ดู", "เห็น", "คิด", "รู้", "จำ", "ลืม", "เรียน", "เล่น", "ซื้อ", 
+    "ขาย", "ราคา", "ถูก", "แพง", "ลด", "แถม", "ส่ง", "ด่วน", "ฟรี", "รับ", "ศูนย์",
+    "แท้", "ใหม่", "เก่า", "แรก", "นี้", "นั้น", "โน้น", "นี่", "นั่น", "โน่น", "อะไร", 
+    "ใคร", "กี่", "บ้าง", "ทุก", "บาง", "จริง", "จัง", "แท้", "เทียม", "ปลอม", "สาย", 
+    "เคส", "ฟิล์ม", "ภาพ", "รูป", "เสียง", "เพลง", "หนัง", "เกม", "แอป", "เว็บ", "เน็ต", 
+    "โค้ด", "โอน", "หวย", "ออก", "เงิน", "เก็บ", "แสน", "แรก", "งาน", "การ", "ช่วย", 
+    "บอก", "ให้", "คน", "ทอง", "ร้อย", "พัน", "หมื่น", "ล้าน", "มาก", "น้อย", "ดี", 
+    "เลว", "ชั่ว", "สูง", "ต่ำ", "ดำ", "ขาว", "แดง", "เขียว", "เหลือง", "ฟ้า", "ส้ม", 
+    "ชมพู", "ม่วง", "เทา", "สวย", "หล่อ", "และ", "หรือ", "แต่", "ที่", "ซึ่ง", "อัน", 
+    "ของ", "เพื่อ", "ใน", "จาก", "โดย", "ตาม", "กับ", "มี", "เป็น", "จะ", "ต้อง", 
+    "อยาก", "นุ่ม", "แข็ง", "ใหญ่", "เล็ก", "ยาว", "สั้น", "กว้าง", "แคบ", "หนา", 
+    "บาง", "ร้อน", "เย็น", "อุ่น", "หนาว", "ง่าย", "ยาก", "เร็ว", "ช้า", "ได้", 
+    "เลย", "ด้วย", "จาก", "ถึง", "จน", "กว่า", "ก็", "ยัง", "อีก", "แล้ว", "นะ", 
+    "สิ", "ละ", "หน่อย", "นิด", "ชิ้น", "กล่อง", "อัน", "ตัว", "ใบ", "คู่", "ชุด", 
+    "แผ่น", "ม้วน"
+]
+
+def local_segment_thai(text):
+    if not text:
+        return ""
+    word_set = set(THAI_WORDS)
+    max_len = max(len(w) for w in THAI_WORDS)
+    
+    result = []
+    i = 0
+    n = len(text)
+    
+    while i < n:
+        if not contains_thai(text[i]):
+            result.append(text[i])
+            i += 1
+            continue
+            
+        matched = False
+        for l in range(min(max_len, n - i), 0, -1):
+            substr = text[i:i+l]
+            if substr in word_set:
+                result.append(substr)
+                i += l
+                matched = True
+                break
+        
+        if not matched:
+            start = i
+            while i < n and contains_thai(text[i]):
+                word_matched_here = False
+                if i > start:
+                    for l in range(min(max_len, n - i), 0, -1):
+                        if text[i:i+l] in word_set:
+                            word_matched_here = True
+                            break
+                if word_matched_here:
+                    break
+                i += 1
+            result.append(text[start:i])
+            
+    output = []
+    for idx, part in enumerate(result):
+        if idx > 0:
+            prev_char = result[idx-1][-1]
+            curr_char = part[0]
+            if (contains_thai(prev_char) and contains_thai(curr_char) and 
+                prev_char != '\u200b' and curr_char != '\u200b' and
+                curr_char not in _COMBINING_CHARS and
+                prev_char not in _LEADING_VOWELS):
+                output.append('\u200b')
+        output.append(part)
+        
+    return "".join(output)
+
+def segment_thai_text(text, client=client):
+    global API_ENABLED
+    if not text or not contains_thai(text):
+        return text
+    if not API_ENABLED:
+        return local_segment_thai(text)
+    prompt = (
+        "You are an expert Thai word segmentation tool. "
+        "Your task is to insert a zero-width space character (\\u200b) at every natural word boundary in the provided Thai text. "
+        "Strict rules:\n"
+        "1. Do NOT modify, delete, or add any words, characters, punctuation, spaces, or newlines of the original text. "
+        "Keep the exact same characters and layout.\n"
+        "2. Do NOT add any introductory or concluding remarks. Output ONLY the segmented text.\n"
+        "3. Ensure words like 'หวยออก', 'เงินเก็บ', 'แสนแรก', 'ทำงาน' are segmented at their natural boundaries (e.g., 'หวย\\u200bออก' or left as 'หวยออก', but never break syllables awkwardly).\n\n"
+        f"Text to segment:\n{text}"
+    )
+    for model in TEXT_MODELS:
+        try:
+            resp = client.models.generate_content(model=model, contents=prompt)
+            segmented = resp.text.strip().replace('\\u200b', '\u200b')
+            clean_orig = text.replace('\u200b', '').replace('\\u200b', '')
+            clean_seg = segmented.replace('\u200b', '').replace('\\u200b', '')
+            if len(clean_orig) == len(clean_seg):
+                return segmented
+        except Exception as e:
+            print(f"[{model}] segment_thai_text failed: {e}")
+    print("[Warning] segment_thai_text failed on all models. Disabling API calls for this run.")
+    API_ENABLED = False
+    return local_segment_thai(text)
+
+def verify_image_title_match(img_bytes, reddit_title):
+    global API_ENABLED
+    if not API_ENABLED:
+        return True
+    prompt = (
+        f"Analyze this image and the Reddit thread title: '{reddit_title}'. "
+        "Do the title and the image describe/show the same event, object, or subject matter? "
+        "(e.g. if the title is about space telescopes and the image shows a chess board, they do NOT match). "
+        "Output ONLY 'yes' or 'no' in lowercase, without punctuation."
+    )
+    part = types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg")
+    for model in TEXT_MODELS:
+        try:
+            resp = client.models.generate_content(
+                model=model,
+                contents=[part, prompt]
+            )
+            result = resp.text.strip().lower()
+            print(f"[{model}] Image-title match verification result: '{result}'")
+            if "yes" in result:
+                return True
+            elif "no" in result:
+                return False
+        except Exception as e:
+            print(f"[{model}] verify_image_title_match failed: {e}")
+    return True
+
 def translate_to_thai(text):
     if not text or contains_thai(text):
         return text
@@ -717,6 +870,15 @@ def main():
         print("Image download failed")
         return
 
+    with open(img_path, "rb") as f:
+        img_bytes = f.read()
+
+    if not verify_image_title_match(img_bytes, post["title"]):
+        print("Safeguard triggered: Image and title do not match. Skipping entry.")
+        if os.path.exists(img_path):
+            os.unlink(img_path)
+        return
+
     subject, vibe = analyze_image(img_path, reddit_title=post["title"])
     if not subject or "ไม่เกี่ยว" in subject:
         print("Vision: not relevant, using Reddit title as fallback")
@@ -747,9 +909,11 @@ def main():
         print(f"Make caption failed: {e}")
         caption = ""
 
+    is_fallback = False
     # Validate output has Thai
     if not line1 or not contains_thai(line1) or not caption or not contains_thai(caption):
         print("Safeguard triggered: missing Thai content. Using FALLBACK_POSTS.")
+        is_fallback = True
         fallback = random.choice(FALLBACK_POSTS)
         line1 = fallback["hook1"]
         line2 = fallback["hook2"]
@@ -757,13 +921,17 @@ def main():
     else:
         caption += f"\n📷 via r/{post['subreddit']}"
 
+    line1 = segment_thai_text(line1, client)
+    line2 = segment_thai_text(line2, client)
     print(f"Hook: {line1} | {line2}")
 
     # PIL overlay
     try:
         from overlay_utils import add_overlay
-        overlaid = add_overlay(img_path, line1, line2, ACCENT_COLOR)
-        os.unlink(img_path)
+        img_to_overlay = None if is_fallback else img_path
+        overlaid = add_overlay(img_to_overlay, line1, line2, ACCENT_COLOR)
+        if img_path and os.path.exists(img_path):
+            os.unlink(img_path)
         img_path = overlaid
     except Exception as e:
         print(f"Overlay failed (using original): {e}")
