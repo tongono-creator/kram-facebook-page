@@ -133,9 +133,9 @@ def gemini_text(prompt):
 # ── Translate + create hook ──────────────────────────────────────────────────
 def translate_story(subreddit, title, body):
     """
-    คืน (line1, line2, caption)
-    line1/line2 = hook สั้นๆ บนรูป
-    caption = เล่าเรื่องภาษาไทย สำหรับ Facebook caption
+    คืน (hook, caption)
+    hook = พาดหัวบนรูป — 1-3 บรรทัด คั่นด้วย \\n
+    caption = เล่าเรื่องภาษาไทย 5 ชั้น สำหรับ Facebook caption
     """
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
     prompt = (
@@ -145,44 +145,43 @@ def translate_story(subreddit, title, body):
         "งาน: สร้างเนื้อหาภาษาไทยสำหรับ Facebook page ผู้ชายไทย วัย 25-45 ปี\n"
         "เขียนแบบแอดมินชาย บุคลิกสบายๆ (ใช้ ครับ/ผม/พี่)\n\n"
         "ตอบเป็น JSON เท่านั้น (ห้ามมีข้อความอื่นนอก JSON):\n"
-        "{\n"
-        '  "line1": "พาดหัว part 1",\n'
-        '  "line2": "พาดหัว part 2",\n'
-        '  "caption": "caption ตาม 5 ชั้น"\n'
-        "}\n\n"
+        '{"hook": "พาดหัวบนรูป", "caption": "caption 5 ชั้น"}\n\n'
 
-        "=== กฎ line1 + line2 ===\n"
-        "เลือกว่าจะใช้ 1 หรือ 2 บรรทัดตามที่เหมาะกับเนื้อหา\n"
-        "ถ้าพาดหัวสั้นกระชับได้ใน 1 บรรทัด → ปล่อย line2 เป็น '' (string ว่าง)\n"
-        "ถ้าต้องการ 2 บรรทัด → line1+line2 ต้องเป็นเรื่องเดียวกัน ต่อเนื่องกัน ห้าม 2 topic แยกกัน\n\n"
+        "=== กฎ hook ===\n"
+        "hook คือข้อความพาดหัวที่จะแสดงบนรูป — ใช้ font เดียวกันทุกบรรทัด\n"
+        "เลือกความยาวที่เหมาะกับเนื้อเรื่อง: 1, 2 หรือ 3 บรรทัดก็ได้\n"
+        "ถ้าต้องการหลายบรรทัด → คั่นด้วย \\n\n"
+        "กฎ: ทุกบรรทัดต้องเป็นเรื่องเดียวกัน อ่านต่อเนื่อง — ห้าม 2 topic แยกกัน\n"
+        "แต่ละบรรทัดไม่เกิน 12 คำ\n\n"
         "ตัวอย่าง 1 บรรทัด:\n"
-        '- "แฟนคบกับน้องชายผมมา 2 ปี" / ""\n'
-        '- "ผมโกหกบอสมา 8 เดือนว่าเข้าใจงาน" / ""\n\n'
-        "ตัวอย่าง 2 บรรทัด (เมื่อ twist ต้องแยกบรรทัด):\n"
-        '- "แฟนคบกับน้องชายผม" / "แต่พ่อแม่บอกผมเป็นฝ่ายผิด"\n'
-        '- "ทิ้งเพื่อนไว้ที่ปั้ม" / "เพราะเธอจะทำให้ตกเครื่อง"\n\n'
+        '  "แฟนคบกับน้องชายผมมา 2 ปี"\n'
+        '  "ผมโกหกบอสมา 8 เดือนว่าเข้าใจงาน"\n\n'
+        "ตัวอย่าง 2 บรรทัด:\n"
+        '  "แฟนคบกับน้องชายผม\\nแต่พ่อแม่บอกผมเป็นฝ่ายผิด"\n'
+        '  "ทิ้งเพื่อนไว้ที่ปั้ม\\nเพราะเธอจะทำให้ตกเครื่อง"\n\n'
+        "ตัวอย่าง 3 บรรทัด:\n"
+        '  "กตัญญูจนไม่มีเก็บ\\nไม่รู้แก่แล้วจะพึ่งใครครับ\\nผ่อนพ่อแม่ #วัยทำงาน"\n\n'
 
         "=== caption 5 ชั้น (เขียนต่อเนื่อง ไม่ใส่หัวข้อ ไม่ใส่หมายเลข) ===\n\n"
         "ชั้น 1 — HOOK: ประโยคแรกช็อก/ขัดสามัญสำนึก ทำให้หยุดอ่านทันที\n"
-        "  เช่น: 'ผมโกหกบอสทุกวันมา 8 เดือน ว่าเข้าใจงาน ทั้งที่ไม่รู้เรื่องเลยสักอย่างครับ'\n\n"
-        "ชั้น 2 — EXPAND: ขยายบริบท ทำไมถึงเกิดขึ้น ตอนนั้นรู้สึกอะไร\n\n"
-        "ชั้น 3 — CLEAR CONTENT: เล่าเนื้อเรื่องหลักเรียงลำดับ ชัดเจน อ่านแล้วตามได้ทันที\n"
-        "  — เขียนเป็นย่อหน้าสั้นๆ แต่ละย่อหน้าจบความในตัวเอง\n"
-        "  — ไม่กระโดดข้ามขั้นตอน อธิบายว่าใคร ทำอะไร เพราะอะไร\n\n"
-        "ชั้น 4 — TURNING POINT: จุดพลิกที่ไม่คาดคิด ทำให้เรื่องน่าสนใจขึ้น\n\n"
-        "ชั้น 5 — STRONG ENDING + COMMENT CALL: ปิดด้วยประโยคกระแทก + ถามตรงๆ ให้อยากตอบ\n"
-        "  เช่น: 'ถ้าเป็นคุณจะทำยังไงครับ?'"
+        "ชั้น 2 — EXPAND: ขยายบริบท ทำไมถึงเกิดขึ้น ตอนนั้นรู้สึกอะไร\n"
+        "ชั้น 3 — CLEAR CONTENT: เล่าเนื้อเรื่องหลักเรียงลำดับ ชัดเจน อ่านตามได้ทันที\n"
+        "  แต่ละย่อหน้าจบความในตัวเอง ไม่กระโดดข้ามขั้นตอน\n"
+        "ชั้น 4 — TURNING POINT: จุดพลิกที่ไม่คาดคิด\n"
+        "ชั้น 5 — STRONG ENDING + COMMENT CALL: ปิดกระแทก + ถามตรงๆ"
     )
     raw = gemini_text(prompt)
     m = re.search(r'\{.*?\}', raw, re.DOTALL)
     if m:
         try:
             data = json.loads(m.group())
-            return data.get("line1", ""), data.get("line2", ""), data.get("caption", "")
+            hook    = data.get("hook", "").replace("\\n", "\n")
+            caption = data.get("caption", "")
+            return hook, caption
         except Exception as e:
             print(f"JSON parse error: {e}\nRaw: {raw[:200]}")
     print(f"translate_story fallback. Raw:\n{raw[:200]}")
-    return title[:20], "", ""
+    return title[:30], ""
 
 # ── Thai text wrap (leading vowel safe) ──────────────────────────────────────
 _LEADING_VOWELS  = set("เแโใไ")
@@ -251,86 +250,81 @@ def wrap_text(draw, text, font, max_width):
     return lines
 
 # ── Generate image ───────────────────────────────────────────────────────────
-def generate_image(line1, line2):
-    """Dark card 1080x1080 — line1 ฟ้า #00BFFF ใหญ่มาก / line2 ขาว"""
+def generate_image(hook):
+    """Dark card 1080x1080 — hook text ขาว font size เดียว auto-fit ให้ใหญ่สุด"""
     bkk  = timezone(timedelta(hours=7))
     ts   = datetime.now(bkk).strftime("%Y%m%d_%H%M%S")
     path = os.path.join(OUTPUT_DIR, f"story_{ts}.jpg")
 
     W = H = 1080
-    img  = Image.new("RGB", (W, H), (10, 10, 14))   # near-black background
+    img  = Image.new("RGB", (W, H), (0, 0, 0))   # pure black
     draw = ImageDraw.Draw(img)
 
-    # subtle dark gradient วาดจากบนลงล่าง
-    for y in range(H):
-        alpha = int(30 * (y / H))
-        draw.line([(0, y), (W, y)], fill=(alpha, alpha, int(alpha * 1.2)))
-
     PAD      = 80
-    max_w    = W - PAD * 2
-    LINE_GAP = 24
-    COLOR1   = (255, 255, 255)  # ขาว
-    COLOR2   = (255, 255, 255)  # ขาว
+    max_w    = W - PAD * 2   # 920px
+    LINE_GAP = 28
+    COLOR    = (255, 255, 255)
 
-    # auto-fit: เริ่ม font ใหญ่ลดลงจนพอดี
+    # แยก hook เป็นบรรทัด (ตาม \n ที่ Gemini กำหนด)
+    raw_lines = [l.strip() for l in hook.strip().split("\n") if l.strip()]
+
+    # auto-fit: เริ่ม 120px ลดลงทีละ 4 จนพอดี
     font_size = 120
-    while font_size >= 40:
-        font1 = ImageFont.truetype(FONT_PATH, font_size)
-        font2 = ImageFont.truetype(FONT_PATH, max(36, int(font_size * 0.72)))
+    best_font = None
+    best_lines = []
+    while font_size >= 36:
+        font = ImageFont.truetype(FONT_PATH, font_size)
+        # wrap แต่ละบรรทัดถ้ายาวเกิน max_w
+        wrapped = []
+        for l in raw_lines:
+            wrapped.extend(wrap_text(draw, l, font, max_w))
 
-        lines1 = wrap_text(draw, line1, font1, max_w) if line1 else []
-        lines2 = wrap_text(draw, line2, font2, max_w) if line2 else []
-
-        def line_h(text, font):
+        def lh(text):
             bb = draw.textbbox((0, 0), text, font=font)
             return bb[3] - bb[1]
 
-        total_h = sum(line_h(t, font1) + LINE_GAP for t in lines1)
-        if lines1 and lines2:
-            total_h += LINE_GAP * 2   # separator gap
-        total_h += sum(line_h(t, font2) + LINE_GAP for t in lines2)
+        total_h  = sum(lh(t) + LINE_GAP for t in wrapped)
+        width_ok = all(draw.textbbox((0, 0), t, font=font)[2] <= max_w for t in wrapped)
 
-        width_ok = (
-            all(draw.textbbox((0, 0), t, font=font1)[2] <= max_w for t in lines1) and
-            all(draw.textbbox((0, 0), t, font=font2)[2] <= max_w for t in lines2)
-        )
         if total_h <= H - PAD * 2 and width_ok:
+            best_font  = font
+            best_lines = wrapped
             break
         font_size -= 4
 
-    print(f"Story image font size: {font_size}")
+    if not best_font:
+        best_font  = ImageFont.truetype(FONT_PATH, 36)
+        best_lines = []
+        for l in raw_lines:
+            best_lines.extend(wrap_text(draw, l, best_font, max_w))
 
-    # วาด — centering ทั้งกลุ่ม
+    print(f"Story image font size: {font_size} | lines: {len(best_lines)}")
+
+    # คำนวณ total_h จริงก่อนวาด
+    def lh(text):
+        bb = draw.textbbox((0, 0), text, font=best_font)
+        return bb[3] - bb[1]
+    total_h = sum(lh(t) + LINE_GAP for t in best_lines)
+
     y = (H - total_h) // 2
 
-    def draw_outlined(text, font, color, y_pos):
-        bb = draw.textbbox((0, 0), text, font=font)
+    for text in best_lines:
+        bb = draw.textbbox((0, 0), text, font=best_font)
         w  = bb[2] - bb[0]
         x  = (W - w) // 2
-        dy = y_pos - bb[1]
-        # 8-direction outline สีดำ
+        dy = y - bb[1]
+        # 8-direction outline
         for dx, ddy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
-            draw.text((x+dx, dy+ddy), text, font=font, fill=(0, 0, 0))
-        draw.text((x, dy), text, font=font, fill=color)
-        return bb[3] - bb[1]   # คืนความสูงจริง
+            draw.text((x+dx, dy+ddy), text, font=best_font, fill=(0, 0, 0))
+        draw.text((x, dy), text, font=best_font, fill=COLOR)
+        y += lh(text) + LINE_GAP
 
-    for text in lines1:
-        h = draw_outlined(text, font1, COLOR1, y)
-        y += h + LINE_GAP
-
-    if lines1 and lines2:
-        y += LINE_GAP   # extra gap ระหว่าง 2 บรรทัด
-
-    for text in lines2:
-        h = draw_outlined(text, font2, COLOR2, y)
-        y += h + LINE_GAP
-
-    # watermark เล็กๆ ด้านล่าง
+    # watermark
     try:
-        wm_font = ImageFont.truetype(FONT_PATH, 28)
-        wm_text = "📖 เรื่องจริงจาก Reddit"
+        wm_font = ImageFont.truetype(FONT_PATH, 26)
+        wm_text = "เรื่องจริงจาก Reddit"
         bb = draw.textbbox((0, 0), wm_text, font=wm_font)
-        draw.text(((W - (bb[2]-bb[0])) // 2, H - 60), wm_text, font=wm_font, fill=(80, 80, 80))
+        draw.text(((W - (bb[2]-bb[0])) // 2, H - 55), wm_text, font=wm_font, fill=(70, 70, 70))
     except Exception:
         pass
 
@@ -408,12 +402,12 @@ if __name__ == "__main__":
         print("No suitable story found after 5 attempts")
         raise SystemExit(1)
 
-    line1, line2, caption = translate_story(post["subreddit"], post["title"], post["body"])
+    hook, caption = translate_story(post["subreddit"], post["title"], post["body"])
 
-    print(f"\nHook: [{line1}] / [{line2}]")
-    print(f"Caption preview:\n{caption[:300]}\n")
+    print(f"\nHook:\n{hook}")
+    print(f"\nCaption preview:\n{caption[:300]}\n")
 
-    if not line1:
+    if not hook:
         print("Translation failed — no hook generated")
         raise SystemExit(1)
 
@@ -421,7 +415,7 @@ if __name__ == "__main__":
         print("[DRY RUN] Image and post skipped.")
         raise SystemExit(0)
 
-    img = generate_image(line1, line2)
+    img = generate_image(hook)
     caption_full = (
         caption
         + f"\n\n#เรื่องจริง #ดราม่า #ชีวิตจริงยิ่งกว่าละคร"
