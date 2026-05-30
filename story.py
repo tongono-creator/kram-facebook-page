@@ -2,6 +2,7 @@
 """story.py — ดึงเรื่องเล่าจาก Reddit แปลไทย โพส Facebook เพจกรามค้าง"""
 
 import os, re, sys, io, json, random, time, requests
+import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime, timezone, timedelta
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -78,33 +79,40 @@ def save_to_history(url):
 
 # ── Reddit fetch ─────────────────────────────────────────────────────────────
 def get_reddit_story(history_set):
-    """ดึง text post จาก subreddits — คืน dict หรือ None"""
+    """ดึง text post จาก subreddits ผ่าน RSS — คืน dict หรือ None"""
+    NS = {"atom": "http://www.w3.org/2005/Atom"}
     subs = random.sample(STORY_SUBREDDITS, len(STORY_SUBREDDITS))
     for sub in subs:
-        url = f"https://www.reddit.com/r/{sub}/hot.json?limit=30"
+        rss_url = f"https://www.reddit.com/r/{sub}/hot.rss?limit=30"
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=10)
+            resp = requests.get(rss_url, headers=HEADERS, timeout=10)
             resp.raise_for_status()
-            posts = resp.json()["data"]["children"]
+            root    = ET.fromstring(resp.content)
+            entries = root.findall("atom:entry", NS)
             candidates = []
-            for p in posts:
-                d = p["data"]
-                if (d.get("is_self")
-                        and d.get("selftext", "").strip()
-                        and len(d["selftext"]) >= 200
-                        and d.get("permalink") not in history_set
-                        and not d.get("over_18", False)
-                        and d.get("score", 0) >= 100):
-                    candidates.append(d)
+            for entry in entries:
+                title   = entry.findtext("atom:title", "", NS).strip()
+                content = entry.findtext("atom:content", "", NS)
+                link_el = entry.find("atom:link", NS)
+                permalink = link_el.get("href", "") if link_el is not None else ""
+
+                # ถอด HTML tags เพื่อดูว่ามีเนื้อเรื่องไหม
+                body = re.sub(r"<[^>]+>", " ", content or "").strip()
+                body = re.sub(r"\s{2,}", " ", body)
+
+                if (len(body) >= 200
+                        and permalink not in history_set
+                        and "reddit.com/r/" in permalink):
+                    candidates.append({
+                        "subreddit": sub,
+                        "title":     title,
+                        "body":      body[:1200],
+                        "permalink": permalink,
+                    })
             if candidates:
                 chosen = random.choice(candidates[:15])
-                print(f"Story: r/{sub} | score={chosen['score']} | {chosen['title'][:60]}")
-                return {
-                    "subreddit": sub,
-                    "title":     chosen["title"],
-                    "body":      chosen["selftext"][:1200],
-                    "permalink": chosen["permalink"],
-                }
+                print(f"Story: r/{sub} | {chosen['title'][:70]}")
+                return chosen
         except Exception as e:
             print(f"Reddit error ({sub}): {e}")
     return None
