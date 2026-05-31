@@ -264,7 +264,7 @@ def post_to_page(img_path, caption):
     with open(img_path, "rb") as f:
         resp = requests.post(
             f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
-            data={"access_token": PAGE_ACCESS_TOKEN, "caption": caption, "published": "true"},
+            data={"access_token": PAGE_ACCESS_TOKEN, "message": caption, "published": "true"},
             files={"source": ("review.png", f, "image/png")},
             timeout=60
         )
