@@ -224,11 +224,40 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
             ):
                 lines.pop(0)
             caption = "\n".join(lines).strip()
-            caption += f"{promo_line}\n\n👉 Shopee → {shopee}{lazada_line}"
+            if promo:
+                caption += promo_line
             return caption
         except Exception as e:
             print(f"[{model}] caption generation failed: {e}")
-    raise RuntimeError("Caption generation failed on all models")
+    # local fallback caption
+    first_few = " ".join([l.strip() for l in detail.splitlines() if l.strip()][:3])
+    caption = (
+        f"สวัสดีครับ วันนี้มีสินค้าดีๆ มาแนะนำครับ!\n\n"
+        f"{first_few}\n\n{highlights}\n\n"
+        f"ใครสนใจกดลิ้งคอมเมนต์แรกได้เลยครับ 👇"
+    )
+    if promo:
+        caption += f"\n🔥 โปร: {promo}"
+    return caption
+
+def post_link_comment(post_id, shopee, lazada, promo):
+    """โพส comment ลิ้งใต้โพส แทนการใส่ลิ้งใน caption"""
+    lazada_line = f"\n🛍️ Lazada → {lazada}" if lazada and "xxx" not in lazada else ""
+    promo_line  = f"\n🔥 โปร: {promo}" if promo else ""
+    text = f"👉 ซื้อได้ที่ Shopee → {shopee}{lazada_line}{promo_line}"
+    try:
+        resp = requests.post(
+            f"https://graph.facebook.com/v25.0/{post_id}/comments",
+            data={"access_token": PAGE_ACCESS_TOKEN, "message": text},
+            timeout=30
+        )
+        result = resp.json()
+        if "id" in result:
+            print(f"Link comment posted: {result['id']}")
+        else:
+            print(f"Link comment failed: {result}")
+    except Exception as e:
+        print(f"Link comment error: {e}")
 
 def post_to_page(img_path, caption):
     print("Posting to Facebook Page...")
@@ -293,9 +322,11 @@ if __name__ == "__main__":
 
     if args.dry_run:
         print(f"Dry run complete. Local image path: {review_img}")
+        print(f"Link comment would be: 👉 Shopee → {product['shopee']}")
     else:
-        post_to_page(review_img, caption)
+        post_id = post_to_page(review_img, caption)
         if os.path.exists(review_img):
             os.unlink(review_img)
+        post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean)
         if not affiliate_mode:
             mark_posted(wb, ws, product["row"])
