@@ -240,24 +240,28 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
         caption += f"\n🔥 โปร: {promo}"
     return caption
 
-def post_link_comment(post_id, shopee, lazada, promo):
-    """โพส comment ลิ้งใต้โพส แทนการใส่ลิ้งใน caption"""
-    lazada_line = f"\n🛍️ Lazada → {lazada}" if lazada and "xxx" not in lazada else ""
-    promo_line  = f"\n🔥 โปร: {promo}" if promo else ""
-    text = f"👉 ซื้อได้ที่ Shopee → {shopee}{lazada_line}{promo_line}"
+def _post_one_comment(post_id, text):
     try:
         resp = requests.post(
-            f"https://graph.facebook.com/v25.0/{post_id}/comments",
+            f"https://graph.facebook.com/v21.0/{post_id}/comments",
             data={"access_token": PAGE_ACCESS_TOKEN, "message": text},
             timeout=30
         )
         result = resp.json()
         if "id" in result:
-            print(f"Link comment posted: {result['id']}")
+            print(f"Comment posted: {result['id']}")
         else:
-            print(f"Link comment failed: {result}")
+            print(f"Comment failed: {result}")
     except Exception as e:
-        print(f"Link comment error: {e}")
+        print(f"Comment error: {e}")
+
+def post_link_comment(post_id, shopee, lazada, promo):
+    """โพส comment ลิ้งใต้โพส แยก Shopee / Lazada คนละคอมเม้น"""
+    promo_line = f"\n🔥 โปร: {promo}" if promo else ""
+    if shopee and "xxx" not in shopee:
+        _post_one_comment(post_id, f"👉 ซื้อได้ที่ Shopee → {shopee}{promo_line}")
+    if lazada and "xxx" not in lazada:
+        _post_one_comment(post_id, f"🛍️ หรือสั่งทาง Lazada → {lazada}")
 
 def post_to_page(img_path, caption):
     print("Posting to Facebook Page...")
