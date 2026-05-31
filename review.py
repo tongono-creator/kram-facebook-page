@@ -11,7 +11,7 @@ from overlay_utils import add_overlay
 
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY",    "")
 PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
-PAGE_ID           = os.environ.get("PAGE_ID", "116701184708556")
+PAGE_ID           = "116701184708556"
 TEXT_MODELS       = ["gemini-2.5-flash", "gemini-3.5-flash"]
 OUTPUT_DIR        = "output"
 EXCEL_PATH        = os.path.join(os.path.dirname(__file__), "review_products.xlsx")
