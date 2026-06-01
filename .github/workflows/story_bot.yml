@@ -3,7 +3,6 @@ name: Story Bot (Reddit Drama)
 on:
   schedule:
     - cron: "0 4 * * *"   # BKK 11:00
-    - cron: "0 10 * * *"  # BKK 17:00
     - cron: "0 14 * * *"  # BKK 21:00
   workflow_dispatch:
 

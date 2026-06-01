@@ -548,17 +548,17 @@ FALLBACK_POSTS = [
     {
         "hook1": "ความลับสุดทึ่ง..",
         "hook2": "ปลาโลมาสามารถหลับตาข้างเดียวได้ครับ",
-        "caption": "▪️ รู้หรือไม่ครับว่าปลาโลมาเป็นสัตว์ที่มีระบบการนอนที่มหัศจรรย์มาก\n▪️ พวกมันจะหลับตาข้างเดียวและพักสมองทีละซีก เพื่อคอยระวังภัยขณะนอนหลับ\n▪️ สมองซีกที่เหลือจะคอยสั่งการให้หายใจและพยุงตัวไม่ให้จมน้ำครับ\n▪️ ใครเห็นแล้วประทับใจความฉลาดของโลมาบ้าง ลองคอมเมนต์คุยกันหน่อยครับ\n\n#ปลาโลมา #เรื่องน่ารู้ #สัตว์โลกน่ารัก #ธรรมชาติ"
+        "caption": "รู้หรือไม่ครับว่าปลาโลมาเป็นสัตว์ที่มีระบบการนอนที่มหัศจรรย์มาก พวกมันจะหลับตาข้างเดียวและพักสมองทีละซีก เพื่อคอยระวังภัยขณะนอนหลับ ส่วนสมองซีกที่เหลือจะคอยสั่งการให้หายใจและพยุงตัวไม่ให้จมน้ำครับ ใครเห็นแล้วประทับใจความฉลาดของโลมาบ้าง ลองคอมเมนต์คุยกันหน่อยครับ\n\n#ปลาโลมา #เรื่องน่ารู้ #สัตว์โลกน่ารัก #ธรรมชาติ"
     },
     {
         "hook1": "เห็ดเรืองแสงได้..",
         "hook2": "พบเห็นได้จริงในป่าลึกตอนกลางคืนครับ",
-        "caption": "▪️ ธรรมชาติในป่าลึกช่วงหน้าฝนมีความลับที่ชวนขนลุกและมหัศจรรย์ปะปนอยู่ครับ\n▪️ เห็ดเรืองแสงบางชนิดสามารถปล่อยแสงสีเขียวเข้มออกมาท่ามกลางความมืดมิด\n▪️ เพื่อล่อแมลงให้มาตอมและช่วยกระจายสปอร์ในการขยายพันธุ์ต่อไปครับ\n▪️ ใครเคยไปเดินป่าแล้วเจอสิ่งมหัศจรรย์แบบนี้บ้าง มาแชร์ประสบการณ์กันได้เลยครับ\n\n#เห็ดเรืองแสง #ธรรมชาติบำบัด #เรื่องแปลก #เดินป่า"
+        "caption": "ธรรมชาติในป่าลึกช่วงหน้าฝนมีความลับที่ชวนขนลุกและมหัศจรรย์ปะปนอยู่ครับ เห็ดเรืองแสงบางชนิดสามารถปล่อยแสงสีเขียวเข้มออกมาท่ามกลางความมืดมิด เพื่อล่อแมลงให้มาตอมและช่วยกระจายสปอร์ในการขยายพันธุ์ต่อไปครับ ใครเคยไปเดินป่าแล้วเจอสิ่งมหัศจรรย์แบบนี้บ้าง มาแชร์ประสบการณ์กันได้เลยครับ\n\n#เห็ดเรืองแสง #ธรรมชาติบำบัด #เรื่องแปลก #เดินป่า"
     },
     {
         "hook1": "หัวใจดวงใหญ่ยักษ์..",
         "hook2": "วาฬสีน้ำเงินมีหัวใจใหญ่เท่ารถยนต์คันเล็กครับ",
-        "caption": "▪️ วาฬสีน้ำเงินคือสิ่งมีชีวิตที่มีขนาดใหญ่ที่สุดเท่าที่โลกเคยมีมาครับ\n▪️ หัวใจของมันเพียงห้องเดียวก็มีน้ำหนักมากถึง 180 กิโลกรัมแล้ว\n▪️ และเส้นเลือดใหญ่ของมันก็กว้างพอที่จะให้มนุษย์ตัวเล็กๆ ลงไปว่ายน้ำได้สบายๆ ครับ\n▪️ ธรรมชาติช่างน่าทึ่งจริงๆ ใครชอบเรื่องของวาฬยักษ์พิมพ์คอมเมนต์กันมาหน่อยครับ\n\n#วาฬสีน้ำเงิน #สัตว์ทะเล #เรื่องน่าทึ่ง #โลกใต้ทะเล"
+        "caption": "วาฬสีน้ำเงินคือสิ่งมีชีวิตที่มีขนาดใหญ่ที่สุดเท่าที่โลกเคยมีมาครับ หัวใจของมันห้องเดียวมีน้ำหนักมากถึง 180 กิโลกรัมแล้ว และเส้นเลือดใหญ่ของมันก็กว้างพอที่จะให้มนุษย์ลงไปว่ายน้ำได้สบายๆ ครับ ธรรมชาติช่างน่าทึ่งจริงๆ ใครชอบเรื่องของวาฬยักษ์พิมพ์คอมเมนต์กันมาหน่อยครับ\n\n#วาฬสีน้ำเงิน #สัตว์ทะเล #เรื่องน่าทึ่ง #โลกใต้ทะเล"
     }
 ]
 
@@ -633,9 +633,8 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
     title_line = f"ชื่อโพสต์ต้นฉบับ: {reddit_title}" if reddit_title else ""
     is_animal = subreddit in ANIMAL_SUBS
-
     if is_animal:
-        # ─── Animal formula — ▪️ bullet narrative ────────────────────
+        # ─── Animal formula — Short Natural Paragraph ────────────────────
         prompt = (
             f"รูปสัตว์จาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
@@ -646,19 +645,15 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             "  2. Look at the attached image carefully: Prioritize what animal, pose, object, and environment are ACTUALLY visible in the image. Do not assume or hallucinate details that are not there.\n"
             "  3. Write the caption ensuring it matches the actual visual evidence shown in the image.\n\n"
             + REALISM_FILTER +
-            "เขียน Facebook caption แบบ ▪️ bullet narrative สไตล์เพจสัตว์ไวรัลไทย\n"
-            "ใช้ ▪️ นำหน้าทุก bullet — 6-8 จุด เล่าเรื่องมีความต่อเนื่อง\n"
-            "โครงสร้าง:\n"
-            "▪️ 1-2: Setup — เหตุการณ์ที่เห็นในรูป สัตว์ทำอะไร สถานการณ์คืออะไร (อิงตามรูปภาพจริงเท่านั้น)\n"
-            "▪️ 3-4: Narrate — เล่าเหมือนผู้บรรยายละคร dramatic ใส่ความรู้สึกตามท่าทางจริงของสัตว์ในรูป\n"
-            "▪️ 5-6: Inner voice — ใส่ \" \" เขียนจากมุมมองสัตว์พูดเอง + insight โดยอ้างอิงและบรรยายสิ่งที่เห็นเด่นชัดในรูปภาพจริงเท่านั้น\n"
-            "▪️ 7-8: Engage — punchline ตลกๆ หรือ life lesson + คำถามชวน comment\n"
-            "แต่ละ bullet: 1-2 ประโยค ภาษาพูดธรรมดา relatable\n"
+            "เขียน Facebook caption เป็นข้อความสั้นปกติ 1 ย่อหน้า (ความยาว 2-4 บรรทัด) สไตล์เล่าเรื่องน่ารัก/ตลกของสัตว์ในรูป\n"
+            "ห้ามเขียนในรูปแบบข้อตกลง หัวข้อย่อย หรือมีสัญลักษณ์นำหน้าบรรทัด เช่น ▪️ หรือ - เด็ดขาด\n"
+            "เล่าเหตุการณ์ที่เห็นในรูป ความรู้สึกตามท่าทางจริงของสัตว์ หรือสิ่งที่มันคิดในใจสั้นๆ เป็นธรรมชาติ\n"
+            "จบด้วยประโยคสั้นๆ ตั้งคำถามชวนให้คนมาแสดงความคิดเห็นในคอมเมนต์\n"
             "จบด้วย hashtag 3-4 อัน\n"
             "ห้าม ** markdown ห้ามอวยเกินจริง ตอบแค่ caption"
         )
     else:
-        # ─── Discovery formula — ▪️ bullet narrative ──────────────────
+        # ─── Discovery formula — Short Natural Paragraph ──────────────────
         prompt = (
             f"Interesting fact/news post from r/{subreddit}\n"
             f"Subject visible: {subject}\n"
@@ -669,14 +664,10 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             "  2. Look at the attached image carefully: Prioritize what objects, actions, and details are ACTUALLY visible in the image. Do not assume or hallucinate details that are not there.\n"
             "  3. Write the caption ensuring it matches the actual visual evidence shown in the image.\n\n"
             + REALISM_FILTER +
-            "Write a high-engagement Facebook caption in THAI based on this fact/news. Use a '▪️ bullet narrative' style:\n"
-            "Start each bullet point with a ▪️ emoji. Generate 6-8 bullet points in total. 1-2 sentences per bullet.\n"
+            "Write a high-engagement Facebook caption in THAI based on this fact/news as a single short paragraph (2-4 sentences). Absolutely NO bullet points, lists, or symbols like ▪️.\n"
             "Structure of the narrative:\n"
-            "▪️ 1-2: Hook — A shocking claim, modern tech news, or fascinating fact. Introduce who, what, and where strictly based on what is visible in the image and original post title.\n"
-            "▪️ 3-4: Context & Explanation — How it works, the background details, or why this happened (consistent with the image contents).\n"
-            "▪️ 5-6: Wow details — Mind-blowing statistics, comparisons, or details that make people say 'wow'.\n"
-            "▪️ 7-8: Relatable Engagement — Connect this fact/news to a funny, sarcastic, or relatable human angle (e.g. office syndrome, manager struggles, money wastage, or daily life habits) to stimulate comments and shares.\n\n"
-            "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา ทั่วไป ไม่เป็นทางการ ไม่เก๊กเท่, เหมือนคนทั่วไปบ่นหรือเล่าเรื่องฮาๆ ให้ฟัง).\n"
+            "Start with a shocking claim or interesting fact from the image, explain briefly how it works or why it's cool, and connect it to a funny, sarcastic, or relatable human angle to stimulate comments.\n"
+            "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา สรรพนามแทนตัวเองด้วยผม/พี่ และลงท้ายสุภาพครับ/ผม).\n"
             "Do not use markdown like ** or bolding in the caption.\n"
             "End the caption with 3-4 relevant hashtags.\n"
             "Output ONLY the caption."

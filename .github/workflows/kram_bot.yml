@@ -2,16 +2,9 @@ name: Kram Bot
 
 on:
   schedule:
-    - cron: "0 22 * * *"
-    - cron: "0 3 * * *"
-    - cron: "0 5 * * *"
-    - cron: "0 7 * * *"
-    - cron: "0 9 * * *"
-    - cron: "0 11 * * *"
-    - cron: "0 12 * * *"
-    - cron: "0 13 * * *"
-    - cron: "0 14 * * *"
-    - cron: "0 15 * * *"
+    - cron: "0 3 * * *"   # 10:00 BKK
+    - cron: "0 8 * * *"   # 15:00 BKK
+    - cron: "0 13 * * *"  # 20:00 BKK
   workflow_dispatch:
 
 jobs:
