@@ -1,0 +1,37 @@
+name: Lotto Bot
+
+on:
+  schedule:
+    # 14:00 - 16:45 BKK (BKK is UTC+7) => 07:00 - 09:45 UTC
+    # Runs every 15 minutes on the 1st and 16th of each month
+    - cron: '*/15 7-9 1,16 * *'
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run lotto poster script
+        env:
+          KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+        run: python lotto_poster.py
+
+      - name: Commit and push if history updated
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          python merge_history.py
