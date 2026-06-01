@@ -45,6 +45,7 @@ def _load_excel():
                     "shopee": str(shopee or "").strip(),
                     "lazada": str(lazada or "").strip(),
                     "desc":   str(desc or "").strip(),
+                    "image":  "",
                 })
 
             # food links — เก็บทุก row ที่มีค่า column G
@@ -86,6 +87,7 @@ def _load_excel():
                             if len(row) < 10:
                                 continue
                             name = row[1]
+                            image = row[2] if len(row) > 2 else ""
                             price = row[3]
                             shopee = row[9]
                             lazada = row[10] if len(row) > 10 else None
@@ -107,6 +109,7 @@ def _load_excel():
                                         "shopee": shopee_str,
                                         "lazada": lazada_str,
                                         "desc":   desc,
+                                        "image":  str(image).strip() if image else "",
                                     })
                     except Exception as extra_err:
                         print(f"Error loading extra excel {file_name}: {extra_err}")
