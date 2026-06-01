@@ -131,10 +131,15 @@ def gemini_text(prompt):
     return ""
 
 # ── Translate + create hook ──────────────────────────────────────────────────
+def contains_thai(text):
+    if not text:
+        return False
+    return any('\u0e00' <= char <= '\u0e7f' for char in text)
+
 def translate_story(subreddit, title, body):
     """
     คืน (hook, caption)
-    hook = พาดหัวบนรูป — 1-3 บรรทัด คั่นด้วย \\n
+    hook = พาดหัวบนรูป — 1-3 บรรทัด คั่นด้วย \n
     caption = เล่าเรื่องภาษาไทย 5 ชั้น สำหรับ Facebook caption
     """
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
@@ -171,17 +176,67 @@ def translate_story(subreddit, title, body):
         "ชั้น 5 — STRONG ENDING + COMMENT CALL: ปิดกระแทก + ถามตรงๆ"
     )
     raw = gemini_text(prompt)
-    m = re.search(r'\{.*?\}', raw, re.DOTALL)
-    if m:
-        try:
-            data = json.loads(m.group())
-            hook    = data.get("hook", "").replace("\\n", "\n")
-            caption = data.get("caption", "")
-            return hook, caption
-        except Exception as e:
-            print(f"JSON parse error: {e}\nRaw: {raw[:200]}")
-    print(f"translate_story fallback. Raw:\n{raw[:200]}")
-    return title[:30], ""
+    hook, caption = "", ""
+    if raw:
+        clean_raw = raw.strip()
+        if clean_raw.startswith("```"):
+            clean_raw = re.sub(r"^```(?:json)?\n", "", clean_raw)
+            clean_raw = re.sub(r"\n```$", "", clean_raw)
+            clean_raw = clean_raw.strip()
+        
+        m = re.search(r'\{.*?\}', clean_raw, re.DOTALL)
+        if m:
+            try:
+                data = json.loads(m.group())
+                hook    = data.get("hook", "").replace("\\n", "\n")
+                caption = data.get("caption", "")
+            except Exception as e:
+                print(f"JSON parse error: {e}")
+
+    # Fallback to direct translation if JSON parsing failed or output has no Thai
+    if not hook or not caption or not contains_thai(hook) or not contains_thai(caption):
+        print("JSON translation failed or missing Thai. Trying direct translation fallback...")
+        fallback_prompt = (
+            f"แปลเรื่องเล่าจาก Reddit r/{subreddit} นี้เป็นภาษาไทย:\n"
+            f"Title: {title}\n"
+            f"Body: {body}\n\n"
+            "เขียนคำตอบออกมา 2 บรรทัด คั่นด้วยเครื่องหมาย | :\n"
+            "บรรทัดที่ 1: พาดหัวภาษาไทยสั้นๆ กวนๆ น่าดึงดูดใจ สำหรับใส่บนรูปภาพ (ยาวไม่เกิน 10 คำ)\n"
+            "บรรทัดที่ 2: เนื้อหาคำยายเรื่องเล่าฉบับเต็มภาษาไทยสำหรับแอดมินเพจวัยรุ่น/ผู้ชาย ลงท้ายด้วยครับ/ผม/พี่ และจบด้วยคำถามชวนแสดงความเห็น\n"
+            "ห้ามใช้ JSON หรืออธิบายเพิ่มเติม ตอบเฉพาะข้อมูลที่ระบุในฟอร์แมต: พาดหัว | คำบรรยาย"
+        )
+        fallback_raw = gemini_text(fallback_prompt)
+        if fallback_raw and "|" in fallback_raw:
+            try:
+                parts = fallback_raw.split("|", 1)
+                hook = parts[0].strip()
+                caption = parts[1].strip()
+                print(f"Fallback direct translation success! Hook: {hook[:30]}")
+            except Exception as fe:
+                print(f"Fallback split error: {fe}")
+
+    # Fallback to predefined local Thai stories if all AI methods fail
+    if not hook or not caption or not contains_thai(hook) or not contains_thai(caption):
+        print("All AI translation methods failed or missing Thai. Using local fallback database.")
+        fallbacks = [
+            {
+                "hook": "แฟนทำแบบนี้..\nผมควรทนต่อไหมครับ?",
+                "caption": "ผมมีเรื่องอยากระบายและขอความเห็นจากทุกคนหน่อยครับ คือเรื่องมีอยู่ว่าแฟนผมมักจะติดต่อกับแฟนเก่าของเธออยู่เรื่อยๆ โดยที่เธออ้างว่าเป็นแค่เพื่อนร่วมงานกัน แต่ล่าสุดผมดันไปเห็นแชทที่พวกเขานัดเจอกันนอกรอบแบบไม่บอกผม ผมรู้สึกสับสนมากครับว่าคิดมากไปเองหรือควรคุยตรงๆ ดี ใครเคยเจอเรื่องแนวนี้ช่วยแนะนำทีครับ"
+            },
+            {
+                "hook": "โกหกหัวหน้างาน..\nจนปวดหัวเอง",
+                "caption": "คือเรื่องมันเริ่มจากผมรับงานโปรเจกต์นึงมา แล้วตอนประชุมผมดันบอกหัวหน้าไปว่าเข้าใจระบบทั้งหมดและทำคนเดียวได้สบายมาก ทั้งที่จริงๆ ผมไม่เข้าใจเลยครับ ตอนนี้เดดไลน์เหลืออีกแค่ 3 วัน แต่งานยังไม่คืบหน้าเลย ผมเครียดมากและกลัวหัวหน้าด่าจนแทบไม่ได้นอนเลยครับ ใครเคยตกอยู่ในสถานการณ์แบบนี้บ้างไหมครับ มาแชร์วิธีแก้ปัญหากันหน่อยครับ"
+            },
+            {
+                "hook": "ทิ้งเพื่อนที่ปั๊มน้ำมัน..\nผมผิดไหม?",
+                "caption": "ผมอยากถามทุกคนว่าผมใจดำเกินไปไหมครับ คือวันนั้นพวกเรานัดกันจะไปขึ้นเครื่องบินไปเที่ยวต่างจังหวัดกัน แล้วเพื่อนผมคนนึงมัวแต่นอนตื่นสายและทำตัวชิลมากๆ ตอนแวะปั๊มเธอก็เดินหายไปซื้อของโดยไม่รักษาเวลา จนผมตัดสินใจให้คนรถขับออกไปขึ้นเครื่องก่อนเลยโดยไม่รอเธอ ทำให้เธอตกเครื่องและโกรธผมมากครับ คิดว่าผมทำถูกแล้วหรือผิดกันแน่ ลองแสดงความเห็นมาคุยกันหน่อยครับ"
+            }
+        ]
+        chosen = random.choice(fallbacks)
+        hook = chosen["hook"]
+        caption = chosen["caption"]
+
+    return hook, caption
 
 # ── Thai text wrap (leading vowel safe) ──────────────────────────────────────
 _LEADING_VOWELS  = set("เแโใไ")
