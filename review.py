@@ -120,9 +120,9 @@ def extract_highlights(detail, promo):
     highlights = None
     prompt = (
         f"จากรายละเอียดสินค้านี้:\n{detail}\n\n"
-        f"สกัดออกมาเป็น bullet points ภาษาไทยสั้นๆ 3-5 จุดเด่น "
-        f"เน้นประโยชน์ที่คนซื้อสนใจ ห้ามใส่ข้อมูลราคาหรือโปรโมชั่น "
-        f"ตอบแค่ bullet points เท่านั้น"
+        f"สกัดจุดเด่นสินค้าเป็นประโยคข้อความสั้นแนวธรรมชาติ 1-2 ย่อหน้าสั้นๆ (ห้ามทำเป็นข้อๆ หรือมีสัญลักษณ์รายการ/bullet points เช่น •, ▪️, - หรือเลขข้อ) "
+        f"เน้นประโยชน์ที่คนซื้อสนใจและใช้งานจริง ห้ามใส่ข้อมูลราคาหรือโปรโมชั่น "
+        f"ตอบเฉพาะส่วนรายละเอียดเนื้อความเท่านั้น"
     )
     for model in TEXT_MODELS:
         try:
@@ -138,16 +138,16 @@ def extract_highlights(detail, promo):
     if not highlights:
         print("[Warning] Highlights AI failed, using local fallback.")
         lines = [l.strip() for l in detail.splitlines() if l.strip()]
-        bullets = []
+        points = []
         for line in lines:
             cleaned = re.sub(r'^[•\-\*\d\.\s–]+', '', line).strip()
             if cleaned and 5 < len(cleaned) < 100:
-                bullets.append(f"• {cleaned}")
-            if len(bullets) >= 4:
+                points.append(cleaned)
+            if len(points) >= 3:
                 break
-        if not bullets:
-            bullets = [f"• {line[:80]}" for line in lines[:3]]
-        highlights = "\n".join(bullets) if bullets else "• รายละเอียดเพิ่มเติมตามระบุในลิงก์ร้านค้า"
+        if not points:
+            points = [line[:80] for line in lines[:2]]
+        highlights = " ".join(points) if points else "รายละเอียดเพิ่มเติมศึกษาต่อได้ที่หน้าร้านเลยครับ"
     if promo:
         highlights += f"\n🔥 โปรตอนนี้: {promo}"
     return highlights
@@ -211,7 +211,7 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
         f"2. เล่าให้เห็นภาพ (Vivid Storytelling): รีวิวคุณสมบัติเด่น ประสิทธิภาพการใช้งานจริง หรือผลลัพธ์หลังจากใช้แล้วให้เห็นภาพชัดเจน\n"
         f"3. ปิดจบต้องบอกว่า 'ควรทำอะไร' (Call to Action): บอกให้สั่งซื้อโดยการกดที่ตะกร้า ชี้เป้าลิงก์ หรือบอกว่ามีโปรโมชั่นจัดหนักอยู่\n\n"
         f"เขียนให้น่าอ่าน สั้นกระชับ เป็นกันเอง ท้ายโพสต์ใส่แฮชแท็ก 2-3 อัน\n"
-        f"ห้ามใช้ markdown ตัวหนา (**) และตอบเฉพาะตัวแคปชั่นรีวิวเท่านั้น"
+        f"ห้ามใช้ markdown ตัวหนา (**) และห้ามมีสัญลักษณ์หัวข้อย่อยหรือ bullet points (เช่น •, ▪️, -) เด็ดขาด เขียนอธิบายไหลลื่นเป็นย่อหน้าธรรมชาติเท่านั้น ตอบเฉพาะตัวแคปชั่นรีวิวเท่านั้น"
     )
     for model in TEXT_MODELS:
         try:
@@ -219,7 +219,7 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
             caption = resp.text.strip()
             lines = caption.splitlines()
             while lines and (
-                re.search(r'^(ได้เลย|นี่คือ|แน่นอน|โพสต์รีวิว|ครับ|ค่ะ|---)', lines[0].strip(), re.IGNORECASE)
+                re.search(r'^(ได้เลย|นี่คือ|จริง|แน่นอน|โพสต์รีวิว|ครับ|ค่ะ|---)', lines[0].strip(), re.IGNORECASE)
                 or lines[0].strip() in ("", "---")
             ):
                 lines.pop(0)
@@ -233,7 +233,7 @@ def generate_caption(detail, shopee, lazada, promo, highlights):
     first_few = " ".join([l.strip() for l in detail.splitlines() if l.strip()][:3])
     caption = (
         f"สวัสดีครับ วันนี้มีสินค้าดีๆ มาแนะนำครับ!\n\n"
-        f"{first_few}\n\n{highlights}\n\n"
+        f"{first_few} บอกเลยว่าตอบโจทย์ชีวิตประจำวันมากครับ {highlights}\n\n"
         f"ใครสนใจกดลิ้งคอมเมนต์แรกได้เลยครับ 👇"
     )
     if promo:
