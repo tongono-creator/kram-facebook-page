@@ -73,6 +73,44 @@ def _load_excel():
                     "picture_url": str(picture_url or "").strip(),
                 })
 
+        # Load extra products from affiliate_data/*.xlsx
+        extra_dir = os.path.join(os.path.dirname(__file__), "affiliate_data")
+        if os.path.exists(extra_dir):
+            for file_name in os.listdir(extra_dir):
+                if file_name.endswith(".xlsx") and not file_name.startswith("~$"):
+                    try:
+                        extra_path = os.path.join(extra_dir, file_name)
+                        extra_wb = openpyxl.load_workbook(extra_path, data_only=True)
+                        extra_ws = extra_wb.active
+                        for row in extra_ws.iter_rows(min_row=2, values_only=True):
+                            if len(row) < 10:
+                                continue
+                            name = row[1]
+                            price = row[3]
+                            shopee = row[9]
+                            lazada = row[10] if len(row) > 10 else None
+
+                            if name and shopee:
+                                shopee_str = str(shopee).strip()
+                                if shopee_str and "xxx" not in shopee_str:
+                                    lazada_str = str(lazada).strip() if lazada else ""
+                                    if price:
+                                        p_str = str(price).strip()
+                                        if p_str.endswith(".00"):
+                                            p_str = p_str[:-3]
+                                        desc = f"ราคาพิเศษเพียง {p_str} บาท ขายดี ยอดนิยม"
+                                    else:
+                                        desc = "ราคาพิเศษสุดคุ้ม ขายดี ยอดนิยม"
+
+                                    products.append({
+                                        "name":   str(name).strip(),
+                                        "shopee": shopee_str,
+                                        "lazada": lazada_str,
+                                        "desc":   desc,
+                                    })
+                    except Exception as extra_err:
+                        print(f"Error loading extra excel {file_name}: {extra_err}")
+
         return products, food_entries, promos
     except Exception as e:
         print(f"Excel read error: {e}")
@@ -325,6 +363,11 @@ def get_product_comments(caption=None, img_path=None):
     active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"]]
     if not active:
         return []
+    
+    # Cap candidates to 25 to prevent token bloat
+    if len(active) > 25:
+        active = random.sample(active, 25)
+        print(f"Capped active products to 25 candidates for AI selector.")
     
     selected_p = None
     if caption or img_path:
