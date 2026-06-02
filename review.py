@@ -311,7 +311,7 @@ if __name__ == "__main__":
     
     # PIL Overlay
     try:
-        review_img = add_overlay(product_img, line1, line2, ACCENT_COLOR)
+        review_img = add_overlay(product_img, line1, line2, ACCENT_COLOR, font_name="Itim-Regular.ttf")
         os.unlink(product_img)
         print(f"Review image overlaid: {review_img}")
     except Exception as overlay_err:

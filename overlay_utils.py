@@ -169,11 +169,15 @@ def _apply_bottom_gradient(img, start_y, end_y, max_alpha=230):
         draw.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
     return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
 
-def add_overlay(img_path, line1, line2, accent_color, out_path=None):
+def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None):
     """
     Overlays text directly on the image with a smooth black gradient at the bottom.
     No solid black bar is appended, maximizing image visual space (Matichon Style).
     """
+    global FONT_PATH
+    if font_name:
+        FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", font_name)
+
     W, H = 1080, 1080
     
     if img_path and os.path.exists(img_path):
