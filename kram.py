@@ -564,8 +564,8 @@ FALLBACK_POSTS = [
 
 def generate_hook(subject, vibe, subreddit):
     """สร้าง hook text 2 บรรทัดสำหรับ PIL overlay
-    - สัตว์ → inner monologue สั้นๆ ที่อ่านแล้วเข้าใจได้ทันที ไม่สั้นห้วนจนงง
-    - ว้าว/น่าทึ่ง → discovery hook สั้นๆ ดึงดูดความสนใจ (ไม่ใช่ประโยคเล่าเรื่องยาว)
+    - สัตว์ → Pet POV หรือ บ่นพฤติกรรมสัตว์เลี้ยงกวนๆ ตลกร้าย (เช่น 'มองแรงใส่ผม..', 'ทวงขนมคำโต..')
+    - ว้าว/น่าทึ่ง/วิทยาศาสตร์ → หัวข้อชวนถกเถียงหรือสงสัย (เช่น 'กล้ากินไหมครับ?', 'เรื่องจริงสุดหลอน..')
     """
     vibe_line = f"ฟีล: {vibe}" if vibe else ""
     is_animal = subreddit in ANIMAL_SUBS
@@ -575,27 +575,27 @@ def generate_hook(subject, vibe, subreddit):
             f"รูปสัตว์จาก r/{subreddit}\n"
             f"เห็น: {subject}\n"
             f"{vibe_line}\n\n"
-            "เขียน hook text ภาษาไทยสั้นๆ กวนๆ ดึงดูดสายตา 2 บรรทัดบนรูปภาพ (อ่านแล้วเข้าใจมุกได้ทันที ไม่ห้วนจนงง):\n"
-            "บรรทัด 1: สิ่งที่สัตว์คิด/รู้สึกสั้นๆ 2-5 คำ ลงท้ายด้วย .. (เช่น 'มองแรงขั้นสุด..', 'เนียนเลยนะ..')\n"
-            "บรรทัด 2: หักมุมหรือคำอธิบายความในใจสั้นๆ 4-8 คำ เพื่อให้เข้าใจมุกได้ชัดเจน (เช่น 'เหมือนโดนเรียกทำโอทีวันหยุด', 'นึกว่าแม่ไม่เห็น')\n"
-            "ใช้ภาษาพูดธรรมดาสั้นๆ ไม่เขียนคำบรรยายยาว ไม่เขียนคำนำหรือป้ายกำกับ\n\n"
+            "เขียน hook text ภาษาไทยสั้นๆ กวนๆ ตลกๆ 2 บรรทัดบนรูปภาพ (ฟีลสัตว์บ่นใส่ทาส หรือเจ้าของทาสบ่นพฤติกรรมสุดกวน):\n"
+            "บรรทัด 1: คำพูดตัดพ้อ/บ่น/ทวงความยุติธรรมสั้นๆ 2-5 คำ ลงท้ายด้วย .. (เช่น 'เมื่อปลุกตอนตีสอง..', 'ขอลดทิฐิลงก่อน..')\n"
+            "บรรทัด 2: มุกจิกกัดหรือความจริงอันฮาๆ 4-8 คำ เกี่ยวกับพฤติกรรมมัน (เช่น 'ทวงขนมแบบประธานบริษัท', 'คิดว่าผมไม่เห็นมั้งครับ')\n"
+            "ใช้ภาษาพูดแบบเป็นกันเอง สรรพนามเพศชาย (ครับ) ไม่เป็นทางการ ห้ามใส่ป้ายกำกับ\n\n"
             "⚠️ CRITICAL RULES:\n"
             "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros.\n"
-            "2. DO NOT write any conversational intro or acknowledgment filler like 'แน่นอน!', 'จัดไป!', 'ตามคำขอ', 'ได้เลยครับ' etc. Start directly with the hook lines."
+            "2. DO NOT write any conversational intro or acknowledgment filler. Start directly with the hook lines."
         )
     else:
         prompt = (
             f"Interesting fact/news post from r/{subreddit}\n"
             f"Subject visible: {subject}\n"
             f"{vibe_line}\n\n"
-            "Write a very short, punchy, eye-catching 2-line Thai hook for this image (NOT a long sentence or paragraph):\n"
-            "Line 1: Shocking/exciting keyword or brief claim (3-5 Thai words, e.g. 'เรื่องจริงสุดอึ้ง', 'เทคโนโลยีสุดล้ำ', 'ที่แรกในโลก').\n"
-            "Line 2: Core curiosity generator / subject (3-5 Thai words, e.g. 'ศูนย์ข้อมูลใต้น้ำ', 'สิ่งมีชีวิตลึกลับ', 'ภาพถ่ายประวัติศาสตร์').\n"
-            "Absolutely NO long explanations, NO conversational sentences, NO fillers. Keep it extremely short (3-5 words per line) so it renders very large and clear on the image.\n\n"
+            "Write a very short, eye-catching 2-line Thai debate/curiosity hook for this image (NOT a long sentence):\n"
+            "Line 1: Shocking/exciting/question statement (3-5 Thai words, e.g. 'กล้าลองไหมครับ?', 'ล้ำหรือหลอนดี?', 'ความลับสุดอึ้ง').\n"
+            "Line 2: Subject of debate or mystery (3-5 Thai words, e.g. 'เครื่องจักรมีสมอง', 'ธรรมชาติสุดแปลก', 'ความจริงเรื่องปลา').\n"
+            "Absolutely NO long explanations, NO fillers. Keep it extremely short (3-5 words per line) so it renders clearly.\n\n"
             "⚠️ CRITICAL RULES:\n"
             "1. DO NOT include any labels like 'Line 1:', 'บรรทัด 1:', 'Hook:', or any intros/outros. Output ONLY the 2 lines of text.\n"
             "2. Keep the length extremely short (max 5 words per line).\n"
-            "3. DO NOT write any conversational intro or acknowledgment filler like 'แน่นอน!', 'จัดไป!', 'ตามคำขอ', 'ได้เลยครับ' etc. Start directly with the hook lines."
+            "3. DO NOT write any conversational intro or acknowledgment filler. Start directly with the hook lines."
         )
     # keywords ที่เป็น prompt echo หรือ filler ของโมเดล — ต้องกรองทิ้งเพิ่มเติมเพื่อป้องกันการโพสต์เสียของ
     ECHO_KEYWORDS = [
@@ -645,12 +645,12 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             "  2. Look at the attached image carefully: Prioritize what animal, pose, object, and environment are ACTUALLY visible in the image. Do not assume or hallucinate details that are not there.\n"
             "  3. Write the caption ensuring it matches the actual visual evidence shown in the image.\n\n"
             + REALISM_FILTER +
-            "เขียน Facebook caption เป็นข้อความสั้นปกติ 1 ย่อหน้า (ความยาว 2-4 บรรทัด) สไตล์เล่าเรื่องน่ารัก/ตลกของสัตว์ในรูป\n"
+            "เขียน Facebook caption เป็นข้อความสั้นปกติ 1 ย่อหน้า (ความยาว 2-4 บรรทัด) สไตล์บ่นพฤติกรรมสุดดื้อ/กวนของสัตว์เลี้ยง (เช่น ขโมยขนม, ปลุกตอนดึก, หน้าเบื่อโลก) หรือมุมมองฮาๆ ของคนเป็นทาส\n"
             "ห้ามเขียนในรูปแบบข้อตกลง หัวข้อย่อย หรือมีสัญลักษณ์นำหน้าบรรทัด เช่น ▪️ หรือ - เด็ดขาด\n"
-            "เล่าเหตุการณ์ที่เห็นในรูป ความรู้สึกตามท่าทางจริงของสัตว์ หรือสิ่งที่มันคิดในใจสั้นๆ เป็นธรรมชาติ\n"
-            "จบด้วยประโยคสั้นๆ ตั้งคำถามชวนให้คนมาแสดงความคิดเห็นในคอมเมนต์\n"
+            "เล่าเหตุการณ์แบบเป็นกันเอง เหมือนเมาท์มอยแฉความมึนของมันให้เพื่อนฟัง\n"
+            "คุณ MUST จบด้วยประโยคสั้นๆ ตั้งคำถามชวนให้คนเลี้ยงสัตว์มาแชร์ประสบการณ์ของสัตว์เลี้ยงตัวเองที่บ้าน (เช่น 'บ้านใครโดนหน้าตาแบบนี้ทวงขนมบ้างครับ?', 'ที่บ้านใครมีเด็กดื้อแสบแบบนี้รายงานตัวหน่อยครับ?')\n"
             "จบด้วย hashtag 3-4 อัน\n"
-            "ห้าม ** markdown ห้ามอวยเกินจริง ตอบแค่ caption"
+            "ห้าม ** markdown ตอบแค่ caption"
         )
     else:
         # ─── Discovery formula — Short Natural Paragraph ──────────────────
@@ -666,8 +666,9 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             + REALISM_FILTER +
             "Write a high-engagement Facebook caption in THAI based on this fact/news as a single short paragraph (2-4 sentences). Absolutely NO bullet points, lists, or symbols like ▪️.\n"
             "Structure of the narrative:\n"
-            "Start with a shocking claim or interesting fact from the image, explain briefly how it works or why it's cool, and connect it to a funny, sarcastic, or relatable human angle to stimulate comments.\n"
+            "Start with a shocking claim or interesting fact from the image, explain briefly how it works or why it's cool. Frame the topic as a curiosity debate or question to stimulate comments.\n"
             "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา สรรพนามแทนตัวเองด้วยผม/พี่ และลงท้ายสุภาพครับ/ผม).\n"
+            "คุณ MUST จบด้วยประโยคตั้งคำถามชวนคุย/ชวนดีเบตความเห็นเรื่องนั้นๆ (เช่น 'ถ้าเจอแบบนี้จะกล้าลองกินไหมครับ?', 'คิดว่าเป็นเรื่องจริงหรือจัดฉากครับ?')\n"
             "Do not use markdown like ** or bolding in the caption.\n"
             "End the caption with 3-4 relevant hashtags.\n"
             "Output ONLY the caption."
