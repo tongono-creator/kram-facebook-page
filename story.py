@@ -19,7 +19,7 @@ GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 client      = genai.Client(api_key=GEMINI_API_KEY, http_options=HttpOptions(timeout=300000))
 TEXT_MODELS = ["gemini-2.5-flash", "gemini-3.5-flash"]
 OUTPUT_DIR  = "output"
-FONT_PATH   = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
+FONT_PATH   = os.path.join(os.path.dirname(__file__), "fonts", "Sarabun-ExtraBold.ttf")
 HISTORY_FILE = "story_history.txt"
 HEADERS      = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
 
