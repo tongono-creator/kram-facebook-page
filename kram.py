@@ -921,7 +921,17 @@ def main():
     # PIL overlay
     try:
         from overlay_utils import add_overlay
-        img_to_overlay = None if is_fallback else img_path
+        img_to_overlay = img_path
+        if is_fallback:
+            if fallback["hook1"] == "ความลับสุดทึ่ง..":
+                img_to_overlay = os.path.join("fallback_images", "dolphin.png")
+            elif fallback["hook1"] == "เห็ดเรืองแสงได้..":
+                img_to_overlay = os.path.join("fallback_images", "mushroom.png")
+            elif fallback["hook1"] == "หัวใจดวงใหญ่ยักษ์..":
+                img_to_overlay = os.path.join("fallback_images", "whale.png")
+            else:
+                img_to_overlay = None
+
         overlaid = add_overlay(img_to_overlay, line1, line2, ACCENT_COLOR)
         if img_path and os.path.exists(img_path):
             os.unlink(img_path)
