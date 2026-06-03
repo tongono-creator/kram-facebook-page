@@ -263,8 +263,47 @@ def post_link_comment(post_id, shopee, lazada, promo):
     if lazada and "xxx" not in lazada:
         _post_one_comment(post_id, f"🛍️ หรือสั่งทาง Lazada → {lazada}")
 
-def post_to_page(img_path, caption):
+def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None):
     print("Posting to Facebook Page...")
+    from affiliate_utils import get_next_scheduled_time
+    
+    slots = ["08:00"]
+    scheduled_time = get_next_scheduled_time(slots)
+    
+    if scheduled_time:
+        comment_texts = []
+        promo_line = f"\n🔥 โปร: {promo}" if promo else ""
+        if shopee and "xxx" not in shopee:
+            comment_texts.append(f"👉 ซื้อได้ที่ Shopee → {shopee}{promo_line}")
+        if lazada and "xxx" not in lazada:
+            comment_texts.append(f"🛍️ หรือสั่งทาง Lazada → {lazada}")
+            
+        if comment_texts:
+            caption += "\n\n📌 ชี้เป้าของดีน่าสนใจ:\n" + "\n".join(comment_texts)
+            
+        print(f"Scheduling to Facebook for timestamp {scheduled_time}...")
+        with open(img_path, "rb") as f:
+            resp = requests.post(
+                f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
+                data={
+                    "access_token": PAGE_ACCESS_TOKEN,
+                    "message": caption,
+                    "published": "false",
+                    "unpublished_content_type": "SCHEDULED",
+                    "scheduled_publish_time": scheduled_time
+                },
+                files={"source": ("review.png", f, "image/png")},
+                timeout=60
+            )
+        result = resp.json()
+        if "id" in result:
+            photo_id = result.get("post_id") or result["id"]
+            print(f"Scheduled successfully! Photo ID: {photo_id}")
+            return photo_id, True
+        else:
+            print(f"FB Error: {result}")
+            raise SystemExit(1)
+
     with open(img_path, "rb") as f:
         resp = requests.post(
             f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
@@ -277,7 +316,7 @@ def post_to_page(img_path, caption):
         post_id = result.get("post_id") or result["id"]
         print(f"Page Posted! ID: {post_id}")
         print(f"https://www.facebook.com/{post_id}")
-        return post_id
+        return post_id, False
     else:
         print(f"FB Error: {result}")
         raise SystemExit(1)
@@ -328,9 +367,10 @@ if __name__ == "__main__":
         print(f"Dry run complete. Local image path: {review_img}")
         print(f"Link comment would be: 👉 Shopee → {product['shopee']}")
     else:
-        post_id = post_to_page(review_img, caption)
+        post_id, was_scheduled = post_to_page(review_img, caption, product["shopee"], product["lazada"], promo_clean)
         if os.path.exists(review_img):
             os.unlink(review_img)
-        post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean)
+        if not was_scheduled:
+            post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean)
         if not affiliate_mode:
             mark_posted(wb, ws, product["row"])

@@ -250,6 +250,44 @@ def download_video_with_audio(video_id):
 def post_video(caption, video_path):
     """โพส video ลง Facebook page"""
     try:
+        from affiliate_utils import get_next_scheduled_time, get_all_comments
+        slots = ["10:00", "15:00", "20:00"]
+        scheduled_time = get_next_scheduled_time(slots)
+        
+        if scheduled_time:
+            comments = get_all_comments(caption=caption, img_path=None)
+            comment_texts = []
+            for msg in comments:
+                if isinstance(msg, dict):
+                    comment_texts.append(msg["message"])
+                else:
+                    comment_texts.append(msg)
+            if comment_texts:
+                caption += "\n\n📌 ชี้เป้าของดีน่าสนใจ:\n" + "\n".join(comment_texts)
+                
+            print(f"Scheduling video to Facebook for timestamp {scheduled_time}...")
+            api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/videos"
+            with open(video_path, "rb") as f:
+                resp = requests.post(
+                    api_url,
+                    data={
+                        "description":  caption,
+                        "access_token": PAGE_ACCESS_TOKEN,
+                        "published":    "false",
+                        "scheduled_publish_time": scheduled_time
+                    },
+                    files={"source": ("video.mp4", f, "video/mp4")},
+                    timeout=180,
+                )
+            result = resp.json()
+            if "id" in result:
+                photo_id = result.get("post_id") or result["id"]
+                print(f"Video Scheduled: {photo_id}")
+                return True
+            else:
+                print(f"Video scheduling failed: {result}")
+                return False
+
         api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/videos"
         with open(video_path, "rb") as f:
             resp = requests.post(
@@ -741,6 +779,45 @@ def download_image(image_url):
 
 def post_photo(caption, img_path):
     try:
+        from affiliate_utils import get_next_scheduled_time, get_all_comments
+        slots = ["10:00", "15:00", "20:00"]
+        scheduled_time = get_next_scheduled_time(slots)
+        
+        if scheduled_time:
+            comments = get_all_comments(caption=caption, img_path=img_path)
+            comment_texts = []
+            for msg in comments:
+                if isinstance(msg, dict):
+                    comment_texts.append(msg["message"])
+                else:
+                    comment_texts.append(msg)
+            if comment_texts:
+                caption += "\n\n📌 ชี้เป้าของดีน่าสนใจ:\n" + "\n".join(comment_texts)
+                
+            print(f"Scheduling photo to Facebook for timestamp {scheduled_time}...")
+            api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/photos"
+            with open(img_path, "rb") as f:
+                resp = requests.post(
+                    api_url,
+                    data={
+                        "message":      caption,
+                        "access_token": PAGE_ACCESS_TOKEN,
+                        "published":    "false",
+                        "unpublished_content_type": "SCHEDULED",
+                        "scheduled_publish_time": scheduled_time
+                    },
+                    files={"source": ("photo.jpg", f, "image/jpeg")},
+                    timeout=60,
+                )
+            result = resp.json()
+            if "id" in result:
+                photo_id = result.get("post_id") or result["id"]
+                print(f"Photo Scheduled: {photo_id}")
+                return True
+            else:
+                print(f"Photo scheduling failed: {result}")
+                return False
+
         api_url = f"https://graph.facebook.com/v21.0/{PAGE_ID}/photos"
         with open(img_path, "rb") as f:
             resp = requests.post(

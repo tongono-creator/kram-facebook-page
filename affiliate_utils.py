@@ -457,3 +457,33 @@ def get_all_comments(caption=None, img_path=None):
             pool.append(web)
 
     return pool
+
+def get_next_scheduled_time(slots):
+    """
+    Calculate next scheduled publish time in Bangkok timezone (UTC+7).
+    Bypassed if IMMEDIATE=true is set in environment.
+    """
+    if os.environ.get("IMMEDIATE") == "true":
+        print("IMMEDIATE environment variable is set to true. Skipping scheduling...")
+        return None
+
+    bkk = timezone(timedelta(hours=7))
+    now = datetime.now(bkk)
+    
+    candidates = []
+    for day_offset in [0, 1]:
+        base_date = now + timedelta(days=day_offset)
+        for slot in slots:
+            hour, min_val = map(int, slot.split(":"))
+            dt = datetime(base_date.year, base_date.month, base_date.day, hour, min_val, tzinfo=bkk)
+            # Facebook Graph API requires scheduled_publish_time to be >= 10 mins in future
+            if dt > now + timedelta(minutes=10):
+                candidates.append(dt)
+                
+    candidates.sort()
+    if candidates:
+        target = candidates[0]
+        print(f"Calculated next target slot: {target.strftime('%Y-%m-%d %H:%M:%S %Z')} (UNIX: {int(target.timestamp())})")
+        return int(target.timestamp())
+    return None
+
