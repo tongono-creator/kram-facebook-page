@@ -2,9 +2,9 @@ name: Kram Bot
 
 on:
   schedule:
-    - cron: "30 2 * * *"   # 09:30 BKK (target 10:00)
-    - cron: "30 7 * * *"   # 14:30 BKK (target 15:00)
-    - cron: "30 12 * * *"  # 19:30 BKK (target 20:00)
+    - cron: "0 3 * * *"   # 10:00 BKK
+    - cron: "0 8 * * *"   # 15:00 BKK
+    - cron: "0 13 * * *"  # 20:00 BKK
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,6 @@ jobs:
         env:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          IMMEDIATE:         ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
         run: python kram.py
 
       - name: Commit and push if history updated

@@ -379,45 +379,6 @@ def generate_image(hook):
 
 # ── Post to Facebook ────────────────────────────────────────────────────────
 def post_facebook(img_path, caption):
-    from affiliate_utils import get_next_scheduled_time, get_all_comments
-    
-    slots = ["11:00", "21:00"]
-    scheduled_time = get_next_scheduled_time(slots)
-    
-    if scheduled_time:
-        comments = get_all_comments()
-        comment_texts = []
-        for msg in comments:
-            if isinstance(msg, dict):
-                comment_texts.append(msg["message"])
-            else:
-                comment_texts.append(msg)
-        if comment_texts:
-            caption += "\n\n📌 ชี้เป้าของดีน่าสนใจ:\n" + "\n".join(comment_texts)
-            
-        print(f"Scheduling story to Facebook for timestamp {scheduled_time}...")
-        with open(img_path, "rb") as f:
-            resp = requests.post(
-                f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
-                data={
-                    "access_token": PAGE_ACCESS_TOKEN,
-                    "caption": caption,
-                    "published": "false",
-                    "unpublished_content_type": "SCHEDULED",
-                    "scheduled_publish_time": scheduled_time
-                },
-                files={"source": ("story.jpg", f, "image/jpeg")},
-                timeout=60,
-            )
-        result = resp.json()
-        if "id" in result:
-            photo_id = result.get("post_id") or result["id"]
-            print(f"Story Scheduled! Photo ID: {photo_id}")
-            return photo_id
-        else:
-            print(f"FB Error: {result}")
-            raise SystemExit(1)
-
     print("Posting story to Facebook...")
     with open(img_path, "rb") as f:
         resp = requests.post(
@@ -435,7 +396,6 @@ def post_facebook(img_path, caption):
     else:
         print(f"FB Error: {result}")
         raise SystemExit(1)
-
 
 def add_comment(post_id):
     try:
