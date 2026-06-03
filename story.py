@@ -379,22 +379,45 @@ def generate_image(hook):
 
 # ── Post to Facebook ────────────────────────────────────────────────────────
 def post_facebook(img_path, caption):
-    print("Posting story to Facebook...")
-    with open(img_path, "rb") as f:
-        resp = requests.post(
-            f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
-            data={"access_token": PAGE_ACCESS_TOKEN, "caption": caption, "published": "true"},
-            files={"source": ("story.jpg", f, "image/jpeg")},
+    print("Posting story to Facebook (using two-step publish)...")
+    try:
+        # Step 1: Upload photo as unpublished
+        with open(img_path, "rb") as f:
+            resp = requests.post(
+                f"https://graph.facebook.com/v25.0/{PAGE_ID}/photos",
+                data={"access_token": PAGE_ACCESS_TOKEN, "published": "false"},
+                files={"source": ("story.jpg", f, "image/jpeg")},
+                timeout=60,
+            )
+        upload_result = resp.json()
+        if "id" not in upload_result:
+            print(f"Photo upload failed: {upload_result}")
+            raise SystemExit(1)
+        
+        photo_id = upload_result["id"]
+        print(f"Photo uploaded successfully as unpublished! ID: {photo_id}")
+        
+        # Step 2: Publish to feed with long caption
+        resp2 = requests.post(
+            f"https://graph.facebook.com/v25.0/{PAGE_ID}/feed",
+            data={
+                "access_token": PAGE_ACCESS_TOKEN,
+                "message": caption,
+                "attached_media": json.dumps([{"media_fbid": photo_id}])
+            },
             timeout=60,
         )
-    result = resp.json()
-    if "id" in result:
-        post_id = result.get("post_id") or result["id"]
-        print(f"Posted! ID: {post_id}")
-        add_comment(post_id)
-        return post_id
-    else:
-        print(f"FB Error: {result}")
+        feed_result = resp2.json()
+        if "id" in feed_result:
+            post_id = feed_result["id"]
+            print(f"Posted to feed! ID: {post_id}")
+            add_comment(post_id)
+            return post_id
+        else:
+            print(f"Feed publishing failed: {feed_result}")
+            raise SystemExit(1)
+    except Exception as e:
+        print(f"Error posting to FB: {e}")
         raise SystemExit(1)
 
 def add_comment(post_id):
