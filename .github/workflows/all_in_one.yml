@@ -76,7 +76,17 @@ jobs:
           if ! git diff --cached --quiet; then
             echo "Staging and pushing review_products.xlsx changes..."
             git commit -m "chore: update review_products.xlsx posted status [skip ci]"
-            git pull --rebase
+                        # Stash other changes so pull-rebase succeeds
+            HAS_CHANGES=$(git status --porcelain | grep -v "review_products.xlsx" || true)
+            if [ -n "$HAS_CHANGES" ]; then
+              echo "Stashing unstaged changes before pull..."
+              git stash --include-untracked
+              git pull --rebase
+              echo "Restoring stashed changes..."
+              git stash pop || true
+            else
+              git pull --rebase
+            fi
             git push
           else
             echo "No changes in review_products.xlsx"
