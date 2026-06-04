@@ -73,13 +73,66 @@ def clean_promo(raw):
     kept = [l.strip() for l in lines if re.search(r'฿|ลด|%|ส่งฟรี|flash|sale', l, re.IGNORECASE)]
     return " | ".join(kept[:3]) if kept else ""
 
-def load_affiliate_product():
+def get_allowed_xlsx_files():
+    path = os.path.abspath(__file__).replace("\\", "/")
+    if "chowchow" in path:
+        return ["สัตว์เลี้ยง.xlsx"]
+    elif "somtam" in path:
+        return ["อาหารและเครื่องดื่ม.xlsx"]
+    elif "rocket" in path:
+        return ["เครื่องใช้ไฟฟ้าภายในบ้าน.xlsx"]
+    elif "x-bot" in path:
+        return ["สินค้าขายดี.xlsx"]
+    else:  # kram-facebook-page
+        return ["เครื่องใช้ในบ้าน.xlsx", "ค่าคอมพิเศษ.xlsx", "เสื้อผ้าแฟชั่นผู้หญิง.xlsx", "สินค้าสำหรับเม้นใต้คลิป.xlsx"]
+
+def get_posted_urls(ws):
+    urls = set()
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if len(row) < 4:
+            continue
+        shopee = row[2]
+        lazada = row[3]
+        if shopee and str(shopee).strip().startswith("http"):
+            urls.add(str(shopee).strip())
+        if lazada and str(lazada).strip().startswith("http"):
+            urls.add(str(lazada).strip())
+    return urls
+
+def append_posted_fallback(wb, ws, product):
+    bkk = timezone(timedelta(hours=7))
+    ts = datetime.now(bkk).strftime("%Y-%m-%d %H:%M")
+    row_num = ws.max_row + 1
+    
+    ws.cell(row=row_num, column=1, value=product["no"])
+    ws.cell(row=row_num, column=2, value=product["detail"])
+    ws.cell(row=row_num, column=3, value=product["shopee"])
+    ws.cell(row=row_num, column=4, value=product["lazada"])
+    ws.cell(row=row_num, column=5, value=product["image_url"])
+    ws.cell(row=row_num, column=6, value=product["promo"])
+    ws.cell(row=row_num, column=7, value=f"done {ts}")
+    
+    wb.save(EXCEL_PATH)
+    print(f"Appended fallback product to review_products.xlsx at row {row_num}")
+
+def load_affiliate_product(posted_urls):
     """Fallback: สุ่มสินค้าจาก AFFILIATE_DIR เมื่อ review_products.xlsx หมด"""
     import glob
-    xlsx_files = glob.glob(os.path.join(AFFILIATE_DIR, "*.xlsx"))
+    allowed_names = get_allowed_xlsx_files()
+    xlsx_files = []
+    for name in allowed_names:
+        p = os.path.join(AFFILIATE_DIR, name)
+        if os.path.exists(p):
+            xlsx_files.append(p)
+            
+    # Fallback to any xlsx files if no mapped files exist
+    if not xlsx_files:
+        xlsx_files = glob.glob(os.path.join(AFFILIATE_DIR, "*.xlsx"))
+        
     if not xlsx_files:
         print(f"[affiliate] No xlsx files found in {AFFILIATE_DIR}")
         return None
+        
     random.shuffle(xlsx_files)
     for xlsx_path in xlsx_files:
         try:
@@ -96,11 +149,19 @@ def load_affiliate_product():
                 lazada = row[10] if len(row) > 10 else None
                 if not shopee or not name:
                     continue
+                
+                shopee_val = str(shopee).strip()
+                lazada_val = str(lazada).strip() if lazada else ""
+                
+                # Check against posted URLs
+                if shopee_val in posted_urls or (lazada_val and lazada_val in posted_urls):
+                    continue
+                    
                 candidates.append({
                     "no": row[0],
                     "detail": f"{name} ราคา {price} บาท",
-                    "shopee": str(shopee).strip(),
-                    "lazada": str(lazada).strip() if lazada else "",
+                    "shopee": shopee_val,
+                    "lazada": lazada_val,
                     "image_url": str(imgurl).strip() if imgurl else "",
                     "promo": "",
                     "row": None,
@@ -114,6 +175,7 @@ def load_affiliate_product():
             print(f"[affiliate] Failed to read {xlsx_path}: {e}")
     print("[affiliate] No valid product found in any xlsx file")
     return None
+
 
 def extract_highlights(detail, promo):
     """ให้ AI สกัดจุดเด่นจาก raw detail"""
@@ -331,11 +393,13 @@ if __name__ == "__main__":
     affiliate_mode = False
     if not product:
         print("review_products.xlsx หมดแล้ว — ลอง fallback จาก AFFILIATE_DIR")
-        product = load_affiliate_product()
+        posted_urls = get_posted_urls(ws)
+        product = load_affiliate_product(posted_urls)
         affiliate_mode = True
         if not product:
             print("ไม่มีสินค้าที่ต้องโพส (ครบแล้วหรือยังไม่ได้เพิ่ม)")
             raise SystemExit(0)
+
 
     print(f"Product #{product['no']}: {product['detail'][:60]}...")
 
@@ -374,3 +438,6 @@ if __name__ == "__main__":
             post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean)
         if not affiliate_mode:
             mark_posted(wb, ws, product["row"])
+        else:
+            append_posted_fallback(wb, ws, product)
+
