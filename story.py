@@ -171,9 +171,10 @@ def is_hook_clear(hook):
 
 def translate_story(subreddit, title, body):
     """
-    คืน (hook, caption)
+    คืน (hook, caption, x_thread)
     hook = พาดหัวบนรูป — 1-3 บรรทัด คั่นด้วย \n
     caption = เล่าเรื่องภาษาไทย 5 ชั้น สำหรับ Facebook caption
+    x_thread = ข้อความโพสต์ใน X 2 ทวีต
     """
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
     prompt = (
@@ -186,7 +187,11 @@ def translate_story(subreddit, title, body):
         '{\n'
         '  "core_issue": "สรุปประเด็นหลักของเรื่องเป็นประโยคภาษาไทยธรรมดาและสมบูรณ์ 1 ประโยค (ระบุชัดเจนว่า ใคร ทำอะไร กับใคร/ปัญหาคืออะไร เช่น \'บริษัทบอกว่าไม่บังคับ แต่กดดันให้ผู้สมัครสัมภาษณ์งานกับ AI ก่อนเจอ HR\')",\n'
         '  "hook": "พาดหัวสั้นๆ กระชับบนรูปภาพ คั่นบรรทัดด้วย \\\\n (ย่อ/สรุปจาก core_issue โดยอ่านแล้วต้องรู้ทันทีว่า ใคร ทำอะไร ปัญหาคืออะไร และห้ามใช้วลีที่ไม่ครบความหมาย ห้ามใช้ประโยคไม่มีประธาน และห้ามใช้คำว่า \'ที่บอก...\' เด็ดขาด)",\n'
-        '  "caption": "caption 5 ชั้น เล่าเป็นภาษาพูดธรรมชาติที่ลื่นไหล"\n'
+        '  "caption": "caption 5 ชั้น เล่าเป็นภาษาพูดธรรมชาติที่ลื่นไหล",\n'
+        '  "x_thread": [\n'
+        '    "ข้อความโพสต์ที่ 1 ของ thread ใน X (สรุปเนื้อเรื่องส่วนที่ 1/คำถามชวนคิดเพื่อดึงดูดความสนใจ, ยาวไม่เกิน 250 ตัวอักษร, จบด้วย \'1/2\')",\n'
+        '    "ข้อความโพสต์ที่ 2 ของ thread ใน X (สรุปคำเฉลย/จุดพีค/การชวนตัดสินคดี, ยาวไม่เกิน 250 ตัวอักษร, จบด้วย \'2/2\')"\n'
+        '  ]\n'
         '}\n\n'
 
         "=== วิธีสร้าง core_issue และ hook (ทำตามลำดับ) ===\n"
@@ -204,6 +209,13 @@ def translate_story(subreddit, title, body):
         "  ✅ 'หัวหน้าสั่งให้ผม\\nทำงานเสาร์อาทิตย์ฟรี\\nผมควรปฏิเสธไหมครับ?'\n"
         "  ✅ 'เมียขอยืมเงินแสนแรก\\nที่ผมเก็บมาทั้งชีวิต\\nควรให้ยืมดีไหมครับ?'\n\n"
 
+        "=== กฎการสร้าง x_thread ===\n"
+        "1. x_thread ต้องประกอบด้วยข้อความ 2 ข้อความ (โพสต์ที่ 1 และ 2) เพื่อนำไปโพสต์ต่อกันเป็น Thread บน X (Twitter)\n"
+        "2. โพสต์ที่ 1: ตั้งคำถามชวนคิดหรือเล่าเรื่องเกริ่นตอนต้นให้ชวนติดตาม โดยให้มีอารมณ์ดราม่าและชวนตัดสินเหมือน Facebook caption และแนบภาพเสมอ จบท้ายด้วย '1/2'\n"
+        "3. โพสต์ที่ 2: เล่าจุดจบหรือสรุปผลและยิงคำถามชวนแสดงความคิดเห็นแบบเดียวกับ Facebook caption และจบท้ายด้วย '2/2'\n"
+        "4. ทั้งสองโพสต์ต้องจำกัดความยาวไม่เกิน 250 ตัวอักษรภาษาไทยต่อโพสต์ (เพื่อไม่ให้เกินขีดจำกัด 280 ตัวอักษรของ X)\n"
+        "5. เขียนด้วยภาษาพูดสบายๆ โทนจริงจังและน่าสนใจ (ใช้หางเสียงครับ/ผม/พี่ เหมือนเดิม)\n\n"
+
         "=== caption 5 ชั้น (เขียนต่อเนื่องเป็นความเรียงปกติ ห้ามใส่หัวข้อ ห้ามใส่หมายเลข ห้ามมี bullet points เด็ดขาด) ===\n"
         "ชั้น 1 — HOOK: ประโยคแรกเปิดมาเพื่อเรียกหาการตัดสินคดี/ดราม่าความขัดแย้งของเรื่องทันที (หลีกเลี่ยงประโยคซ้ำซ้อนไม่เป็นธรรมชาติ ให้เขียนเป็นภาษาพูดปกติ เช่น 'มีเรื่องอยากให้พี่ๆ ช่วยตัดสินหน่อยครับ...' หรือ 'เดี๋ยวนี้บางบริษัทเริ่มให้ผู้สมัครตอบคำถามกับระบบ AI ก่อนเจอคนจริง บางที่บอกว่าไม่บังคับ แต่คนสมัครก็อดคิดไม่ได้ว่า ถ้าไม่ทำจะเสียเปรียบไหม')\n"
         "ชั้น 2 — EXPAND: ขยายบริบทสั้นๆ ยั่วให้อยากรู้เนื้อเรื่อง\n"
@@ -212,7 +224,7 @@ def translate_story(subreddit, title, body):
         "ชั้น 5 — JUDGMENT CALL: สรุปแล้วปิดกระแทกด้วยคำถามชวนตัดสินคดีตรงๆ ชวนแชร์ความคิดเห็นหรือบอกทีมฝั่งไหน (เช่น 'พี่ๆ ว่างานนี้ผมผิดไหมครับ?', 'ถ้าเป็นพี่ๆ จะยอมสัมภาษณ์กับ AI ไหมครับ หรือมองว่าการรับคนควรมีมนุษย์คุยกับมนุษย์ก่อน?')"
     )
     raw = gemini_text(prompt)
-    hook, caption, core_issue = "", "", ""
+    hook, caption, core_issue, x_thread = "", "", "", []
     if raw:
         clean_raw = raw.strip()
         if clean_raw.startswith("```"):
@@ -227,6 +239,7 @@ def translate_story(subreddit, title, body):
                 hook       = data.get("hook", "").replace("\\n", "\n")
                 caption    = data.get("caption", "")
                 core_issue = data.get("core_issue", "")
+                x_thread   = data.get("x_thread", [])
             except Exception as e:
                 print(f"JSON parse error: {e}")
 
@@ -292,7 +305,19 @@ def translate_story(subreddit, title, body):
         hook = chosen["hook"]
         caption = chosen["caption"]
 
-    return hook, caption
+    # Ensure x_thread is populated
+    if not x_thread or len(x_thread) < 2:
+        # Split the caption into two parts for thread
+        lines = [l.strip() for l in caption.split("\n") if l.strip()]
+        half = len(lines) // 2
+        p1 = " ".join(lines[:half])[:250] + " 1/2"
+        p2 = " ".join(lines[half:])[:250] + " 2/2"
+        x_thread = [p1, p2]
+
+    # Clean thread elements just to be safe
+    x_thread = [t.strip() for t in x_thread]
+
+    return hook, caption, x_thread
 
 # ── Thai text wrap (leading vowel safe) ──────────────────────────────────────
 _LEADING_VOWELS  = set("เแโใไ")
@@ -466,6 +491,69 @@ def generate_image(hook):
     print(f"Story image saved: {path}")
     return path
 
+# ── Post to X (Twitter) ──────────────────────────────────────────────────────
+def post_to_x_thread(tweets, image_path=None):
+    """
+    โพสต์ thread ลง X โดยใช้ tweepy
+    tweets: list ของข้อความ (เช่น ['ข้อความ 1/2', 'ข้อความ 2/2'])
+    image_path: พาธรูปภาพประกอบ (จะแนบที่ทวีตแรก)
+    """
+    X_CONSUMER_KEY = os.environ.get("X_CONSUMER_KEY", "")
+    X_CONSUMER_SECRET = os.environ.get("X_CONSUMER_SECRET", "")
+    X_ACCESS_TOKEN = os.environ.get("X_ACCESS_TOKEN", "")
+    X_ACCESS_TOKEN_SECRET = os.environ.get("X_ACCESS_TOKEN_SECRET", "")
+
+    if not X_CONSUMER_KEY or not X_CONSUMER_SECRET or not X_ACCESS_TOKEN or not X_ACCESS_TOKEN_SECRET:
+        print("[WARNING] X credentials not configured. Skipping post to X.")
+        return None
+
+    print("Posting story thread to X...")
+    try:
+        import tweepy
+        auth = tweepy.OAuth1UserHandler(X_CONSUMER_KEY, X_CONSUMER_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET)
+        api = tweepy.API(auth)
+        x_client = tweepy.Client(
+            consumer_key=X_CONSUMER_KEY,
+            consumer_secret=X_CONSUMER_SECRET,
+            access_token=X_ACCESS_TOKEN,
+            access_token_secret=X_ACCESS_TOKEN_SECRET
+        )
+
+        media_id = None
+        if image_path and os.path.exists(image_path):
+            try:
+                media = api.media_upload(image_path)
+                media_id = media.media_id
+                print(f"X media uploaded successfully! ID: {media_id}")
+            except Exception as ue:
+                print(f"X media upload failed: {ue}")
+
+        # Post first tweet (with image if available)
+        first_tweet_text = tweets[0]
+        if media_id:
+            res1 = x_client.create_tweet(text=first_tweet_text, media_ids=[media_id])
+        else:
+            res1 = x_client.create_tweet(text=first_tweet_text)
+
+        if not res1 or not res1.data:
+            print("Failed to post first tweet of thread.")
+            return None
+
+        first_id = res1.data["id"]
+        print(f"First tweet posted! ID: {first_id}")
+
+        # Post second tweet in reply to the first
+        if len(tweets) > 1:
+            second_tweet_text = tweets[1]
+            res2 = x_client.create_tweet(text=second_tweet_text, in_reply_to_tweet_id=first_id)
+            if res2 and res2.data:
+                print(f"Second tweet posted! ID: {res2.data['id']}")
+
+        return first_id
+    except Exception as e:
+        print(f"Error posting to X thread: {e}")
+        return None
+
 # ── Post to Facebook ────────────────────────────────────────────────────────
 def post_facebook(img_path, caption):
     print("Posting story to Facebook (using two-step publish)...")
@@ -559,10 +647,12 @@ if __name__ == "__main__":
         print("No suitable story found after 5 attempts")
         raise SystemExit(1)
 
-    hook, caption = translate_story(post["subreddit"], post["title"], post["body"])
+    hook, caption, x_thread = translate_story(post["subreddit"], post["title"], post["body"])
 
     print(f"\nHook:\n{hook}")
     print(f"\nCaption preview:\n{caption[:300]}\n")
+    if x_thread:
+        print(f"X Thread Preview:\n- Tweet 1: {x_thread[0]}\n- Tweet 2: {x_thread[1] if len(x_thread) > 1 else ''}\n")
 
     if not hook:
         print("Translation failed — no hook generated")
@@ -578,6 +668,7 @@ if __name__ == "__main__":
         + f"\n\n#เรื่องจริง #ดราม่า #ชีวิตจริงยิ่งกว่าละคร"
     )
     post_facebook(img, caption_full)
+    post_to_x_thread(x_thread, img)
     save_to_history(post["permalink"])
     save_to_history(reddit_title_key(post["title"]))
 

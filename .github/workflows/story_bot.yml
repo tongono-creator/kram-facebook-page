@@ -19,11 +19,15 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install google-genai requests openpyxl Pillow
+        run: pip install google-genai requests openpyxl Pillow tweepy
       - name: Run story bot
         env:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
+          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: python story.py
       - name: Save story history
         run: |
