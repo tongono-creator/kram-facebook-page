@@ -94,8 +94,12 @@ def _load_excel():
 
                             if name and shopee:
                                 shopee_str = str(shopee).strip()
+                                if not shopee_str.startswith("http"):
+                                    shopee_str = ""
                                 if shopee_str and "xxx" not in shopee_str:
                                     lazada_str = str(lazada).strip() if lazada else ""
+                                    if not lazada_str.startswith("http"):
+                                        lazada_str = ""
                                     if price:
                                         p_str = str(price).strip()
                                         if p_str.endswith(".00"):
