@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """review.py — generate รูปรีวิวสินค้าจาก review_products.xlsx แล้วโพส FB"""
 
-import sys, io, os, base64, requests, time, random, re, json
+import sys, io, os, base64, requests, time, random, re
 from datetime import datetime, timezone, timedelta
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 from google import genai
-from google.genai import types
 import openpyxl
 from overlay_utils import add_overlay
 
@@ -384,194 +383,6 @@ def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None):
         print(f"FB Error: {result}")
         raise SystemExit(1)
 
-def get_product_metadata(name, detail):
-    prompt = (
-        f"วิเคราะห์สินค้าสำหรับทำการตลาด:\n"
-        f"ชื่อสินค้า: {name}\n"
-        f"รายละเอียด: {detail}\n\n"
-        "เราจะสร้างภาพโฆษณารีวิวสินค้าสไตล์อินโฟกราฟิกเด่น (Infographic ad card) ขนาด 1080x1080 พิกเซล\n"
-        "หน้าที่ของคุณคือ สรุปจุดเด่นของสินค้าและวางแผนคำพาดหัว คุณลักษณะเด่น และการชี้จุดขายบนรูป\n"
-        "ตอบกลับในรูปแบบ JSON เท่านั้น ห้ามเขียนคำนำ ห้ามเขียนสรุป ห้ามใส่ markdown block (เช่น ```json) ตอบเฉพาะ JSON ดิบตามโครงสร้างนี้:\n"
-        "{\n"
-        "  \"imagen_prompt\": \"Detailed English prompt for Imagen 4.0. Describe the product accurately and place it center-focused on a clean, professional, premium lifestyle background (e.g. minimalist room, home desk). ABSOLUTELY NO text, watermarks, or overlays inside the image.\",\n"
-        "  \"headline_line1\": \"พาดหัวแถว 1 ชวนดึงดูด (ไม่เกิน 5-6 คำภาษาไทย, เช่น 'พัดลมไร้สายพกพา!')\",\n"
-        "  \"headline_line2\": \"พาดหัวแถว 2 ขยายจุดเด่นหลัก (ไม่เกิน 5-6 คำภาษาไทย, เช่น 'เย็นนาน 24 ชั่วโมง พกพาสะดวก')\",\n"
-        "  \"features\": [\n"
-        "    {\n"
-        "      \"icon\": \"Emoji สัญลักษณ์ เช่น 🔋 หรือ 💡 หรือ 🌀 ที่ตรงกับฟีเจอร์\",\n"
-        "      \"text_line1\": \"ฟีเจอร์สั้นแถว 1 (2-3 คำ)\",\n"
-        "      \"text_line2\": \"ฟีเจอร์สั้นแถว 2 (2-3 คำ)\"\n"
-        "    },\n"
-        "    ... (ต้องมีครบ 3 ฟีเจอร์พอดี)\n"
-        "  ],\n"
-        "  \"callouts\": [\n"
-        "    {\n"
-        "      \"text\": \"คำชี้จุดเด่นสั้นมาก (1-3 คำ เช่น 'ปรับหมุนได้ 90°')\",\n"
-        "      \"x\": 180,       # พิกัด X ของตัวกล่องข้อความชี้เป้า (ช่วง 100 - 300 หรือ 780 - 980)\n"
-        "      \"y\": 450,       # พิกัด Y ของตัวกล่องข้อความชี้เป้า (ช่วง 300 - 750)\n"
-        "      \"point_x\": 450, # พิกัด X ที่ต้องการให้เส้นชี้ไปหาจุดเด่นบนตัวสินค้า (ช่วง 400 - 680)\n"
-        "      \"point_y\": 500  # พิกัด Y ที่ต้องการให้เส้นชี้ไปหาจุดเด่นบนตัวสินค้า (ช่วง 400 - 680)\n"
-        "    },\n"
-        "    ... (มี 2-3 จุดที่ชี้ไปยังตัวสินค้า)\n"
-        "  ]\n"
-        "}"
-    )
-    
-    last_err = None
-    for model in TEXT_MODELS:
-        try:
-            resp = client.models.generate_content(
-                model=model,
-                contents=prompt
-            )
-            raw = resp.text.strip()
-            if raw.startswith("```"):
-                raw = re.sub(r"^```(?:json)?\n", "", raw)
-                raw = re.sub(r"\n```$", "", raw)
-                raw = raw.strip()
-            return json.loads(raw)
-        except Exception as e:
-            last_err = e
-    raise last_err
-
-def generate_base_image(prompt):
-    print("Calling Imagen to generate base product photo...")
-    response = client.models.generate_images(
-        model='imagen-4.0-fast-generate-001',
-        prompt=prompt,
-        config=types.GenerateImagesConfig(
-            number_of_images=1,
-            aspect_ratio="1:1",
-            output_mime_type="image/jpeg"
-        )
-    )
-    image_bytes = response.generated_images[0].image.image_bytes
-    from PIL import Image
-    return Image.open(io.BytesIO(image_bytes))
-
-def draw_infographic(img, meta):
-    from PIL import ImageDraw, ImageFont
-    W, H = img.size
-    draw = ImageDraw.Draw(img)
-    
-    font_path = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
-    
-    font_hl = ImageFont.truetype(font_path, 34)
-    font_feat_title = ImageFont.truetype(font_path, 21)
-    font_callout = ImageFont.truetype(font_path, 19)
-    font_num = ImageFont.truetype(font_path, 16)
-        
-    # ── 1. Draw Headline at the Top ──────────────────────────────────────────
-    text_hl = f"{meta['headline_line1']}\n{meta['headline_line2']}"
-    hl_bbox = draw.textbbox((0, 0), text_hl, font=font_hl, align="center")
-    hl_w = hl_bbox[2] - hl_bbox[0]
-    hl_h = hl_bbox[3] - hl_bbox[1]
-    
-    rect_padding_x = 40
-    rect_padding_y = 20
-    rect_w = hl_w + rect_padding_x * 2
-    rect_h = hl_h + rect_padding_y * 2
-    rect_x1 = (W - rect_w) // 2
-    rect_y1 = 40
-    rect_x2 = rect_x1 + rect_w
-    rect_y2 = rect_y1 + rect_h
-    
-    # Draw shadow
-    draw.rounded_rectangle([rect_x1 + 5, rect_y1 + 5, rect_x2 + 5, rect_y2 + 5], radius=30, fill=(0, 0, 0, 60))
-    # Draw bubble outline
-    draw.rounded_rectangle([rect_x1 - 2, rect_y1 - 2, rect_x2 + 2, rect_y2 + 2], radius=30, fill=(0, 0, 0))
-    # Draw bubble body
-    draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=30, fill=(255, 255, 255))
-    
-    # Draw text
-    center_x = (rect_x1 + rect_x2) // 2
-    hl_left = center_x - hl_w // 2
-    hl_top = rect_y1 + rect_padding_y
-    draw.text((hl_left, hl_top), text_hl, font=font_hl, fill=(0, 0, 0), align="center")
-    
-    # ── 2. Draw 3 Feature Boxes at the Bottom ─────────────────────────────────
-    PAD_X = 50
-    GAP = 30
-    box_w = (W - PAD_X * 2 - GAP * 2) // 3
-    box_h = 160
-    box_y1 = H - box_h - 40
-    box_y2 = box_y1 + box_h
-    
-    for idx, feat in enumerate(meta['features']):
-        bx1 = PAD_X + idx * (box_w + GAP)
-        bx2 = bx1 + box_w
-        
-        # Shadow
-        draw.rounded_rectangle([bx1 + 4, box_y1 + 4, bx2 + 4, box_y2 + 4], radius=20, fill=(0, 0, 0, 60))
-        # Border
-        draw.rounded_rectangle([bx1 - 2, box_y1 - 2, bx2 + 2, box_y2 + 2], radius=20, fill=(0, 0, 0))
-        # White background
-        draw.rounded_rectangle([bx1, box_y1, bx2, box_y2], radius=20, fill=(255, 255, 255))
-        
-        # Draw Premium Numbered Badge instead of Emoji
-        circle_r = 16
-        cx = bx1 + box_w // 2
-        cy = box_y1 + 35
-        draw.ellipse([cx - circle_r, cy - circle_r, cx + circle_r, cy + circle_r], fill=ACCENT_COLOR)
-        num_str = f"0{idx+1}"
-        draw.text((cx, cy), num_str, font=font_num, fill=(255, 255, 255), anchor="mm")
-            
-        # Draw Text below badge
-        text_f = f"{feat['text_line1']}\n{feat['text_line2']}"
-        f_bbox = draw.textbbox((0, 0), text_f, font=font_feat_title, align="center")
-        f_w = f_bbox[2] - f_bbox[0]
-        
-        feat_center_x = bx1 + box_w // 2
-        feat_left = feat_center_x - f_w // 2
-        feat_top = box_y1 + 75
-        draw.text((feat_left, feat_top), text_f, font=font_feat_title, fill=(0, 0, 0), align="center")
-        
-    # ── 3. Draw Callouts with Pointer Lines ───────────────────────────────────
-    for callout in meta['callouts']:
-        text = callout['text']
-        cx = callout['x']
-        cy = callout['y']
-        px = callout['point_x']
-        py = callout['point_y']
-        
-        c_bbox = draw.textbbox((0, 0), text, font=font_callout)
-        c_w = c_bbox[2] - c_bbox[0]
-        c_h = c_bbox[3] - c_bbox[1]
-        
-        pad_x = 25
-        pad_y = 12
-        bx1 = cx - c_w // 2 - pad_x
-        by1 = cy - c_h // 2 - pad_y
-        bx2 = cx + c_w // 2 + pad_x
-        by2 = cy + c_h // 2 + pad_y
-        
-        if px < cx:
-            line_start_x = bx1
-        else:
-            line_start_x = bx2
-        line_start_y = cy
-        
-        # Draw shadow line
-        draw.line([(line_start_x + 2, line_start_y + 2), (px + 2, py + 2)], fill=(0, 0, 0, 60), width=3)
-        # Draw outline line
-        draw.line([(line_start_x, line_start_y), (px, py)], fill=(0, 0, 0), width=4)
-        draw.line([(line_start_x, line_start_y), (px, py)], fill=(255, 255, 255), width=2)
-        
-        # Draw small circle at the end of the line
-        R = 5
-        draw.ellipse([px - R - 1, py - R - 1, px + R + 1, py + R + 1], fill=(0, 0, 0))
-        draw.ellipse([px - R, py - R, px + R, py + R], fill=(255, 255, 255))
-        
-        # Draw box shadow
-        draw.rounded_rectangle([bx1 + 3, by1 + 3, bx2 + 3, by2 + 3], radius=15, fill=(0, 0, 0, 60))
-        # Draw box outline
-        draw.rounded_rectangle([bx1 - 2, by1 - 2, bx2 + 2, by2 + 2], radius=15, fill=(0, 0, 0))
-        # Draw box body
-        draw.rounded_rectangle([bx1, by1, bx2, by2], radius=15, fill=(255, 255, 255))
-        
-        # Draw text inside box
-        draw.text((cx, cy - c_bbox[1] - c_h // 2), text, font=font_callout, fill=(0, 0, 0), anchor="mm")
-
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -596,39 +407,19 @@ if __name__ == "__main__":
     highlights  = extract_highlights(product["detail"], promo_clean)
     print(f"Highlights:\n{highlights}\n")
 
-    review_img = None
+    line1, line2 = generate_hook(product["detail"], highlights)
+    print(f"Hook generated: {line1} | {line2}")
+
+    product_img = download_image(product["image_url"])
     
-    # Try generating infographic via Imagen 4.0 and Pillow drawing
+    # PIL Overlay
     try:
-        print("Extracting metadata for infographic...")
-        meta = get_product_metadata(product["detail"], product["detail"])
-        print(f"Metadata extracted: {json.dumps(meta, ensure_ascii=False)}")
-        
-        print("Generating lifestyle image...")
-        base_img = generate_base_image(meta["imagen_prompt"])
-        
-        print("Drawing infographic overlays...")
-        draw_infographic(base_img, meta)
-        
-        bkk = timezone(timedelta(hours=7))
-        ts = datetime.now(bkk).strftime("%Y%m%d_%H%M%S")
-        review_img = os.path.join(OUTPUT_DIR, f"review_{ts}.jpg")
-        base_img.save(review_img, "JPEG", quality=95)
-        print(f"Infographic image saved successfully: {review_img}")
-    except Exception as infographic_err:
-        print(f"[Warning] Infographic generation failed: {infographic_err}. Falling back to original image + overlay flow.")
-        # Fallback to original flow
-        try:
-            line1, line2 = generate_hook(product["detail"], highlights)
-            print(f"Hook generated: {line1} | {line2}")
-            product_img = download_image(product["image_url"])
-            review_img = add_overlay(product_img, line1, line2, ACCENT_COLOR, font_name="Itim-Regular.ttf")
-            if os.path.exists(product_img):
-                os.unlink(product_img)
-            print(f"Fallback review image overlaid: {review_img}")
-        except Exception as fallback_err:
-            print(f"[Error] Fallback flow also failed: {fallback_err}")
-            raise SystemExit(1)
+        review_img = add_overlay(product_img, line1, line2, ACCENT_COLOR, font_name="Itim-Regular.ttf")
+        os.unlink(product_img)
+        print(f"Review image overlaid: {review_img}")
+    except Exception as overlay_err:
+        print(f"Overlay failed, using original image: {overlay_err}")
+        review_img = product_img
 
     caption = generate_caption(
         product["detail"], product["shopee"],
