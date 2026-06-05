@@ -454,17 +454,12 @@ def draw_infographic(img, meta):
     W, H = img.size
     draw = ImageDraw.Draw(img)
     
-    font_path = os.path.join(os.path.dirname(__file__), "fonts", "Itim-Regular.ttf")
-    emoji_font_path = r"C:\Windows\Fonts\seguiemj.ttf"
+    font_path = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
     
-    font_hl = ImageFont.truetype(font_path, 42)
-    font_feat_title = ImageFont.truetype(font_path, 24)
-    font_callout = ImageFont.truetype(font_path, 22)
-    
-    if os.path.exists(emoji_font_path):
-        font_emoji = ImageFont.truetype(emoji_font_path, 36)
-    else:
-        font_emoji = font_feat_title
+    font_hl = ImageFont.truetype(font_path, 34)
+    font_feat_title = ImageFont.truetype(font_path, 21)
+    font_callout = ImageFont.truetype(font_path, 19)
+    font_num = ImageFont.truetype(font_path, 16)
         
     # ── 1. Draw Headline at the Top ──────────────────────────────────────────
     text_hl = f"{meta['headline_line1']}\n{meta['headline_line2']}"
@@ -482,9 +477,9 @@ def draw_infographic(img, meta):
     rect_y2 = rect_y1 + rect_h
     
     # Draw shadow
-    draw.rounded_rectangle([rect_x1 + 6, rect_y1 + 6, rect_x2 + 6, rect_y2 + 6], radius=30, fill=(0, 0, 0, 80))
+    draw.rounded_rectangle([rect_x1 + 5, rect_y1 + 5, rect_x2 + 5, rect_y2 + 5], radius=30, fill=(0, 0, 0, 60))
     # Draw bubble outline
-    draw.rounded_rectangle([rect_x1 - 3, rect_y1 - 3, rect_x2 + 3, rect_y2 + 3], radius=30, fill=(0, 0, 0))
+    draw.rounded_rectangle([rect_x1 - 2, rect_y1 - 2, rect_x2 + 2, rect_y2 + 2], radius=30, fill=(0, 0, 0))
     # Draw bubble body
     draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=30, fill=(255, 255, 255))
     
@@ -507,21 +502,21 @@ def draw_infographic(img, meta):
         bx2 = bx1 + box_w
         
         # Shadow
-        draw.rounded_rectangle([bx1 + 4, box_y1 + 4, bx2 + 4, box_y2 + 4], radius=20, fill=(0, 0, 0, 80))
+        draw.rounded_rectangle([bx1 + 4, box_y1 + 4, bx2 + 4, box_y2 + 4], radius=20, fill=(0, 0, 0, 60))
         # Border
-        draw.rounded_rectangle([bx1 - 3, box_y1 - 3, bx2 + 3, box_y2 + 3], radius=20, fill=(0, 0, 0))
+        draw.rounded_rectangle([bx1 - 2, box_y1 - 2, bx2 + 2, box_y2 + 2], radius=20, fill=(0, 0, 0))
         # White background
         draw.rounded_rectangle([bx1, box_y1, bx2, box_y2], radius=20, fill=(255, 255, 255))
         
-        # Draw Emoji Icon
-        emoji = feat['icon']
-        emoji_w = 40
-        if os.path.exists(emoji_font_path):
-            draw.text((bx1 + (box_w - emoji_w) // 2, box_y1 + 15), emoji, font=font_emoji, fill=(0,0,0), embedded_color=True)
-        else:
-            draw.text((bx1 + (box_w - emoji_w) // 2, box_y1 + 15), emoji, font=font_emoji, fill=(0,0,0))
+        # Draw Premium Numbered Badge instead of Emoji
+        circle_r = 16
+        cx = bx1 + box_w // 2
+        cy = box_y1 + 35
+        draw.ellipse([cx - circle_r, cy - circle_r, cx + circle_r, cy + circle_r], fill=ACCENT_COLOR)
+        num_str = f"0{idx+1}"
+        draw.text((cx, cy), num_str, font=font_num, fill=(255, 255, 255), anchor="mm")
             
-        # Draw Text below emoji
+        # Draw Text below badge
         text_f = f"{feat['text_line1']}\n{feat['text_line2']}"
         f_bbox = draw.textbbox((0, 0), text_f, font=font_feat_title, align="center")
         f_w = f_bbox[2] - f_bbox[0]
@@ -557,18 +552,18 @@ def draw_infographic(img, meta):
         line_start_y = cy
         
         # Draw shadow line
-        draw.line([(line_start_x + 2, line_start_y + 2), (px + 2, py + 2)], fill=(0, 0, 0, 80), width=4)
+        draw.line([(line_start_x + 2, line_start_y + 2), (px + 2, py + 2)], fill=(0, 0, 0, 60), width=3)
         # Draw outline line
-        draw.line([(line_start_x, line_start_y), (px, py)], fill=(0, 0, 0), width=6)
-        draw.line([(line_start_x, line_start_y), (px, py)], fill=(255, 255, 255), width=3)
+        draw.line([(line_start_x, line_start_y), (px, py)], fill=(0, 0, 0), width=4)
+        draw.line([(line_start_x, line_start_y), (px, py)], fill=(255, 255, 255), width=2)
         
         # Draw small circle at the end of the line
-        R = 6
+        R = 5
         draw.ellipse([px - R - 1, py - R - 1, px + R + 1, py + R + 1], fill=(0, 0, 0))
         draw.ellipse([px - R, py - R, px + R, py + R], fill=(255, 255, 255))
         
         # Draw box shadow
-        draw.rounded_rectangle([bx1 + 4, by1 + 4, bx2 + 4, by2 + 4], radius=15, fill=(0, 0, 0, 80))
+        draw.rounded_rectangle([bx1 + 3, by1 + 3, bx2 + 3, by2 + 3], radius=15, fill=(0, 0, 0, 60))
         # Draw box outline
         draw.rounded_rectangle([bx1 - 2, by1 - 2, bx2 + 2, by2 + 2], radius=15, fill=(0, 0, 0))
         # Draw box body
