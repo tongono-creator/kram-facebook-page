@@ -358,12 +358,16 @@ def clean_hook_lines(raw_text):
     else:
         parts = text.split("\n")
         
-    # Pattern to strip prefixes like "บรรทัด 1: ", "ข้อความในโพสต์ Facebook: ", "1. ", etc.
-    label_pattern = r'^(ข้อความในโพสต์\s*Facebook|Facebook\s*Caption|Facebook\s*caption|Caption|caption|ข้อความบนรูป|ข้อความในรูป|ข้อความ|คำบรรยาย|คำอธิบาย|บรรทัดที่\s*\d+|บรรทัด\s*\d+|ประโยคที่\s*\d+|ประโยค\s*\d+|Hook\s*text|Hook|Line\s*\d+|[L|l]ine\s*\d+|\d+)\s*[:\-\.\s]\s*'
+    # Pattern to strip text prefixes like "บรรทัด 1: ", "ข้อความในโพสต์ Facebook: ", "Line 1: ", etc.
+    text_label_pattern = r'^(ข้อความในโพสต์\s*Facebook|Facebook\s*Caption|Facebook\s*caption|Caption|caption|ข้อความบนรูป|ข้อความในรูป|ข้อความ|คำบรรยาย|คำอธิบาย|บรรทัดที่\s*\d+|บรรทัด\s*\d+|ประโยคที่\s*\d+|ประโยค\s*\d+|Hook\s*text|Hook|Line\s*\d+|[L|l]ine\s*\d+)\s*[:\-\.\s]\s*'
+    
+    # Pattern to strip digit list prefixes (e.g. "1. ", "1 - ", etc.), requiring a non-digit delimiter and not matching decimals
+    digit_label_pattern = r'^\d+\s*[:\-\.]\s*(?!\d)'
     
     cleaned_lines = []
     for part in parts:
-        cleaned = re.sub(label_pattern, '', part, flags=re.IGNORECASE).strip()
+        cleaned = re.sub(text_label_pattern, '', part, flags=re.IGNORECASE).strip()
+        cleaned = re.sub(digit_label_pattern, '', cleaned).strip()
         cleaned = cleaned.strip('"\'“”‘’')
         if cleaned:
             cleaned_lines.append(cleaned)

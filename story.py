@@ -385,28 +385,6 @@ def wrap_text(draw, text, font, max_width):
         lines = [text] if getattr(font, "size", 99) > 75 else _wrap_char(draw, text, font, max_width)
     return lines
 
-def draw_thai_clean(draw, text, pos, font, fill):
-    UPPER_VOWELS = set("ิีึืั")
-    TONE_MARKS = set("่้๊๋์")
-    x, y_base = pos
-    current_x = x
-    i = 0
-    n = len(text)
-    while i < n:
-        char = text[i]
-        if i + 2 < n and text[i+1] in UPPER_VOWELS and text[i+2] in TONE_MARKS:
-            base = text[i:i+2]
-            tone = text[i+2]
-            draw.text((current_x, y_base), base, font=font, fill=fill)
-            offset_x = int(font.size * 0.25)
-            shift_y = int(font.size * 0.18)
-            draw.text((current_x + offset_x, y_base - shift_y), tone, font=font, fill=fill)
-            current_x += draw.textlength(base, font=font)
-            i += 3
-        else:
-            draw.text((current_x, y_base), char, font=font, fill=fill)
-            current_x += draw.textlength(char, font=font)
-            i += 1
 
 # ── Generate image ───────────────────────────────────────────────────────────
 def generate_image(hook):
@@ -472,10 +450,8 @@ def generate_image(hook):
         w  = bb[2] - bb[0]
         x  = (W - w) // 2
         dy = y - bb[1]
-        # 8-direction outline
-        for dx, ddy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
-            draw_thai_clean(draw, text, (x+dx, dy+ddy), best_font, fill=(0, 0, 0))
-        draw_thai_clean(draw, text, (x, dy), best_font, fill=COLOR)
+        # Native stroke in PIL for clean text outline
+        draw.text((x, dy), text, font=best_font, fill=COLOR, stroke_width=3, stroke_fill=(0, 0, 0))
         y += lh(text) + LINE_GAP
 
     # watermark
@@ -483,7 +459,7 @@ def generate_image(hook):
         wm_font = ImageFont.truetype(FONT_PATH, 26)
         wm_text = "เรื่องจริงจาก Reddit"
         bb = draw.textbbox((0, 0), wm_text, font=wm_font)
-        draw_thai_clean(draw, wm_text, ((W - (bb[2]-bb[0])) // 2, H - 55), wm_font, fill=(70, 70, 70))
+        draw.text(((W - (bb[2]-bb[0])) // 2, H - 55), wm_text, font=wm_font, fill=(70, 70, 70))
     except Exception:
         pass
 
