@@ -381,7 +381,19 @@ def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None):
         return post_id, False
     else:
         print(f"FB Error: {result}")
-        raise SystemExit(1)
+def extract_badge_text(promo):
+    if not promo:
+        return None
+    pct_match = re.search(r'(ลด\s*\d+\s*%)|(\d+\s*%\s*OFF)', promo, re.IGNORECASE)
+    if pct_match:
+        val = pct_match.group(0)
+        val = re.sub(r'\s+', ' ', val)
+        return val
+    price_match = re.search(r'฿\s*\d+', promo)
+    if price_match:
+        return price_match.group(0).replace(" ", "")
+    return None
+
 
 if __name__ == "__main__":
     import argparse
@@ -414,7 +426,13 @@ if __name__ == "__main__":
     
     # PIL Overlay
     try:
-        review_img = add_overlay(product_img, line1, line2, ACCENT_COLOR, font_name="Itim-Regular.ttf")
+        badge_text = extract_badge_text(product.get("promo"))
+        review_img = add_overlay(
+            product_img, line1, line2, ACCENT_COLOR,
+            font_name="Itim-Regular.ttf",
+            badge_text=badge_text,
+            watermark="คราม Kram"
+        )
         os.unlink(product_img)
         print(f"Review image overlaid: {review_img}")
     except Exception as overlay_err:

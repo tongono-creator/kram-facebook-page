@@ -214,7 +214,162 @@ def _draw_supersampled_card(card_size, radius, fill_color, border_color=None, bo
     return ss_img.resize((w, h), Image.Resampling.LANCZOS)
 
 
-def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="gradient"):
+def _draw_discount_badge(img, text, accent_color):
+    """
+    Draws a tilted, circular e-commerce sticker/badge in the top-right corner of the image.
+    Uses 4x supersampling to ensure clean, smooth anti-aliased corners and text.
+    """
+    W, H = img.size
+    # Size of the badge: 180x180 px
+    bw = 180
+    bh = 180
+    
+    # Supersampled dimensions
+    ss = 4
+    ss_w, ss_h = bw * ss, bh * ss
+    
+    badge_img = Image.new("RGBA", (ss_w, ss_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(badge_img, "RGBA")
+    
+    # 1. Circle color: Convert accent_color to RGB tuple
+    if isinstance(accent_color, str):
+        if accent_color.startswith("#"):
+            accent_rgb = tuple(int(accent_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+        else:
+            accent_rgb = (255, 69, 0) # Fallback to red-orange
+    else:
+        accent_rgb = accent_color
+        
+    fill_color = (*accent_rgb, 255)
+    
+    # Draw circle on supersampled canvas
+    draw.ellipse([0, 0, ss_w, ss_h], fill=fill_color)
+    # Add a thin white border
+    draw.ellipse([8, 8, ss_w - 8, ss_h - 8], outline=(255, 255, 255, 255), width=8)
+    
+    # 2. Draw text
+    font_size = 40 * ss # Start with size 160
+    
+    lines = []
+    if " " in text:
+        lines = [w.strip() for w in text.split(" ") if w.strip()]
+    elif len(text) > 4:
+        if text.startswith("ลด") and len(text) > 2:
+            lines = ["ลด", text[2:]]
+        else:
+            lines = [text]
+    else:
+        lines = [text]
+        
+    while font_size >= 12 * ss:
+        font = ImageFont.truetype(FONT_PATH, font_size)
+        lh = draw.textbbox((0, 0), "ก A", font=font)[3]
+        gap = 4 * ss
+        total_h = lh * len(lines) + gap * (len(lines) - 1)
+        
+        width_ok = all(draw.textbbox((0, 0), l, font=font)[2] <= (bw - 30) * ss for l in lines)
+        if total_h <= (bh - 30) * ss and width_ok:
+            break
+        font_size -= 4 * ss
+        
+    font = ImageFont.truetype(FONT_PATH, font_size)
+    lh = draw.textbbox((0, 0), "ก A", font=font)[3]
+    gap = 4 * ss
+    total_h = lh * len(lines) + gap * (len(lines) - 1)
+    
+    y = (ss_h - total_h) // 2
+    for line in lines:
+        tw = draw.textbbox((0, 0), line, font=font)[2]
+        x = (ss_w - tw) // 2
+        draw.text((x + 2, y + 2), line, font=font, fill=(0, 0, 0, 60))
+        draw.text((x, y), line, font=font, fill=(255, 255, 255, 255))
+        y += lh + gap
+        
+    badge_img = badge_img.resize((bw, bh), Image.Resampling.LANCZOS)
+    badge_img = badge_img.rotate(10, resample=Image.Resampling.BICUBIC, expand=True)
+    
+    bw_new, bh_new = badge_img.size
+    bx = W - bw_new - 40
+    by = 40
+    
+    shadow_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    badge_alpha = badge_img.split()[3]
+    shadow_mask = Image.new("RGBA", badge_img.size, (0, 0, 0, 80))
+    shadow_mask.putalpha(badge_alpha)
+    shadow_layer.paste(shadow_mask, (bx + 4, by + 8))
+    shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(radius=8))
+    
+    img = Image.alpha_composite(img.convert("RGBA"), shadow_layer)
+    badge_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    badge_layer.paste(badge_img, (bx, by))
+    img = Image.alpha_composite(img, badge_layer)
+    
+    return img
+
+
+def _draw_watermark_capsule(img, text, accent_color):
+    """
+    Draws a small, elegant branding watermark capsule in the top-left corner.
+    """
+    W, H = img.size
+    
+    temp_img = Image.new("RGBA", (100, 100))
+    temp_draw = ImageDraw.Draw(temp_img)
+    
+    font_size = 20
+    font = ImageFont.truetype(FONT_PATH, font_size)
+    bbox = temp_draw.textbbox((0, 0), text, font=font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    
+    pad_x = 20
+    pad_y = 10
+    
+    bw = tw + pad_x * 2
+    bh = th + pad_y * 2
+    
+    bx = 40
+    by = 40
+    
+    ss = 4
+    ss_w, ss_h = bw * ss, bh * ss
+    ss_cr = (bh // 2) * ss
+    
+    capsule_img = Image.new("RGBA", (ss_w, ss_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(capsule_img, "RGBA")
+    
+    draw.rounded_rectangle([0, 0, ss_w, ss_h], radius=ss_cr, fill=(15, 15, 20, 190))
+    
+    if isinstance(accent_color, str):
+        if accent_color.startswith("#"):
+            accent_rgb = tuple(int(accent_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+        else:
+            accent_rgb = (0, 191, 255)
+    else:
+        accent_rgb = accent_color
+        
+    draw.rounded_rectangle([0, 0, ss_w, ss_h], radius=ss_cr, outline=(*accent_rgb, 200), width=2 * ss)
+    
+    ss_font = ImageFont.truetype(FONT_PATH, font_size * ss)
+    ss_bbox = draw.textbbox((0, 0), text, font=ss_font)
+    ss_tw = ss_bbox[2] - ss_bbox[0]
+    ss_th = ss_bbox[3] - ss_bbox[1]
+    
+    tx = (ss_w - ss_tw) // 2 - ss_bbox[0]
+    ty = (ss_h - ss_th) // 2 - ss_bbox[1]
+    
+    draw.text((tx, ty), text, font=ss_font, fill=(255, 255, 255, 240))
+    
+    capsule_img = capsule_img.resize((bw, bh), Image.Resampling.LANCZOS)
+    
+    capsule_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    capsule_layer.paste(capsule_img, (bx, by))
+    img = Image.alpha_composite(img.convert("RGBA"), capsule_layer)
+    
+    return img
+
+
+def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="gradient", badge_text=None, watermark=None):
     """
     Overlays text directly on the image.
     Supports two styles:
@@ -401,6 +556,15 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
             b2 = draw.textbbox((0, 0), lines2[0], font=font2)
             y2 = pixel_bottom1 + BLOCK_GAP - b2[1]
             _draw_lines(draw, lines2, font2, lh2, gap2, y2, W, fill=(255, 255, 255), shadow=(0, 0, 0))
+
+    # ── BADGES & WATERMARKS ───────────────────────────────────────────────
+    if badge_text:
+        img = _draw_discount_badge(img, badge_text, accent_color)
+    if watermark:
+        img = _draw_watermark_capsule(img, watermark, accent_color)
+    # ──────────────────────────────────────────────────────────────────────
+
+    img = img.convert("RGB")
 
     if not out_path:
         base     = img_path.rsplit(".", 1)[0] if img_path else "overlay"
