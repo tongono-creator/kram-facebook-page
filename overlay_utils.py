@@ -1,7 +1,7 @@
 # overlay_utils.py â€” PIL text overlay for Facebook bot images
 
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "Sarabun-ExtraBold.ttf")
 
@@ -141,8 +141,9 @@ def _draw_lines(draw, lines, font, line_h, gap, y_start, W, fill, shadow=(0, 0, 
         bw = draw.textbbox((0, 0), clean_line, font=font)[2]
         x  = (W - bw) // 2
         # 8-direction outline — ทำให้อ่านได้แม้พื้นหลังสีใกล้เคียงตัวอักษร
-        for dx, dy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
-            draw.text((x + dx, y + dy), clean_line, font=font, fill=shadow)
+        if shadow and (len(shadow) < 4 or shadow[3] > 0):
+            for dx, dy in [(-3,-3),(-3,0),(-3,3),(0,-3),(0,3),(3,-3),(3,0),(3,3)]:
+                draw.text((x + dx, y + dy), clean_line, font=font, fill=shadow)
         draw.text((x, y), clean_line, font=font, fill=fill)
         y += line_h + gap
     return y  # y หลังบรรทัดสุดท้าย
@@ -169,10 +170,56 @@ def _apply_bottom_gradient(img, start_y, end_y, max_alpha=230):
         draw.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
     return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
 
-def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None):
+def _draw_soft_shadow(image_size, box_coords, radius, shadow_color=(0, 0, 0), shadow_alpha=80, shadow_offset=(0, 8), blur_radius=16):
+    """Draw a soft drop shadow using Gaussian blur on an alpha mask layer"""
+    shadow_layer = Image.new("RGBA", image_size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(shadow_layer, "RGBA")
+    
+    x1, y1, x2, y2 = box_coords
+    dx, dy = shadow_offset
+    s_rect = [x1 + dx, y1 + dy, x2 + dx, y2 + dy]
+    
+    fill_rgba = (*shadow_color, int(shadow_alpha))
+    try:
+        draw.rounded_rectangle(s_rect, radius=radius, fill=fill_rgba)
+    except Exception:
+        draw.rectangle(s_rect, fill=fill_rgba)
+        
+    if blur_radius > 0:
+        shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+        
+    return shadow_layer
+
+
+def _draw_supersampled_card(card_size, radius, fill_color, border_color=None, border_width=0, ss=4):
+    """Draw a card with high-res supersampling to ensure perfectly smooth anti-aliased corners"""
+    w, h = card_size
+    ss_w, ss_h = w * ss, h * ss
+    ss_radius = radius * ss
+    ss_border_width = border_width * ss
+    
+    ss_img = Image.new("RGBA", (ss_w, ss_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(ss_img, "RGBA")
+    
+    rect = [0, 0, ss_w, ss_h]
+    try:
+        draw.rounded_rectangle(rect, radius=ss_radius, fill=fill_color)
+        if border_color and ss_border_width > 0:
+            draw.rounded_rectangle(rect, radius=ss_radius, outline=border_color, width=ss_border_width)
+    except Exception:
+        draw.rectangle(rect, fill=fill_color)
+        if border_color and ss_border_width > 0:
+            draw.rectangle(rect, outline=border_color, width=ss_border_width)
+            
+    return ss_img.resize((w, h), Image.Resampling.LANCZOS)
+
+
+def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="gradient"):
     """
-    Overlays text directly on the image with a smooth black gradient at the bottom.
-    No solid black bar is appended, maximizing image visual space (Matichon Style).
+    Overlays text directly on the image.
+    Supports two styles:
+      - "gradient": Matichon Style bottom dark gradient overlay.
+      - "premium_card": Modern rounded card sticker at the bottom with soft drop shadow.
     """
     global FONT_PATH
     if font_name:
@@ -180,6 +227,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
 
     W, H = 1080, 1080
     
+    # 1. Prepare Base Image
     if img_path and os.path.exists(img_path):
         img = Image.open(img_path).convert("RGB")
         img = _remove_black_bars(img)
@@ -192,71 +240,167 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
         # Fallback to solid dark background
         img = Image.new("RGB", (W, H), (15, 15, 20))
 
-    # Apply bottom gradient overlay (from y=650 to y=1080)
-    start_y = 650
-    img = _apply_bottom_gradient(img, start_y, H)
-
-    draw = ImageDraw.Draw(img)
-    PAD_X = 60
-    PAD_Y = 40
-    max_w = W - PAD_X * 2  # 960px
-    text_zone_h = H - start_y - PAD_Y * 2  # 350px
-    BLOCK_GAP = 12
-
-    # Start size fitting proportionally (line2 is ~70% of line1 size)
-    # 110px starting size allows extremely large headlines!
-    size1 = 110
-    size2 = 76 if line2 else 0
-
-    while size1 >= 40:
-        font1 = ImageFont.truetype(FONT_PATH, size1)
-        font2 = ImageFont.truetype(FONT_PATH, size2) if line2 else None
-
-        # Wrap lines for line1
-        lines1 = _wrap_text(draw, line1, font1, max_w)
-        lines1 = _balance_wrap(draw, lines1, font1, max_w)
-        lh1 = draw.textbbox((0, 0), "ก A", font=font1)[3]
-        gap1 = max(6, size1 // 8)
-        total_h1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
-
-        # Wrap lines for line2
+    if style == "premium_card":
+        # ── PREMIUM CARD STYLE ───────────────────────────────────────────────
+        draw = ImageDraw.Draw(img)
+        
+        # Dimensions & Coordinates
+        bw = 980
+        bx = (W - bw) // 2 # 50
+        
+        # Check text structure
         if line2:
-            lines2 = _wrap_text(draw, line2, font2, max_w)
-            lines2 = _balance_wrap(draw, lines2, font2, max_w)
-            lh2 = draw.textbbox((0, 0), "ก A", font=font2)[3]
-            gap2 = max(6, size2 // 8)
-            total_h2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
-            total_h = total_h1 + BLOCK_GAP + total_h2
+            # Two-panel card (colored header, white body)
+            header_h = 100
+            body_h = 220
+            card_h = header_h + body_h
+            by = 700
+            cr = 24
+            
+            # Prepare header (colored) and body (white) colors
+            if isinstance(accent_color, str):
+                accent_rgb = tuple(int(accent_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+            else:
+                accent_rgb = accent_color
+                
+            header_color = (*accent_rgb, 255)
+            body_color = (255, 255, 255, 242) # 95% white
+            
+            # Render supersampled card parts
+            card_img = Image.new("RGBA", (bw, card_h), (0, 0, 0, 0))
+            
+            # Header panel (top rounded)
+            header_panel = _draw_supersampled_card((bw, header_h + cr), cr, header_color)
+            card_img.paste(header_panel.crop((0, 0, bw, header_h)), (0, 0))
+            
+            # Body panel (bottom rounded)
+            body_panel = _draw_supersampled_card((bw, body_h + cr), cr, body_color)
+            card_img.paste(body_panel.crop((0, cr, bw, body_h + cr)), (0, header_h))
+            
+            # Draw shadow layer
+            shadow_layer = _draw_soft_shadow((W, H), [bx, by, bx + bw, by + card_h], cr)
+            img = Image.alpha_composite(img.convert("RGBA"), shadow_layer)
+            
+            # Composite card onto image
+            card_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            card_layer.paste(card_img, (bx, by))
+            img = Image.alpha_composite(img, card_layer).convert("RGB")
+            
+            # Draw Text
+            draw_ctx = ImageDraw.Draw(img)
+            
+            # Fit line1 in header
+            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, bw - 60, header_h - 20, start=48, min_size=24)
+            h_text1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
+            y_start1 = by + (header_h - h_text1) // 2
+            
+            # Contrast text color for header
+            r, g, b = accent_rgb
+            brightness = (r * 299 + g * 587 + b * 114) / 1000
+            h_text_fill = (40, 40, 40) if brightness > 128 else (255, 255, 255)
+            
+            _draw_lines(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=h_text_fill, shadow=None)
+            
+            # Fit line2 in body
+            font2, size2, lines2, lh2, gap2 = _fit_wrapped(draw_ctx, line2, bw - 60, body_h - 40, start=44, min_size=22)
+            h_text2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
+            y_start2 = by + header_h + (body_h - h_text2) // 2
+            
+            _draw_lines(draw_ctx, lines2, font2, lh2, gap2, y_start2, W, fill=(40, 40, 40), shadow=None)
+            
         else:
-            total_h = total_h1
-            total_h2 = 0
+            # Single-panel card (white body)
+            card_h = 240
+            by = 780
+            cr = 24
+            body_color = (255, 255, 255, 242)
+            
+            # Draw shadow layer
+            shadow_layer = _draw_soft_shadow((W, H), [bx, by, bx + bw, by + card_h], cr)
+            img = Image.alpha_composite(img.convert("RGBA"), shadow_layer)
+            
+            # Render and composite card
+            card_img = _draw_supersampled_card((bw, card_h), cr, body_color)
+            card_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            card_layer.paste(card_img, (bx, by))
+            img = Image.alpha_composite(img, card_layer).convert("RGB")
+            
+            # Draw Text
+            draw_ctx = ImageDraw.Draw(img)
+            
+            # Fit line1 in card
+            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, bw - 60, card_h - 40, start=54, min_size=24)
+            h_text1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
+            y_start1 = by + (card_h - h_text1) // 2
+            
+            _draw_lines(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=(40, 40, 40), shadow=None)
+            
+    else:
+        # ── CLASSIC GRADIENT STYLE ───────────────────────────────────────────
+        # Apply bottom gradient overlay (from y=650 to y=1080)
+        start_y = 650
+        img = _apply_bottom_gradient(img, start_y, H)
 
-        # Check if text fits inside boundaries
-        width_ok = all(draw.textbbox((0, 0), l, font=font1)[2] <= max_w for l in lines1)
+        draw = ImageDraw.Draw(img)
+        PAD_X = 60
+        PAD_Y = 40
+        max_w = W - PAD_X * 2  # 960px
+        text_zone_h = H - start_y - PAD_Y * 2  # 350px
+        BLOCK_GAP = 12
+
+        # Start size fitting proportionally (line2 is ~70% of line1 size)
+        size1 = 110
+        size2 = 76 if line2 else 0
+
+        while size1 >= 40:
+            font1 = ImageFont.truetype(FONT_PATH, size1)
+            font2 = ImageFont.truetype(FONT_PATH, size2) if line2 else None
+
+            # Wrap lines for line1
+            lines1 = _wrap_text(draw, line1, font1, max_w)
+            lines1 = _balance_wrap(draw, lines1, font1, max_w)
+            lh1 = draw.textbbox((0, 0), "ก A", font=font1)[3]
+            gap1 = max(6, size1 // 8)
+            total_h1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
+
+            # Wrap lines for line2
+            if line2:
+                lines2 = _wrap_text(draw, line2, font2, max_w)
+                lines2 = _balance_wrap(draw, lines2, font2, max_w)
+                lh2 = draw.textbbox((0, 0), "ก A", font=font2)[3]
+                gap2 = max(6, size2 // 8)
+                total_h2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
+                total_h = total_h1 + BLOCK_GAP + total_h2
+            else:
+                total_h = total_h1
+                total_h2 = 0
+
+            # Check if text fits inside boundaries
+            width_ok = all(draw.textbbox((0, 0), l, font=font1)[2] <= max_w for l in lines1)
+            if line2:
+                width_ok = width_ok and all(draw.textbbox((0, 0), l, font=font2)[2] <= max_w for l in lines2)
+
+            if total_h <= text_zone_h and width_ok:
+                break
+
+            # Decrement size proportionally
+            size1 -= 4
+            if line2:
+                size2 = max(24, int(size1 * 0.7))
+
+        y_start = start_y + (H - start_y - total_h) // 2
+
+        # Draw line1 — accent color
+        _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color, shadow=(0, 0, 0))
+
+        # Draw line2 — white
         if line2:
-            width_ok = width_ok and all(draw.textbbox((0, 0), l, font=font2)[2] <= max_w for l in lines2)
-
-        if total_h <= text_zone_h and width_ok:
-            break
-
-        # Decrement size proportionally
-        size1 -= 4
-        if line2:
-            size2 = max(24, int(size1 * 0.7))
-
-    y_start = start_y + (H - start_y - total_h) // 2
-
-    # Draw line1 — accent color
-    _draw_lines(draw, lines1, font1, lh1, gap1, y_start, W, fill=accent_color)
-
-    # Draw line2 — white (pixel-exact gap: BLOCK_GAP px between bottom of line1 and top of line2)
-    if line2:
-        n1 = len(lines1)
-        b1 = draw.textbbox((0, 0), lines1[-1], font=font1)
-        pixel_bottom1 = y_start + lh1 * (n1 - 1) + gap1 * (n1 - 1) + b1[3]
-        b2 = draw.textbbox((0, 0), lines2[0], font=font2)
-        y2 = pixel_bottom1 + BLOCK_GAP - b2[1]
-        _draw_lines(draw, lines2, font2, lh2, gap2, y2, W, fill=(255, 255, 255))
+            n1 = len(lines1)
+            b1 = draw.textbbox((0, 0), lines1[-1], font=font1)
+            pixel_bottom1 = y_start + lh1 * (n1 - 1) + gap1 * (n1 - 1) + b1[3]
+            b2 = draw.textbbox((0, 0), lines2[0], font=font2)
+            y2 = pixel_bottom1 + BLOCK_GAP - b2[1]
+            _draw_lines(draw, lines2, font2, lh2, gap2, y2, W, fill=(255, 255, 255), shadow=(0, 0, 0))
 
     if not out_path:
         base     = img_path.rsplit(".", 1)[0] if img_path else "overlay"
