@@ -2,8 +2,8 @@ name: Product Review Post (CatDumb Style)
 
 on:
   schedule:
-    # จันทร์ / พุธ / ศุกร์ เวลา 07:30 Bangkok (00:30 UTC)
-    - cron: '30 0 * * 1,3,5'
+    # ทุกวัน 04:45 Bangkok (21:45 UTC)
+    - cron: '45 21 * * *'
   workflow_dispatch:
 
 jobs:
