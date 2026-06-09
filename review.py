@@ -260,8 +260,9 @@ def generate_hook(detail, highlights):
             print(f"[{model}] hook generation failed: {e}")
     # Smart local fallback for hook
     first_line = detail.split('\n')[0].strip()
+    first_line = re.sub(r'[\[\]\(\)]', '', first_line)
     first_line = re.sub(r'^[•\-\*\d\.\s–]+', '', first_line).strip()
-    _specs = ['ราคา', 'แพ็ค', 'ขนาด', 'สำหรับ', 'จำนวน', 'กรัม', 'ลิตร', ' ml', ' kg', ' g ', '(']
+    _specs = ['ราคา', 'แพ็ค', 'ขนาด', 'สำหรับ', 'จำนวน', 'กรัม', 'ลิตร', ' ml', ' kg', ' g ', ',']
     _stop = len(first_line)
     for _kw in _specs:
         _idx = first_line.find(_kw)
@@ -269,7 +270,12 @@ def generate_hook(detail, highlights):
             _stop = min(_stop, _idx)
     short_title = first_line[:_stop].strip()
     words = short_title.split()
-    line1 = " ".join(words[:3]) if words else "สินค้าแนะนำ"
+    line1 = "สินค้าแนะนำ"
+    for n in (3, 2, 1):
+        candidate = " ".join(words[:n]) if words else "สินค้าแนะนำ"
+        if len(candidate) <= 20 or n == 1:
+            line1 = candidate
+            break
     price_m = re.search(r'ราคา\s*([\d,]+(?:\.\d+)?)\s*บาท', detail)
     if price_m:
         line2 = f"แค่ {price_m.group(1)} บาท คุ้มมาก"
