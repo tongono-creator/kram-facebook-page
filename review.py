@@ -438,12 +438,17 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true", help="Run without posting or marking as done")
     args = parser.parse_args()
 
+    IMMEDIATE = os.environ.get("IMMEDIATE", "false").lower() == "true"
+
     bkk = timezone(timedelta(hours=7))
     now_bkk = datetime.now(bkk)
 
     # Pre-calculate 5 timestamps: 05:00/08:00/11:00/14:00/17:00 BKK
+    # IMMEDIATE=true (workflow_dispatch) -> post now, no scheduling
     slot_times = ["05:00", "08:00", "11:00", "14:00", "17:00"]
     def make_slot_ts(slot_str):
+        if IMMEDIATE:
+            return None
         h, m = map(int, slot_str.split(":"))
         dt = now_bkk.replace(hour=h, minute=m, second=0, microsecond=0)
         if dt <= now_bkk:
