@@ -278,12 +278,12 @@ def generate_hook(detail, highlights):
             break
     price_m = re.search(r'ราคา\s*([\d,]+(?:\.\d+)?)\s*บาท', detail)
     if price_m:
-        line2 = f"แค่ {price_m.group(1)} บาท คุ้มมาก"
+        line2 = f"ราคา {price_m.group(1)} บาท"
     else:
         feat_lines = [l.strip() for l in detail.splitlines() if l.strip() and l.strip() != first_line.strip()]
         feat_lines = [re.sub(r'^[•\-\*\d\.\s–]+', '', l).strip() for l in feat_lines]
         feat_lines = [l for l in feat_lines if 5 < len(l) < 60]
-        line2 = feat_lines[0][:20] if feat_lines else "คุ้มค่าน่าใช้"
+        line2 = feat_lines[0][:20] if feat_lines else ""
     return line1, line2
 
 def generate_caption(detail, shopee, lazada, promo, highlights):
