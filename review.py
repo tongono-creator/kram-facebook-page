@@ -25,7 +25,17 @@ if not GEMINI_API_KEY:
         pass
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-client = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 60000.0})
+API_ENABLED = True
+client = None
+if not GEMINI_API_KEY or GEMINI_API_KEY in ("DUMMY_KEY", "DUMMY"):
+    print("[Warning] GEMINI_API_KEY is not set or is a dummy key. Disabling API calls.")
+    API_ENABLED = False
+else:
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 60000.0})
+    except Exception as e:
+        print(f"[Warning] Failed to initialize genai.Client: {e}. Disabling API calls.")
+        API_ENABLED = False
 
 def load_next_product():
     wb = openpyxl.load_workbook(EXCEL_PATH)
@@ -287,62 +297,163 @@ def generate_hook(detail, highlights):
     return line1, line2
 
 def generate_caption(detail, shopee, lazada, promo, highlights):
-    promo_line = f"\n🔥 โปรโมชั่น: {promo}" if promo else ""
-    lazada_line = f"\n🛍️ Lazada → {lazada}" if lazada and "xxx" not in lazada else ""
-    import hashlib as _hs_p
-    _seed_p = int(_hs_p.md5(detail.encode()).hexdigest()[:8], 16)
-    _archetypes_p = [
-        "เพื่อนที่เพิ่งซื้อมาใช้แล้ว อยากแชร์ให้รู้จัก ไม่ได้ขายของ",
-        "คนที่มีปัญหาในชีวิตประจำวัน แล้วบังเอิญเจอสินค้าตัวนี้ช่วยแก้",
-        "คนที่เจอราคาดีหรือโปรน่าสนใจ กลัวเพื่อนพลาดเลยรีบบอก",
-        "คนที่ใช้มาสักพักแล้ว มาเล่าประสบการณ์จริงๆ ให้ฟัง",
-    ]
-    _archetype_p = _archetypes_p[_seed_p % 4]
-    prompt = (
-        f"คุณคือ{_archetype_p} ไม่ใช่นักขาย ไม่ใช่แอดมินเพจ ใช้คำลงท้ายว่า 'ครับ' และสรรพนาม 'ผม'\n"
-        f"ก่อนเขียน ให้คิดก่อนว่า: สินค้านี้แก้ปัญหาอะไรในชีวิตประจำวัน คนซื้อเพราะอะไร จุดไหนที่ทำให้รู้สึกว่า 'น่าสนใจ'\n\n"
-        f"รายละเอียดสินค้า:\n{detail}\n\n"
-        f"เขียน Facebook post ตามลำดับนี้:\n"
-        f"1. เปิดด้วยปัญหาหรือความรู้สึก — ห้ามขึ้นต้นด้วยชื่อสินค้าหรือแบรนด์\n"
-        f"2. เล่าว่าเจออะไร สั้นๆ\n"
-        f"3. พูดถึงสินค้า — ใช้ชื่อแบรนด์หรือชื่อย่อเท่านั้น ห้าม copy title เต็มจาก Shopee\n"
-        f"4. บอกเหตุผลที่ชอบ 1-2 จุด จากมุมผู้ใช้จริง\n"
-        f"5. จบด้วย 'ดูลิ้งในคอมเมนต์แรกเลยครับ 👇'\n\n"
-        f"ความยาว: 3-5 ประโยค\n"
-        f"ห้ามใช้: คุ้มมาก, ของมันต้องมี, รีบซื้อ, โปรโมชั่น, สั่งได้เลย, อย่าพลาด, ไม่ควรพลาด\n"
-        f"ห้าม copy ชื่อสินค้าเต็มจาก Shopee, ห้าม bullet points, ห้าม **, ห้ามสเปกยาวๆ\n"
-        f"ตอบเฉพาะตัวโพสต์เท่านั้น ไม่ต้องพูดอะไรนำหน้า"
-    )
-    for model in TEXT_MODELS:
-        try:
-            resp = client.models.generate_content(model=model, contents=prompt)
-            caption = resp.text.strip()
-            lines = caption.splitlines()
-            while lines and (
-                re.search(r'^(ได้เลย|นี่คือ|จริง|แน่นอน|โพสต์รีวิว|ครับ|ค่ะ|---)', lines[0].strip(), re.IGNORECASE)
-                or lines[0].strip() in ("", "---")
-            ):
-                lines.pop(0)
-            caption = "\n".join(lines).strip()
-            if promo:
-                caption += promo_line
-            return caption
-        except Exception as e:
-            print(f"[{model}] caption generation failed: {e}")
-    # local fallback caption
+    global API_ENABLED
+    import random
     import hashlib as _hs
-    _seed = int(_hs.md5(detail.encode()).hexdigest()[:8], 16)
-    _price_m = re.search(r'ราคา\s*([\d,]+(?:\.\d+)?)\s*บาท', detail)
-    _price_str = f"\n\nราคาแค่ {_price_m.group(1)} บาท" if _price_m else ""
-    _fallback_templates = [
-        f"เจอของดีมาบอกต่อ ลองใช้แล้วชอบครับ{_price_str}\n\nดูลิ้งในคอมเมนต์แรก 👇",
-        f"มีปัญหาแบบนี้อยู่เหมือนกัน เพิ่งหาทางออกเจอครับ{_price_str}\n\nรายละเอียดในคอมเมนต์แรก 👇",
-        f"นานๆ จะเจอของดีราคานี้ แปะไว้ก่อนครับ{_price_str}\n\nดูในคอมเมนต์แรก 👇",
-        f"ใช้มาพักนึงแล้ว ดีกว่าที่คิดไว้ครับ{_price_str}\n\nดูลิ้งในคอมเมนต์แรก 👇",
+    import re
+    
+    is_x = "x-bot" in __file__.replace("\\", "/")
+    promo_line = f"\n🔥 โปรโมชั่น: {promo}" if promo else ""
+    if is_x:
+        promo_line = f" 🔥 {promo}" if promo else ""
+        
+    caption = None
+    
+    # Archetypes with weights: 30% Friend, 30% Review, 20% Promo, 20% Life Story
+    archetypes = [
+        ("เพื่อนที่มาบอกต่อ แนะนำของดีให้เพื่อน", "เพื่อนบอกต่อ"),
+        ("คนที่ชอบซื้อของออนไลน์และมารีวิวสั้นๆ หลังใช้งานจริงมาระยะหนึ่ง", "รีวิวหลังใช้"),
+        ("คนที่บังเอิญเจอราคาโปรโมชั่นหรือส่วนลดพิเศษแล้วอยากเอามาแชร์ต่อ", "เจอโปรมาแชร์"),
+        ("คนที่บ่นหรือเล่าเรื่องราวชีวิตประจำวัน/อุปสรรคชีวิตทั่วไปก่อน แล้วโยงเข้าหาตัวสินค้าที่เข้ามาช่วยแก้ปัญหา", "เล่าเรื่องชีวิตแล้วโยงเข้าสินค้า")
     ]
-    caption = _fallback_templates[_seed % 4]
+    weights = [30, 30, 20, 20]
+    
+    selected_arch_desc, selected_arch_name = random.choices(archetypes, weights=weights, k=1)[0]
+    
+    path_norm = __file__.replace("\\", "/").lower()
+    if "somtam" in path_norm:
+        gender_inst = f"คุณคือคนธรรมดาที่ซื้อของออนไลน์บ่อย และชอบแชร์ของที่คิดว่าคุ้มให้เพื่อน โดยรอบนี้สุ่มบทบาทเป็น: {selected_arch_desc} ใช้คำลงท้ายว่า 'ค่ะ' หรือ 'คะ' และสรรพนามแทนตัวว่า 'หนู' หรือ 'เรา' เท่านั้น"
+        closing = "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
+        closing_fallback_promo = "แปะพิกัดไว้ในคอมเมนต์แรกเลยนะคะ 👇"
+        fallbacks = [
+            "เจอ {title_clean} อันนี้มาลองใช้แล้วดีงามมาก แนะนำค่า{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇",
+            "ใครหา {title_clean} อยู่ ตัวนี้ลองใช้มาระยะนึงแล้ว ดีกว่าที่คิดไว้เยอะเลย{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇",
+            "บังเอิญเจอ {title_clean} ลดเหลือแค่นี้เอง แปะพิกัดไว้เผื่อใครตามหาอยู่เนอะ{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇",
+            "ช่วงนี้เจอปัญหาชีวิตประจำวันนิดหน่อย ดีที่ได้ {title_clean} ตัวนี้มาช่วย สะดวกขึ้นเยอะเลยค่ะ{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
+        ]
+    elif "chowchow" in path_norm:
+        gender_inst = f"คุณคือคนธรรมดาที่ซื้อของออนไลน์บ่อย และชอบแชร์ของที่คิดว่าคุ้มให้เพื่อน โดยรอบนี้สุ่มบทบาทเป็น: {selected_arch_desc} ใช้คำลงท้ายว่า 'ฮะ' หรือ 'โฮ่ง' และสรรพนามแทนตัวว่า 'น้องตูบ' หรือ 'ผม' เท่านั้น และมีกลิ่นอายความซนแบบน้องหมา"
+        closing = "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
+        closing_fallback_promo = "พิกัดอยู่ในคอมเมนต์แรกนะโฮ่ง 👇"
+        fallbacks = [
+            "เจอ {title_clean} อันนี้มาลองใช้แล้วชอบมาก แนะนำฮะ{_price_str}\n\nกดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇",
+            "ใครหา {title_clean} อยู่ ตัวนี้ลองใช้มาระยะนึงแล้ว ดีกว่าที่คิดไว้เยอะเลย{_price_str}\n\nกดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇",
+            "บังเอิญเจอ {title_clean} ลดราคาเหลือเท่านี้ แปะพิกัดไว้เผื่อใครหาอยู่ฮะ{_price_str}\n\nกดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇",
+            "ช่วงนี้เจอปัญหาวุ่นๆ ดีที่ได้ {title_clean} ตัวนี้มาช่วย ชีวิตง่ายขึ้นเยอะโฮ่ง{_price_str}\n\nกดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
+        ]
+    elif "x-bot" in path_norm:
+        gender_inst = f"คุณคือคนธรรมดาที่ซื้อของออนไลน์บ่อย และมาโพสต์สั้นๆ บน X (Twitter) เล่าแบบเพื่อนคุยกัน โดยรอบนี้สุ่มบทบาทเป็น: {selected_arch_desc} ใช้คำลงท้าย 'ครับ' สรรพนาม 'ผม'"
+        closing = ""
+        closing_fallback_promo = ""
+        fallbacks = [
+            "เจอ {title_clean} มาลองใช้แล้วชอบเลย แนะนำครับ{_price_str}",
+            "ใครหา {title_clean} อยู่ ลองใช้มาระยะนึงแล้ว รู้สึกดีกว่าที่คิดไว้ครับ{_price_str}",
+            "บังเอิญเจอ {title_clean} ลดราคาเหลือเท่านี้ แปะพิกัดไว้เผื่อใครหาอยู่{_price_str}",
+            "ชีวิตช่วงนี้สบายขึ้นเยอะเพราะได้ {title_clean} ตัวนี้มาช่วย สะดวกมากครับ{_price_str}"
+        ]
+    else:  # rocket & kram
+        gender_inst = f"คุณคือคนธรรมดาที่ซื้อของออนไลน์บ่อย และชอบแชร์ของที่คิดว่าคุ้มให้เพื่อน โดยรอบนี้สุ่มบทบาทเป็น: {selected_arch_desc} ใช้คำลงท้ายว่า 'ครับ' และสรรพนามแทนตัวว่า 'ผม' หรือ 'พี่' เท่านั้น"
+        closing = "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
+        closing_fallback_promo = "แปะพิกัดไว้ในคอมเมนต์แรกเลยครับ 👇"
+        fallbacks = [
+            "เจอ {title_clean} อันนี้มาลองใช้แล้วโอเคเลย แนะนำครับ{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยครับ 👇",
+            "ใครหา {title_clean} อยู่ ตัวนี้ลองใช้มาระยะนึงแล้ว รู้สึกดีกว่าที่คิดไว้ครับ{_price_str}\n\nดูลิ้งในคอมเมนต์แรกเลยครับ 👇",
+            "บังเอิญเจอ {title_clean} ลดราคาเหลือเท่านี้ แปะพิกัดไว้เผื่อใครหาอยู่ครับ{_price_str}\n\nดูในคอมเมนต์แรกเลยครับ 👇",
+            "ช่วงนี้พยายามแก้ปัญหาชีวิตประจำวัน พอดีได้ {title_clean} ตัวนี้มา สะดวกขึ้นเยอะครับ{_price_str}\n\nดูในคอมเมนต์แรกเลยครับ 👇"
+        ]
+
+    title_lines = [l.strip() for l in detail.splitlines() if l.strip()]
+    title_raw = title_lines[0] if title_lines else ""
+    title_clean = re.sub(r'^[•\-\*\d\.\s\u2013\(\[\{\)\|\}]+', '', title_raw).strip()
+    title_clean = title_clean[:50]
+    
+    price_m = re.search(r'ราคา\s*([\d,]+(?:\.\d+)?)\s*บาท', detail)
+    price_val = price_m.group(1) if price_m else ""
+    _price_str = f" ราคาแค่ {price_val} บาท" if price_val else ""
+    if is_x:
+        _price_str = f" ราคา {price_val} บาท" if price_val else ""
+
+    active_client = globals().get("client")
+    if API_ENABLED and active_client:
+        prompt = (
+            f"{gender_inst}\n\n"
+            "ก่อนเขียนโพสต์ ให้คิดก่อนว่า:\n"
+            "- สินค้านี้แก้ปัญหาอะไร\n"
+            "- คนซื้อเพราะอะไร\n"
+            "- จุดไหนที่ทำให้รู้สึกว่า 'เออ น่าสนใจ'\n\n"
+            f"รายละเอียดสินค้า:\n{detail}\n\n"
+            "กฎเหล็กสำคัญมาก:\n"
+            "- ห้ามเปิดโพสต์ด้วยชื่อสินค้า หรือแบรนด์เด็ดขาด\n"
+            "- ห้ามคัดลอกชื่อสินค้าเต็มจาก Shopee\n"
+            "- ห้ามใส่สเปกยาวๆ\n"
+            "- ห้ามใช้คำขายของเช่น 'คุ้มมาก', 'ของมันต้องมี', 'รีบซื้อ', 'โปรโมชั่น', 'สั่งได้เลย', 'อย่าพลาด', 'ไม่ควรพลาด'\n"
+            "- ให้เขียนเหมือนคนใช้จริงมาเล่า เป็นกันเองและเป็นธรรมชาติที่สุด\n\n"
+        )
+        
+        if is_x:
+            prompt += (
+                "รูปแบบโพสต์บน X (Twitter):\n"
+                "1. เปิดด้วยปัญหาหรือความรู้สึกสั้นๆ\n"
+                "2. พูดถึงสินค้าสั้นๆ (ใช้ชื่อย่อ/แบรนด์ย่อ)\n"
+                "3. บอกจุดเด่นสั้นๆ 1 ข้อ\n\n"
+                "ความยาว: 2-3 ประโยค ห้ามเกิน 150 ตัวอักษรรวม\n"
+                "ตอบเฉพาะตัวโพสต์เท่านั้น"
+            )
+        else:
+            prompt += (
+                "รูปแบบโพสต์บน Facebook:\n"
+                "1. เปิดด้วยปัญหาหรือความรู้สึก\n"
+                "2. เล่าว่าเจออะไร\n"
+                "3. พูดถึงสินค้าสั้นๆ (ใช้ชื่อแบรนด์หรือชื่อย่อเท่านั้น ห้ามใช้ชื่อเต็ม)\n"
+                "4. บอกเหตุผลที่ชอบ 1-2 จุด จากมุมผู้ใช้จริง\n"
+                f"5. ปิดท้ายกระตุ้นการกระทำด้วยประโยคว่า: '{closing}'\n\n"
+                "ความยาว: 2-5 ประโยค\n"
+                "ตอบเฉพาะตัวโพสต์เท่านั้น ไม่ต้องพูดนำหน้า/อธิบายใดๆ"
+            )
+            
+        for model in TEXT_MODELS:
+            try:
+                resp = active_client.models.generate_content(model=model, contents=prompt)
+                caption_text = resp.text.strip()
+                if caption_text:
+                    lines = caption_text.splitlines()
+                    while lines and (
+                        re.search(r'^(ได้เลย|นี่คือ|แน่นอน|โพสต์รีวิว|ครับ|ค่ะ|---)', lines[0].strip(), re.IGNORECASE)
+                        or lines[0].strip() in ("", "---")
+                    ):
+                        lines.pop(0)
+                    caption = "\n".join(lines).strip()
+                    break
+            except Exception as e:
+                err_msg = str(e)
+                print(f"[{model}] caption generation failed: {err_msg[:80]}")
+                if any(x in err_msg.lower() for x in ["api key", "invalid_argument", "api_key", "timeout", "timed out", "deadline exceeded", "connection", "connect", "unreachable"]):
+                    print("Persistent API key or network/timeout issue detected. Disabling API calls immediately.")
+                    API_ENABLED = False
+                    break
+                    
+        if not caption and API_ENABLED:
+            print("[Warning] Caption generation failed on all models. Disabling API calls for this run.")
+            API_ENABLED = False
+
+    if not caption:
+        print("[Warning] Falling back to local heuristic caption.")
+        arch_idx = 0
+        if selected_arch_name == "เพื่อนบอกต่อ":
+            arch_idx = 0
+        elif selected_arch_name == "รีวิวหลังใช้":
+            arch_idx = 1
+        elif selected_arch_name == "เจอโปรมาแชร์":
+            arch_idx = 2
+        else:
+            arch_idx = 3
+            
+        template = fallbacks[arch_idx]
+        caption = template.format(title_clean=title_clean or "ของดี", _price_str=_price_str)
+        
     if promo:
-        caption += f"\n🔥 โปร: {promo}"
+        caption += promo_line
+        
     return caption
 
 def _post_one_comment(post_id, text):
