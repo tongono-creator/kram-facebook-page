@@ -565,19 +565,20 @@ if __name__ == "__main__":
     bkk = timezone(timedelta(hours=7))
     now_bkk = datetime.now(bkk)
 
-    # Pre-calculate 5 timestamps: 05:00/08:00/11:00/14:00/17:00 BKK
-    # IMMEDIATE=true (workflow_dispatch) -> post now, no scheduling
-    slot_times = ["05:00", "08:00", "11:00", "14:00", "17:00"]
-    def make_slot_ts(slot_str):
+    # Pre-calculate 5 timestamps: 08:00/10:00/12:00/14:00/16:00 BKK
+    # IMMEDIATE=true (workflow_dispatch) -> schedule 2 hours apart starting from current time + 15 mins
+    slot_times = ["08:00", "10:00", "12:00", "14:00", "16:00"]
+    slot_timestamps = []
+    for idx, slot_str in enumerate(slot_times):
         if IMMEDIATE:
-            return None
-        h, m = map(int, slot_str.split(":"))
-        dt = now_bkk.replace(hour=h, minute=m, second=0, microsecond=0)
-        if dt <= now_bkk:
-            dt += timedelta(days=1)
-        return int(dt.timestamp())
-
-    slot_timestamps = [make_slot_ts(s) for s in slot_times]
+            dt = now_bkk + timedelta(minutes=15 + idx * 120)
+            slot_timestamps.append(int(dt.timestamp()))
+        else:
+            h, m = map(int, slot_str.split(":"))
+            dt = now_bkk.replace(hour=h, minute=m, second=0, microsecond=0)
+            if dt <= now_bkk + timedelta(minutes=10):
+                dt += timedelta(days=1)
+            slot_timestamps.append(int(dt.timestamp()))
     posted_this_run = set()
 
     for i, sched_ts in enumerate(slot_timestamps):
