@@ -9,6 +9,40 @@ from google import genai
 import openpyxl
 from overlay_utils import add_overlay
 
+def clean_overlay_text(text):
+    if not text:
+        return ""
+    # Remove brackets
+    text = re.sub(r'[【】\[\]\(\)\{\}「」『』〈〉《》〔〕〖〗㘀〙〚〛«»‹›]', '', text)
+    # Remove emoji prefix/suffix and common symbols
+    text = re.sub(r'^[•\-\*\d\.\s\u2013\|\s#@❤️🙏🚚🔥✨⚡🌟⚡️🎁🎗️🎀🎯📢📌📍🛒🛍️]+', '', text)
+    text = re.sub(r'[•\-\*\s\u2013\|\s#@❤️🙏🚚🔥✨⚡🌟⚡️🎁🎗️🎀🎯📢📌📍🛒🛍️]+$', '', text)
+    # Remove product prefix terms
+    text = re.sub(r'^(?:สินค้าพร้อมส่ง|พร้อมส่ง|ของแท้|แท้|ลดล้างสต๊อก|ส่งด่วน|ส่งฟรี|🔥|ลดราคา)\s*', '', text)
+    # Keep only alphanumeric, space, dot, comma, dash, and Thai script
+    text = re.sub(r'[^\w\s\.\,\-\u0e00-\u0e7f]', '', text)
+    # Strip .00 from prices/numbers in the text (e.g. 50.00 -> 50)
+    text = re.sub(r'(\d+)\.00', r'\1', text)
+    # Collapse double spaces
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+def format_thai_price(price_val):
+    if not price_val:
+        return ""
+    try:
+        val = float(str(price_val).replace(",", "").strip())
+        if val.is_integer():
+            return str(int(val))
+        else:
+            return f"{val:.2f}".rstrip('0').rstrip('.')
+    except Exception:
+        s = str(price_val).strip()
+        if s.endswith(".00"):
+            s = s[:-3]
+        return s
+
+
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY",    "")
 PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
 PAGE_ID           = "116701184708556"
@@ -399,7 +433,7 @@ def generate_hook(detail, highlights):
     # line2: ราคา ถ้ามี / ไม่มีดึง feature แรก
     price_m = re.search(r'ราคา\s*([\d,]+(?:\.\d+)?)\s*บาท', detail)
     if price_m:
-        line2 = f"ราคา {price_m.group(1)} บาท"
+        line2 = f"ราคา {format_thai_price(price_m.group(1))} บาท"
     else:
         all_lines = [l.strip() for l in detail.splitlines() if l.strip() and len(l.strip()) > 8]
         clean_lines = [re.sub(r'^[^฀-๿\w]+', '', l).strip() for l in all_lines]
@@ -412,7 +446,7 @@ def local_parse_detail_to_json(detail, promo=None):
     # Find price in detail or promo
     price_m = re.search(r'(?:ราคา|฿)\s*([\d,]+(?:\.\d+)?)\s*(?:บาท)?', detail + " " + (promo or ""))
     if price_m:
-        price = price_m.group(1).replace(",", "")
+        price = format_thai_price(price_m.group(1))
     
     lines = [l.strip() for l in detail.splitlines() if l.strip()]
     first_line = lines[0] if lines else ""
@@ -512,23 +546,23 @@ def parse_detail_to_json(detail, promo=None, client=None):
         
     return local_parse_detail_to_json(detail, promo)
 
-def generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x):
+def generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, in_post_body=False):
     prod_type = product_json.get("ประเภท", "ของกินของใช้")
     highlights = product_json.get("จุดเด่น", "คุณภาพดี ใช้งานสะดวก")
-    price = product_json.get("ราคา", "")
+    price = format_thai_price(product_json.get("ราคา", ""))
     
     if "somtam" in path_norm:
         ending = "ค่ะ"
-        closing = "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วนะคะ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
     elif "chowchow" in path_norm:
         ending = "ฮะ"
-        closing = "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วฮะ 👇" if in_post_body else "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
     elif "x-bot" in path_norm:
         ending = "ครับ"
         closing = ""
     else:
         ending = "ครับ"
-        closing = "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วครับ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
         
     price_str = f" ราคาแค่ {price} บาท" if price else ""
     
@@ -549,7 +583,7 @@ def generate_local_fallback_caption(product_json, selected_persona, selected_hoo
     else:
         return f"{body}\n\n{closing}"
 
-def generate_caption(product_json, selected_persona, selected_hook, selected_style, shopee, lazada, promo):
+def generate_caption(product_json, selected_persona, selected_hook, selected_style, shopee, lazada, promo, in_post_body=False):
     global API_ENABLED
     import json
     
@@ -558,16 +592,16 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
     
     if "somtam" in path_norm:
         gender_rule = "ใช้คำลงท้ายว่า 'ค่ะ' หรือ 'คะ' และสรรพนามแทนตัวว่า 'หนู' หรือ 'เรา' เท่านั้น"
-        closing = "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วนะคะ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
     elif "chowchow" in path_norm:
         gender_rule = "ใช้คำลงท้ายว่า 'ฮะ' หรือ 'โฮ่ง' และสรรพนามแทนตัวว่า 'น้องตูบ' หรือ 'ผม' เท่านั้น และมีกลิ่นอายความซนแบบน้องหมา"
-        closing = "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วฮะ 👇" if in_post_body else "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
     elif "x-bot" in path_norm:
         gender_rule = "ใช้คำลงท้าย 'ครับ' สรรพนามแทนตัว 'ผม'"
         closing = ""
     else:
         gender_rule = "ใช้คำลงท้ายว่า 'ครับ' และสรรพนามแทนตัวว่า 'ผม' หรือ 'พี่' เท่านั้น"
-        closing = "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
+        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วครับ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
 
     caption = None
     
@@ -580,7 +614,7 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
             f"คุณต้องเริ่มประโยคแรกของโพสต์ด้วย Hook นี้เป๊ะๆ ห้ามดัดแปลง: \"{selected_hook}\"\n\n"
             f"ข้อมูลสินค้าที่คุณมีในรูป JSON (ห้ามคิดรายละเอียดที่ไม่มีใน JSON นี้ขึ้นมาเองเด็ดขาด และห้ามโชว์ชื่อสินค้าหรือแบรนด์เต็ม):\n"
             f"{json.dumps(product_json, ensure_ascii=False, indent=2)}\n\n"
-            f"กฎเหล็กข้อห้าม:\n"
+            f"กฎเหล็กข้อห้าม:\n- ต้องใส่ราคาของสินค้าที่ระบุใน JSON เสมอ (ห้ามแก้ไขหรือแต่งราคาขึ้นมาเอง)\n"
             f"- ห้ามเปิดโพสต์ด้วยชื่อสินค้า หรือชื่อแบรนด์ (ต้องเริ่มด้วย Hook: \"{selected_hook}\")\n"
             f"- ห้ามพูดถึงสเปกยาวๆ\n"
             f"- ห้ามใช้คำโฆษณา/คำขายของซ้ำซาก เช่น 'คุ้มมาก', 'คุ้มสุดๆ', 'คุ้มค่า', 'คุ้ม', 'ดีงาม', 'ห้ามพลาด', 'ของดี', 'ดีจริง', 'แนะนำเลย'\n"
@@ -631,9 +665,7 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
 
     if not caption:
         print("[Warning] Falling back to local heuristic caption.")
-        caption = generate_local_fallback_caption(
-            product_json, selected_persona, selected_hook, selected_style, path_norm, is_x
-        )
+        caption = generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, in_post_body=in_post_body)
         
     promo_line = f"\n🔥 โปรโมชั่น: {promo}" if promo else ""
     if is_x:
@@ -818,8 +850,12 @@ if __name__ == "__main__":
 
         try:
             badge_text = extract_badge_text(product.get("promo"))
+            line1_clean = clean_overlay_text(line1)
+            line2_clean = clean_overlay_text(line2)
+            if not line1_clean:
+                line1_clean = "สินค้าแนะนำ"
             review_img = add_overlay(
-                product_img, line1, line2, ACCENT_COLOR,
+                product_img, line1_clean, line2_clean, ACCENT_COLOR,
                 font_name="Itim-Regular.ttf",
                 badge_text=badge_text,
                 watermark="คราม Kram"
@@ -832,7 +868,7 @@ if __name__ == "__main__":
 
         caption = generate_caption(
             product_json, selected_persona, selected_hook, selected_style,
-            product["shopee"], product["lazada"], promo_clean
+            product["shopee"], product["lazada"], promo_clean, in_post_body=(sched_ts is not None)
         )
         print(f"Caption:\n{caption}\n")
 
@@ -848,14 +884,14 @@ if __name__ == "__main__":
         else:
             post_id, was_scheduled = post_to_page(
                 review_img, caption,
-                product["shopee"], product["lazada"], promo_clean,
+                product["shopee"], product["lazada"], promo_clean, in_post_body=(sched_ts is not None),
                 scheduled_timestamp=sched_ts
             )
             posted_this_run.add(product.get("shopee"))
             if os.path.exists(review_img):
                 os.unlink(review_img)
             if not was_scheduled:
-                post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean)
+                post_link_comment(post_id, product["shopee"], product["lazada"], promo_clean, in_post_body=(sched_ts is not None))
             if not affiliate_mode:
                 mark_posted(wb, ws, product["row"], state=state)
             else:
