@@ -102,6 +102,86 @@ def load_next_product():
         }, wb, ws
     return None, wb, ws
 
+
+# --- Upgraded Variety & Quality Upgrades (Memory, Roles, Specs, Similarity) ---
+
+ROLES = [
+    {"id": "R1", "name": "พ่อบ้าน", "desc": "พ่อบ้านวัยทำงาน ชอบจัดบ้าน ทำงานบ้าน และดูแลความเรียบร้อยในบ้าน"},
+    {"id": "R2", "name": "สายกิน", "desc": "คนชอบกิน ชอบลองของอร่อย รีวิวของกินเป็นหลัก หรือเน้นความคุ้มค่าด้านอาหาร"},
+    {"id": "R3", "name": "คนลดน้ำหนัก", "desc": "คนกำลังควบคุมอาหาร ดูแลรูปร่าง สุขภาพ และแคลอรี่"},
+    {"id": "R4", "name": "มนุษย์เงินเดือน", "desc": "พนักงานออฟฟิศ/คนวัยทำงานที่ยุ่งตลอดวัน มักหาความสะดวกสบาย อุปกรณ์ออฟฟิศ หรือขนมยามบ่าย"},
+    {"id": "R5", "name": "คนเลี้ยงสัตว์", "desc": "คนรักสัตว์ เลี้ยงหมา เลี้ยงแมว รักพวกมันเหมือนลูก"},
+    {"id": "R6", "name": "นักออกกำลังกาย", "desc": "สายฟิตเนส คนรักสุขภาพ ออกกำลังกายเป็นประจำ สนใจโปรตีนและอุปกรณ์กีฬา"},
+    {"id": "R7", "name": "แม่บ้าน", "desc": "แม่บ้านครอบครัวที่ใส่ใจเรื่องความประหยัด ความสะอาด ความสะดวกสบายของคนในบ้าน"},
+    {"id": "R8", "name": "คนชอบของถูก", "desc": "นักช้อปสายประหยัด ชอบหารเฉลี่ย ราคาต่อชิ้น ความคุ้มค่าและโปรลดราคา"}
+]
+
+def choose_role(state):
+    last_roles = state.get("last_roles", [])
+    forbidden = []
+    if len(last_roles) >= 2 and last_roles[-1] == last_roles[-2]:
+        forbidden.append(last_roles[-1])
+    available = [r for r in ROLES if r["id"] not in forbidden]
+    if not available:
+        available = ROLES
+    return random.choice(available)
+
+def get_caption_similarity(cap1, cap2):
+    def normalize_text(text):
+        text = text.lower()
+        text = re.sub(r'[^\w\u0e00-\u0e7f]', '', text)
+        return text
+
+    n1 = normalize_text(cap1)
+    n2 = normalize_text(cap2)
+    if not n1 or not n2:
+        return 0.0
+    def get_bigrams(text):
+        return set(text[i:i+2] for i in range(len(text)-1))
+    b1 = get_bigrams(n1)
+    b2 = get_bigrams(n2)
+    if not b1 or not b2:
+        return 0.0
+    intersection = b1.intersection(b2)
+    union = b1.union(b2)
+    return len(intersection) / len(union)
+
+def clean_product_title_locally(title):
+    # Strip specs and sizes
+    title = re.sub(r'\b\d+\s*(?:[lL]|[mM][lL]|[gG]|[kK][gG]|[bB][tT][uU]|[pP][cC][sS]|[pP][aA][cC][kK]|\s*กล่อง|\s*ซอง|\s*แพ็ค|\s*ตัว|\s*คู่)\b', '', title)
+    title = re.sub(r'\d+\s*/\s*\d+', '', title)
+    title = re.sub(r'/\s*/', '/', title)
+    title = re.sub(r'\b\d+in\d+\b', '', title)
+    title = re.sub(r'\b(?:PM\d+\.?\d*|\d+|[a-zA-Z]+\d+|\d+[a-zA-Z]+)\b', '', title)
+    title = re.sub(r'\b[a-zA-Z\d]{2,10}\d[a-zA-Z\d]*\b', '', title)
+    title = re.sub(r'[【】\[\]\(\)\{\}「」『』〈〉《》〔〕〖〗〘〙〚〛«»‹›]', '', title)
+    title = re.sub(r'^(?:สินค้าขายดี|สินค้าพร้อมส่ง|พร้อมส่ง|ของแท้|แท้|ลดล้างสต๊อก|ส่งด่วน|ส่งฟรี|ลดราคา|จัดส่งฟรี)\s*', '', title)
+    title = re.sub(r'\s+', ' ', title).strip()
+    words = title.split()
+    if len(words) > 4:
+        title = " ".join(words[:4])
+    return title.strip()
+
+def get_role_context(role_name, prod_type):
+    phrases = {
+        "พ่อบ้าน": "ในฐานะพ่อบ้านที่ชอบจัดบ้านดูแลงานบ้าน บอกเลยว่าถูกใจมาก",
+        "สายกิน": "สายของอร่อยอย่างเราลองแล้วดื่มด่ำมาก ฟินสุดๆ",
+        "คนลดน้ำหนัก": "ช่วงควบคุมอาหาร ดูแลหุ่นอยู่ ได้ตัวนี้ช่วยชีวิตไว้เลย แคลน้อยโปรตีนสูง",
+        "มนุษย์เงินเดือน": "แช่ตู้เย็นที่ออฟฟิศไว้ เวลาหิวดึกหิวยามบ่ายช่วยชีวิตพนักงานออฟฟิศได้เยอะ",
+        "คนเลี้ยงสัตว์": "คนรักสัตว์อย่างเราหาของดีๆ มาให้เด็กๆ ตลอด ตัวนี้ตอบโจทย์มาก",
+        "นักออกกำลังกาย": "หลังเวทเสร็จเหนื่อยๆ ขี้เกียจเคี้ยวอกไก่ ได้ตัวนี้ดื่มทดแทนสะดวกมาก",
+        "แม่บ้าน": "ในฐานะแม่บ้านที่ชอบหาของเข้าครัว ดูแลคนในบ้าน แนะนำเลยค่ะ",
+        "คนชอบของถูก": "สายช้อปของคุ้มหารเฉลี่ยราคาต่อชิ้นแล้วประหยัดมาก คุ้มค่าน้ำตาไหล"
+    }
+    prod_type_lower = prod_type.lower()
+    if "นม" in prod_type_lower or "โปรตีน" in prod_type_lower or "เวย์" in prod_type_lower:
+        phrases["นักออกกำลังกาย"] = "หลังออกกำลังกายเสร็จเหนื่อยๆ บางวันเคี้ยวอกไก่ไม่ไหวจริงๆ ได้ตัวนี้ดื่มแทนง่ายมาก"
+        phrases["มนุษย์เงินเดือน"] = "พกไปกินตอนบ่ายที่ออฟฟิศอิ่มท้องกำลังดี ไม่ต้องเดินไปกดน้ำหวาน"
+        phrases["คนลดน้ำหนัก"] = "ช่วยลดยากินน้ำหวานจุกจิกได้เยอะ แคลคุมง่ายอิ่มท้องนาน"
+    elif any(x in prod_type_lower for x in ["สัตว์", "แมว", "หมา", "สุนัข", "cat", "dog", "pet"]):
+        phrases["คนเลี้ยงสัตว์"] = "เด็กๆ ที่บ้านชอบกันใหญ่ แย่งกันกินตึม สรรหามานานในที่สุดก็เจอ"
+    return phrases.get(role_name, "ส่วนตัวลองใช้แล้วประทับใจมาก")
+
 PERSONAS = [
     {"id": "A", "name": "เพื่อนบอกต่อ", "desc": "เพื่อนบอกต่อ แนะนำของดีให้เพื่อนด้วยความเป็นกันเอง"},
     {"id": "B", "name": "คนซื้อมาใช้แล้ว", "desc": "คนที่ชอบซื้อของออนไลน์และมารีวิวสั้นๆ หลังใช้งานจริงมาระยะหนึ่ง บอกเล่าตามจริง"},
@@ -138,7 +218,9 @@ def load_state(wb):
     state = {
         "last_personas": [],
         "last_hooks": [],
-        "last_styles": []
+        "last_styles": [],
+        "last_roles": [],
+        "recent_captions": []
     }
     if "posted_state" in wb.sheetnames:
         ws = wb["posted_state"]
@@ -146,7 +228,8 @@ def load_state(wb):
         if val:
             try:
                 import json
-                state = json.loads(val)
+                loaded = json.loads(val)
+                state.update(loaded)
             except Exception as e:
                 print(f"[State] Failed to parse state JSON: {e}")
     return state
@@ -160,6 +243,8 @@ def save_state_to_wb(wb, state):
     state["last_personas"] = state.get("last_personas", [])[-50:]
     state["last_hooks"] = state.get("last_hooks", [])[-50:]
     state["last_styles"] = state.get("last_styles", [])[-50:]
+    state["last_roles"] = state.get("last_roles", [])[-50:]
+    state["recent_captions"] = state.get("recent_captions", [])[-50:]
     ws.cell(row=1, column=1, value=json.dumps(state, ensure_ascii=False))
 
 def choose_persona(state):
@@ -361,13 +446,23 @@ def extract_highlights(detail, promo):
     return highlights
 
 def download_image(url):
-    """Download รูปแรกจาก URL"""
-    first_url = url.strip().split("\n")[0].strip()
-    resp = requests.get(first_url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+    """Download รูปแรกหรือสุ่มรูปจาก gallery"""
+    urls = [u.strip() for u in url.strip().split("\n") if u.strip()]
+    if not urls:
+        raise RuntimeError("No image URLs provided")
+    if len(urls) > 1:
+        import random
+        if random.random() < 0.40:
+            chosen_url = urls[0]
+        else:
+            chosen_url = random.choice(urls[1:])
+    else:
+        chosen_url = urls[0]
+    resp = requests.get(chosen_url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
     if resp.status_code == 200:
         bkk = timezone(timedelta(hours=7))
         ts = datetime.now(bkk).strftime("%Y%m%d_%H%M%S")
-        ext = "webp" if "webp" in first_url else "jpg"
+        ext = "webp" if "webp" in chosen_url else "jpg"
         path = os.path.join(OUTPUT_DIR, f"product_{ts}.{ext}")
         with open(path, "wb") as f:
             f.write(resp.content)
@@ -451,7 +546,7 @@ def local_parse_detail_to_json(detail, promo=None):
     lines = [l.strip() for l in detail.splitlines() if l.strip()]
     first_line = lines[0] if lines else ""
     first_line = re.sub(r'^[•\-\*\d\.\s\u2013\(\[\{\)\|\}#@❤️🙏🚚🔥]+', '', first_line).strip()
-    clean_title = re.sub(r'^(?:ส่งฟรี|พร้อมส่ง|ลดล้างสต๊อก|แท้|ของแท้|ส่งด่วน|ส่งด่วน\d+วัน|รีวิวเยอะสุด|เกรดพรีเมี่ยม|ยอดขายเยอะที่สุด|พรีเมียม)\s*', '', first_line)
+    clean_title = clean_product_title_locally(first_line)
     # Clean price from clean_title
     clean_title = re.sub(r'(?:ราคา|฿)\s*[\d,]+(?:\.\d+)?\s*(?:บาท)?', '', clean_title).strip()
     
@@ -546,7 +641,7 @@ def parse_detail_to_json(detail, promo=None, client=None):
         
     return local_parse_detail_to_json(detail, promo)
 
-def generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, in_post_body=False):
+def generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, selected_role, in_post_body=False):
     prod_type = product_json.get("ประเภท", "ของกินของใช้")
     highlights = product_json.get("จุดเด่น", "คุณภาพดี ใช้งานสะดวก")
     price = format_thai_price(product_json.get("ราคา", ""))
@@ -566,24 +661,26 @@ def generate_local_fallback_caption(product_json, selected_persona, selected_hoo
         
     price_str = f" ราคาแค่ {price} บาท" if price else ""
     
+    role_name = selected_role["name"]
+    role_phrase = get_role_context(role_name, prod_type)
     style_name = selected_style["name"]
     if style_name == "มุกตลก":
-        body = f"{selected_hook} {prod_type}ตัวนี้เลย{ending} ตอนแรกกังวลว่าจะไม่โอเค แต่พอลองแล้วชอบเลย รอดตายแล้วเรา 555 จุดเด่นคือ {highlights}{price_str}"
+        body = f"{selected_hook} {prod_type}ตัวนี้เลย{ending} {role_phrase} ตอนแรกกังวลว่าจะไม่โอเค แต่พอลองแล้วชอบเลย รอดตายแล้วเรา 555 จุดเด่นคือ {highlights}{price_str}"
     elif style_name == "ประสบการณ์ส่วนตัว":
-        body = f"{selected_hook} ลองซื้อ {prod_type} ตัวนี้มาใช้ได้สักพักแล้ว{ending} รู้สึกสะดวกสบายขึ้นเยอะ โดยเฉพาะเรื่อง {highlights}{price_str} ดีจริง"
+        body = f"{selected_hook} {role_phrase} ลองซื้อ {prod_type} ตัวนี้มาใช้ได้สักพักแล้ว{ending} รู้สึกสะดวกสบายขึ้นเยอะ โดยเฉพาะเรื่อง {highlights}{price_str} ดีจริง"
     elif style_name == "คำถาม":
-        body = f"{selected_hook} มีใครเคยลอง {prod_type} ตัวนี้รึยัง{ending} ส่วนตัวใช้แล้วประทับใจจุดเด่น {highlights}{price_str} คิดว่าไงกันบ้าง"
+        body = f"{selected_hook} {role_phrase} มีใครเคยลอง {prod_type} ตัวนี้รึยัง{ending} ส่วนตัวประทับใจจุดเด่น {highlights}{price_str} คิดว่าไงกันบ้าง"
     elif style_name == "การเปรียบเทียบ":
-        body = f"{selected_hook} เทียบกับ {prod_type} แบบเดิมๆ ที่เคยใช้ ตัวนี้คือจุดเด่น {highlights}{price_str} ดีกว่าเห็นๆ เลย{ending}"
+        body = f"{selected_hook} {role_phrase} เทียบกับ {prod_type} แบบเดิมๆ ที่เคยใช้ ตัวนี้คือจุดเด่น {highlights}{price_str} ดีกว่าเห็นๆ เลย{ending}"
     else:
-        body = f"{selected_hook} แวะมาแชร์ {prod_type} ดีๆ{ending} ตัวนี้มีจุดเด่นคือ {highlights}{price_str} เผื่อใครกำลังสนใจอยู่"
+        body = f"{selected_hook} {role_phrase} แวะมาแชร์ {prod_type} ดีๆ{ending} ตัวนี้มีจุดเด่นคือ {highlights}{price_str} เผื่อใครกำลังสนใจอยู่"
         
     if is_x:
         return body[:200]
     else:
         return f"{body}\n\n{closing}"
 
-def generate_caption(product_json, selected_persona, selected_hook, selected_style, shopee, lazada, promo, in_post_body=False):
+def generate_caption(product_json, selected_persona, selected_hook, selected_style, shopee, lazada, promo, selected_role, in_post_body=False):
     global API_ENABLED
     import json
     
@@ -665,7 +762,7 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
 
     if not caption:
         print("[Warning] Falling back to local heuristic caption.")
-        caption = generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, in_post_body=in_post_body)
+        caption = generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, selected_role, in_post_body=in_post_body)
         
     promo_line = f"\n🔥 โปรโมชั่น: {promo}" if promo else ""
     if is_x:
@@ -828,26 +925,70 @@ if __name__ == "__main__":
         print(f"Product: {product['detail'][:60]}...")
 
         state = load_state(wb) if 'state' not in locals() else state
-        selected_persona = choose_persona(state)
-        selected_hook = choose_hook(state)
-        selected_style = choose_style(state)
-
-        print(f"[System Log] Chosen Persona: {selected_persona['name']} ({selected_persona['id']})")
-        print(f"[System Log] Chosen Hook: {selected_hook}")
-        print(f"[System Log] Chosen Style: {selected_style['name']}")
-
         promo_clean = clean_promo(product["promo"])
-        # Parse product details to JSON (hiding full name from final caption generator)
         product_json = parse_detail_to_json(product["detail"], promo_clean, client)
-        print("[System Log] Converted Product JSON:")
-        print(json.dumps(product_json, ensure_ascii=False, indent=2))
+        print(f"[System Log] Converted Product JSON:\n{json.dumps(product_json, ensure_ascii=False, indent=2)}")
 
+        # Loop to generate unique caption with similarity checks
+        max_attempts = 10
+        caption = None
+        chosen_p = None
+        chosen_h = None
+        chosen_s = None
+        chosen_r = None
+
+        for attempt in range(max_attempts):
+            selected_persona = choose_persona(state)
+            selected_hook = choose_hook(state)
+            selected_style = choose_style(state)
+            selected_role = choose_role(state)
+
+            candidate_caption = generate_caption(
+                product_json, selected_persona, selected_hook, selected_style,
+                product["shopee"], product["lazada"], promo_clean,
+                selected_role, in_post_body=(sched_ts is not None)
+            )
+
+            recent_caps = state.get("recent_captions", [])[-20:]
+            is_similar = False
+            for old_cap in recent_caps:
+                score = get_caption_similarity(candidate_caption, old_cap)
+                if score > 0.60:
+                    is_similar = True
+                    print(f"[Attempt {attempt+1}] Caption rejected! Similarity too high ({score:.2f} > 0.60)")
+                    break
+
+            if not is_similar:
+                caption = candidate_caption
+                chosen_p = selected_persona
+                chosen_h = selected_hook
+                chosen_s = selected_style
+                chosen_r = selected_role
+                print(f"[System Log] Caption approved on attempt {attempt+1}!")
+                break
+
+        if not caption:
+            print("[Warning] Could not generate unique caption in 10 attempts. Using the last candidate.")
+            caption = candidate_caption
+            chosen_p = selected_persona
+            chosen_h = selected_hook
+            chosen_s = selected_style
+            chosen_r = selected_role
+
+        print(f"[System Log] Chosen Role: {chosen_r['name']} ({chosen_r['id']})")
+        print(f"[System Log] Chosen Persona: {chosen_p['name']} ({chosen_p['id']})")
+        print(f"[System Log] Chosen Hook: {chosen_h}")
+        print(f"[System Log] Chosen Style: {chosen_s['name']}")
+
+        # Image generation using overlay
         highlights = product_json.get("จุดเด่น", "")
         line1, line2 = generate_hook(product["detail"], highlights)
+        if "segment_thai_text" in globals():
+            line1 = segment_thai_text(line1, client)
+            line2 = segment_thai_text(line2, client)
         print(f"Hook: {line1} | {line2}")
 
         product_img = download_image(product["image_url"])
-
         try:
             badge_text = extract_badge_text(product.get("promo"))
             line1_clean = clean_overlay_text(line1)
@@ -861,21 +1002,18 @@ if __name__ == "__main__":
                 watermark="คราม Kram"
             )
             os.unlink(product_img)
-            print(f"Review image overlaid: {review_img}")
+            print(f"Overlay done: {review_img}")
         except Exception as overlay_err:
-            print(f"Overlay failed, using original image: {overlay_err}")
+            print(f"Overlay failed, using original: {overlay_err}")
             review_img = product_img
-
-        caption = generate_caption(
-            product_json, selected_persona, selected_hook, selected_style,
-            product["shopee"], product["lazada"], promo_clean, in_post_body=(sched_ts is not None)
-        )
         print(f"Caption:\n{caption}\n")
 
-        # บันทึกประวัติการสุ่มเก็บเข้า state ของการรันนี้
-        state["last_personas"].append(selected_persona["id"])
-        state["last_hooks"].append(selected_hook)
-        state["last_styles"].append(selected_style["name"])
+        # Save selection details
+        state["last_personas"].append(chosen_p["id"])
+        state["last_hooks"].append(chosen_h)
+        state["last_styles"].append(chosen_s["name"])
+        state["last_roles"].append(chosen_r["id"])
+        state["recent_captions"].append(caption)
 
         if args.dry_run:
             print(f"Dry run post {i+1}. image={review_img}")
