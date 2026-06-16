@@ -97,7 +97,67 @@ def get_latest_lottery():
         print(f"Error fetching lottery: {e}")
         return None
 
-def post_facebook(page_id, token, message):
+
+def draw_lottery_image(lotto_data, font_dir):
+    from PIL import Image, ImageDraw, ImageFont
+    
+    # Create 1080x1080 black canvas
+    img = Image.new("RGB", (1080, 1080), color="#121212")
+    draw = ImageDraw.Draw(img)
+    
+    # Determine font path
+    font_path = os.path.join(font_dir, "Kanit-Bold.ttf")
+    if not os.path.exists(font_path):
+        font_path = os.path.join(font_dir, "Sarabun-ExtraBold.ttf")
+    if not os.path.exists(font_path):
+        font_path = None
+        
+    def get_font(size):
+        if font_path:
+            return ImageFont.truetype(font_path, size)
+        return ImageFont.load_default()
+        
+    # 1. Draw Title
+    title_text = lotto_data["title"].strip()
+    title_font = get_font(52)
+    draw.text((540, 150), title_text, fill="#ffffff", font=title_font, anchor="mm")
+    
+    # Separator line
+    draw.line([(340, 210), (740, 210)], fill="#444444", width=2)
+    
+    # 2. Draw First Prize Section
+    lbl_font = get_font(38)
+    draw.text((540, 270), "รางวัลที่ 1", fill="#aaaaaa", font=lbl_font, anchor="mm")
+    
+    val_font = get_font(130)
+    draw.text((540, 390), lotto_data["first_prize"], fill="#ffd700", font=val_font, anchor="mm")
+    
+    # Big separator line
+    draw.line([(150, 490), (930, 490)], fill="#333333", width=2)
+    
+    # 3. Draw cards for other prizes
+    def draw_card(cx, cy, width, height, title, value, val_color="#ffd700"):
+        x1 = cx - width // 2
+        y1 = cy - height // 2
+        x2 = cx + width // 2
+        y2 = cy + height // 2
+        draw.rounded_rectangle([x1, y1, x2, y2], radius=15, fill="#1c1c1e")
+        draw.text((cx, y1 + 45), title, fill="#aaaaaa", font=get_font(32), anchor="mm")
+        draw.text((cx, y1 + 130), value, fill=val_color, font=get_font(72), anchor="mm")
+        
+    front_three_str = ", ".join(lotto_data["front_three"])
+    last_three_str = ", ".join(lotto_data["last_three"])
+    last_two_str = lotto_data["last_two"]
+    
+    draw_card(325, 650, 410, 220, "เลขหน้า 3 ตัว", front_three_str)
+    draw_card(755, 650, 410, 220, "เลขท้าย 3 ตัว", last_three_str)
+    draw_card(540, 900, 450, 220, "เลขท้าย 2 ตัว", last_two_str, val_color="#ff453a")
+    
+    out_img_path = os.path.join(font_dir, "..", "lotto_result.jpg")
+    img.save(out_img_path, quality=95)
+    return out_img_path
+
+def post_facebook_text_fallback(page_id, token, message):
     try:
         api_url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
         resp = requests.post(
@@ -117,6 +177,30 @@ def post_facebook(page_id, token, message):
             return None
     except Exception as e:
         print(f"Post error: {e}")
+        return None
+
+def post_facebook_photo(page_id, token, img_path, caption):
+    try:
+        api_url = f"https://graph.facebook.com/v25.0/{page_id}/photos"
+        with open(img_path, "rb") as f:
+            resp = requests.post(
+                api_url,
+                files={"source": f},
+                data={
+                    "caption":      caption,
+                    "access_token": token,
+                },
+                timeout=90
+            )
+        result = resp.json()
+        if "id" in result:
+            print(f"Posted photo successfully to {page_id}: {result['id']}")
+            return result["id"]
+        else:
+            print(f"Photo post failed: {result}")
+            return None
+    except Exception as e:
+        print(f"Photo post error: {e}")
         return None
 
 def main():
@@ -184,8 +268,22 @@ def main():
         f"#ตรวจหวย #ผลสลาก #สลากกินแบ่งรัฐบาล"
     )
 
-    print(f"Posting to {page_name} ({page_id})...")
-    post_id = post_facebook(page_id, token, post_text)
+    print(f"Posting photo to {page_name} ({page_id})...")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    font_dir = os.path.join(script_dir, "fonts")
+    
+    try:
+        img_path = draw_lottery_image(lotto, font_dir)
+        post_id = post_facebook_photo(page_id, token, img_path, post_text)
+        if os.path.exists(img_path):
+            try:
+                os.unlink(img_path)
+            except Exception:
+                pass
+    except Exception as img_err:
+        print(f"Error drawing/posting image: {img_err}. Falling back to text-only post.")
+        post_id = post_facebook_text_fallback(page_id, token, post_text)
+
     if post_id:
         save_to_history(title)
         print(f"Successfully recorded draw: {title}")
