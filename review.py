@@ -7,7 +7,134 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 from google import genai
 import openpyxl
+import sqlite3, struct
+import numpy as np
 from overlay_utils import add_overlay
+
+DB_PATH = os.path.join(os.path.dirname(__file__), "page_bot_memory.db")
+
+def contains_thai(text):
+    if not text:
+        return False
+    return bool(re.search(r'[฀-๿]', text))
+
+def init_db():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            platform TEXT NOT NULL,
+            raw_text TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            slot TEXT NOT NULL,
+            embedding BLOB,
+            timestamp INTEGER NOT NULL
+        );
+        """)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[DB] Init failed: {e}")
+
+def get_embedding(text: str, client):
+    global API_ENABLED
+    if not API_ENABLED or not client:
+        return None
+    try:
+        response = client.models.embed_content(
+            model="gemini-embedding-2",
+            contents=text
+        )
+        return response.embeddings[0].values
+    except Exception as e:
+        err_msg = str(e)
+        print(f"[Warning] Embedding generation failed: {err_msg[:120]}")
+        if "depleted" in err_msg.lower() or "resource_exhausted" in err_msg.lower():
+            print("API credits depleted. Disabling API embedding for this run.")
+            API_ENABLED = False
+        return None
+
+def serialize_vector(vector: list[float]) -> bytes:
+    if not vector:
+        return None
+    return struct.pack(f"{len(vector)}f", *vector)
+
+def deserialize_vector(blob: bytes) -> list[float]:
+    if not blob:
+        return None
+    num_floats = len(blob) // 4
+    return list(struct.unpack(f"{num_floats}f", blob))
+
+def is_duplicate(candidate_text: str, client, threshold: float = 0.82, jaccard_threshold: float = 0.60) -> bool:
+    global API_ENABLED
+    
+    # Try getting embedding for candidate
+    v_candidate = None
+    if API_ENABLED and client:
+        vec = get_embedding(candidate_text, client)
+        if vec:
+            v_candidate = np.array(vec)
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT raw_text, embedding FROM posts ORDER BY timestamp DESC LIMIT 50")
+        rows = cursor.fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"[DB] Fetch failed: {e}")
+        rows = []
+        
+    if not rows:
+        return False
+        
+    for raw_text, blob in rows:
+        # If vector check is available
+        if v_candidate is not None and blob is not None:
+            try:
+                v_hist = np.array(deserialize_vector(blob))
+                dot_product = np.dot(v_candidate, v_hist)
+                norm_c = np.linalg.norm(v_candidate)
+                norm_h = np.linalg.norm(v_hist)
+                
+                if norm_c != 0 and norm_h != 0:
+                    similarity = dot_product / (norm_c * norm_h)
+                    if similarity >= threshold:
+                        print(f"[Vector Dedup] Similarity too high: {similarity:.2f} >= {threshold} (comparing with: '{raw_text[:20]}...')")
+                        return True
+            except Exception as ve:
+                print(f"[Warning] Cosine similarity error: {ve}")
+        
+        # Jaccard fallback
+        similarity = get_caption_similarity(candidate_text, raw_text)
+        if similarity >= jaccard_threshold:
+            print(f"[Jaccard Dedup] Similarity too high: {similarity:.2f} >= {jaccard_threshold} (comparing with: '{raw_text[:20]}...')")
+            return True
+                
+    return False
+
+def save_post_to_db(caption, product_detail, slot, client):
+    global API_ENABLED
+    vec = None
+    if API_ENABLED and client:
+        vec = get_embedding(caption, client)
+    blob = serialize_vector(vec) if vec else None
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        path_norm = __file__.replace("\\", "/").replace("\\", "/").lower()
+        platform = "x" if "x-bot" in path_norm else "facebook"
+        cursor.execute(
+            "INSERT INTO posts (platform, raw_text, topic, slot, embedding, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+            (platform, caption, product_detail, slot, blob, int(time.time()))
+        )
+        conn.commit()
+        conn.close()
+        print("[DB] Successfully saved post memory.")
+    except Exception as e:
+        print(f"[DB] Save post failed: {e}")
 
 def clean_overlay_text(text):
     if not text:
@@ -473,7 +600,8 @@ def download_image(url):
 def generate_hook(detail, highlights):
     """สร้างหัวข้อสั้นพาดหัวรูปภาพ 2 บรรทัด คั่นด้วย '|'"""
     global API_ENABLED
-    if API_ENABLED:
+    active_client = globals().get('client')
+    if API_ENABLED and active_client is not None:
         prompt = (
             f"จากรายละเอียดสินค้าต่อไปนี้:\n{detail}\n\n"
             f"จุดเด่นสินค้าที่สกัดแล้ว:\n{highlights}\n\n"
@@ -489,7 +617,7 @@ def generate_hook(detail, highlights):
         )
         for model in TEXT_MODELS:
             try:
-                resp = client.models.generate_content(model=model, contents=prompt)
+                resp = active_client.models.generate_content(model=model, contents=prompt)
                 result = resp.text.strip()
                 label_pattern = r'^(ข้อความในโพสต์\s*Facebook|Facebook\s*Caption|Facebook\s*caption|Caption|caption|ข้อความบนรูป|ข้อความในรูป|ข้อความ|คำบรรยาย|คำอธิบาย|บรรทัดที่\s*\d+|บรรทัด\s*\d+|ประโยคที่\s*\d+|ประโยค\s*\d+|Hook\s*text|Hook|Line\s*\d+|[L|l]ine\s*\d+|\d+)\s*[:\-\.\s]\s*'
                 result = re.sub(label_pattern, '', result, flags=re.IGNORECASE).strip()
@@ -898,6 +1026,7 @@ if __name__ == "__main__":
             slot_timestamps.append(int(dt.timestamp()))
         # โหลด state เพียงครั้งเดียวก่อนเข้าลูป เพื่อให้จำค่าการสุ่มข้ามโพสต์ได้ถูกต้อง
     import openpyxl
+    init_db()
     wb_init = openpyxl.load_workbook(EXCEL_PATH)
     state = load_state(wb_init)
     wb_init.close()
@@ -949,14 +1078,16 @@ if __name__ == "__main__":
                 selected_role
             )
 
-            recent_caps = state.get("recent_captions", [])[-20:]
-            is_similar = False
-            for old_cap in recent_caps:
-                score = get_caption_similarity(candidate_caption, old_cap)
-                if score > 0.60:
-                    is_similar = True
-                    print(f"[Attempt {attempt+1}] Caption rejected! Similarity too high ({score:.2f} > 0.60)")
-                    break
+            # Dual similarity check: SQLite (vector + fallback Jaccard) and local Excel recent_captions
+            is_similar = is_duplicate(candidate_caption, client, threshold=0.82, jaccard_threshold=0.60)
+            if not is_similar:
+                recent_caps = state.get("recent_captions", [])[-20:]
+                for old_cap in recent_caps:
+                    score = get_caption_similarity(candidate_caption, old_cap)
+                    if score > 0.60:
+                        is_similar = True
+                        print(f"[Attempt {attempt+1}] Caption rejected by Excel memory! Similarity too high ({score:.2f} > 0.60)")
+                        break
 
             if not is_similar:
                 caption = candidate_caption
@@ -1023,8 +1154,14 @@ if __name__ == "__main__":
             post_id, was_scheduled = post_to_page(
                 review_img, caption,
                 product["shopee"], product["lazada"], promo_clean, 
-                scheduled_timestamp=sched_ts
+                scheduled_timestamp=scheduled_ts
             )
+            # Save to SQLite memory
+            slot_name = "unknown"
+            slot_arr = globals().get("slot_times") or globals().get("DAILY_SLOTS")
+            if slot_arr and "i" in locals() and i < len(slot_arr):
+                slot_name = slot_arr[i]
+            save_post_to_db(caption, product["detail"], slot_name, client)
             posted_this_run.add(product.get("shopee"))
             if os.path.exists(review_img):
                 os.unlink(review_img)
