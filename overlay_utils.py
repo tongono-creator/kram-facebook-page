@@ -369,7 +369,7 @@ def _draw_watermark_capsule(img, text, accent_color):
     return img
 
 
-def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="gradient", badge_text=None, watermark=None):
+def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="premium_card", badge_text=None, watermark="คราม Kram"):
     """
     Overlays text directly on the image.
     Supports two styles:

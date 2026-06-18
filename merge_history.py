@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-HISTORY_FILES = ["posted_history.txt", "posted_photos.txt", "posted_recipes.txt", "replied_comments.txt"]
+HISTORY_FILES = ["posted_history.txt", "posted_photos.txt", "posted_recipes.txt", "replied_comments.txt", "replied_fb_comments.txt"]
 
 def main():
     # Find which files have local modifications
@@ -46,7 +46,7 @@ def main():
         merged = remote_lines + [line for line in local_lines if line not in remote_lines]
         
         # Cap size depending on file type
-        if f == "replied_comments.txt":
+        if f in ("replied_comments.txt", "replied_fb_comments.txt"):
             merged = merged[-1000:]
         else:
             merged = merged[-500:]
