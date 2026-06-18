@@ -1029,7 +1029,7 @@ if __name__ == "__main__":
 
     posted_this_run = set()
 
-    for i, sched_ts in enumerate(slot_timestamps):
+    for i, scheduled_ts in enumerate(slot_timestamps):
         print(f"\n--- Post {i+1}/5 (slot {slot_times[i]}) ---")
 
         product, wb, ws = load_next_product()
