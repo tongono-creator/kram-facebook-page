@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-genai requests openpyxl Pillow
+          pip install google-genai requests openpyxl Pillow numpy
 
       - name: Run review script
         env:
