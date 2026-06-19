@@ -397,6 +397,8 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
 
     if style == "news_card":
         # 🌟 NEWS CARD STYLE (Catdumb/Modern News Infographic Style) 🌟
+        # Use Kanit-Bold.ttf for a modern, punchy look
+        FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "Kanit-Bold.ttf")
         draw = ImageDraw.Draw(img)
         
         # 1. Background Blur & Dimming
@@ -423,7 +425,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
                 
                 orig_resized = orig.resize((iw, ih), Image.Resampling.LANCZOS)
                 
-                cr = 24
+                cr = 28
                 mask_img = _draw_supersampled_card((iw, ih), cr, (255, 255, 255, 255))
                 
                 ix = (W - iw) // 2
@@ -435,49 +437,45 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
                 img_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
                 img_layer.paste(orig_resized, (ix, iy), mask_img.convert("L"))
                 img = Image.alpha_composite(img, img_layer).convert("RGB")
+                
+                # Draw a thin white border around the photo card
+                border_card = _draw_supersampled_card((iw, ih), cr, (0, 0, 0, 0), border_color=(255, 255, 255, 180), border_width=3)
+                border_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+                border_layer.paste(border_card, (ix, iy))
+                img = Image.alpha_composite(img.convert("RGBA"), border_layer).convert("RGB")
             except Exception as e_img:
                 print(f"Error drawing foreground card: {e_img}")
             
-        # 3. Bottom Dark Text Card
-        bw = 980
-        bh = 350
-        bx = (W - bw) // 2 # 50
-        by = 670
-        cr = 24
+        # 3. Bottom Full-Width Solid Black Banner
+        by = 680
+        bh = H - by # 400
         
         if isinstance(accent_color, str):
             accent_rgb = tuple(int(accent_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
         else:
             accent_rgb = accent_color
             
-        card_fill = (18, 18, 22, 235)
-        card_border = (*accent_rgb, 255)
-        
-        shadow_layer = _draw_soft_shadow((W, H), [bx, by, bx + bw, by + bh], cr, blur_radius=16)
-        img = Image.alpha_composite(img.convert("RGBA"), shadow_layer)
-        
-        card_img = _draw_supersampled_card((bw, bh), cr, card_fill, border_color=card_border, border_width=3)
-        card_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        card_layer.paste(card_img, (bx, by))
-        img = Image.alpha_composite(img, card_layer).convert("RGB")
+        draw_ctx = ImageDraw.Draw(img)
+        draw_ctx.rectangle([0, by, W, H], fill=(10, 10, 12))
+        draw_ctx.rectangle([0, by, W, by + 6], fill=(*accent_rgb, 255))
         
         # 4. Draw Text
-        draw_ctx = ImageDraw.Draw(img)
+        max_w = W - 120 # 960px text width
         
         if line2:
-            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, bw - 60, 100, start=46, min_size=24)
+            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, max_w, 100, start=48, min_size=24)
             h_text1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
-            y_start1 = by + 30 + (100 - h_text1) // 2
+            y_start1 = by + 25 + (100 - h_text1) // 2
             
-            _draw_lines(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=card_border, shadow=None)
+            _draw_lines(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=(*accent_rgb, 255), shadow=None)
             
-            font2, size2, lines2, lh2, gap2 = _fit_wrapped(draw_ctx, line2, bw - 60, bh - 100 - 60, start=38, min_size=20)
+            font2, size2, lines2, lh2, gap2 = _fit_wrapped(draw_ctx, line2, max_w, bh - 100 - 50, start=38, min_size=20)
             h_text2 = lh2 * len(lines2) + gap2 * (len(lines2) - 1)
-            y_start2 = by + 130 + (bh - 100 - 60 - h_text2) // 2
+            y_start2 = by + 125 + (bh - 100 - 50 - h_text2) // 2
             
-            _draw_lines(draw_ctx, lines2, font2, lh2, gap2, y_start2, W, fill=(240, 240, 240), shadow=None)
+            _draw_lines(draw_ctx, lines2, font2, lh2, gap2, y_start2, W, fill=(255, 255, 255), shadow=None)
         else:
-            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, bw - 60, bh - 60, start=44, min_size=24)
+            font1, size1, lines1, lh1, gap1 = _fit_wrapped(draw_ctx, line1, max_w, bh - 50, start=46, min_size=24)
             h_text1 = lh1 * len(lines1) + gap1 * (len(lines1) - 1)
             y_start1 = by + (bh - h_text1) // 2
             
