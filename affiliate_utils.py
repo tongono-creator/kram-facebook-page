@@ -158,14 +158,12 @@ LAZADA_INTROS = [
 ]
 
 PRODUCT_HOOKS = [
-    "เห้ย ตัวนี้เด็ดจริง! คนรีวิวหลักร้อย คะแนนเต็มห้าดาว",
-    "บอกลาปัญหาเดิมๆ ไปได้เลย ตัวนี้เอาอยู่จริง",
-    "ของมันต้องมีในงบประหยัด สารพัดประโยชน์มาก",
-    "ไอเทมลับที่ทุกคนตามหา รีบตำก่อนของหมด",
-    "ใช้แล้วชีวิตดีขึ้น 300% แนะนำสุดๆ เลยตัวนี้",
-    "ขายดีอันดับต้นๆ ในหมวดนี้ รีวิวปังทุกช่องทาง",
-    "ใครไม่มีคือพลาดมาก ตอบโจทย์สุดๆ เลยชิ้นนี้",
-    "การันตีของแท้ 100% ส่งไว ได้ของชัวร์",
+    "แอดมินเจอของดีตัวนี้มา น่าใช้มากๆ",
+    "อันนี้เป็นตัวช่วยที่ดีและสะดวกมากเลย",
+    "ชิ้นนี้ดีงามมาก ถือว่าตอบโจทย์สุดๆ",
+    "รีวิวค่อนข้างดีเลย เห็นแล้วอยากแนะนำต่อ",
+    "ใครกำลังมองหาตัวช่วยดีๆ แนะนำตัวนี้เลย",
+    "คุ้มค่าราคามาก ใช้งานได้หลากหลายด้วย",
 ]
 
 PROMO_INTROS = [
@@ -365,7 +363,7 @@ def select_product_with_ai(products, caption=None, img_path=None):
     return None
 
 def get_product_comments(caption=None, img_path=None):
-    """comments สินค้าหมุนเวียน แยก Shopee / Lazada (ใช้ AI วิเคราะห์และเลือก)"""
+    """comments สินค้าหมุนเวียน (ใช้ AI วิเคราะห์และเลือก) — คืนค่าลิสต์ที่มี 1 คอมเมนต์รวมลิงก์ Shopee/Lazada"""
     products, _, _ = _load_excel()
     active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"]]
     if not active:
@@ -381,17 +379,16 @@ def get_product_comments(caption=None, img_path=None):
         selected_p = select_product_with_ai(active, caption=caption, img_path=img_path)
         
     if not selected_p:
-        selected_p = random.choice(active)
-        print("AI Selector: Fallback to random product.")
+        # หาก AI เลือกไม่ได้ หรือคีย์หมดโควตา — ห้ามสุ่มสินค้ามั่วเด็ดขาด!
+        print("AI Selector: No relevant product matched. Skipping product comments.")
+        return []
     else:
         print(f"AI Selector: Selected product -> {selected_p['name']}")
 
     p = selected_p
     persona = get_persona()
     
-    comments = []
-    
-    # กำหนดคำลงท้ายสำหรับกรณี Fallback Template
+    # กำหนดคำลงท้าย
     if persona == "chowchow":
         ending = "ฮะ โฮ่ง!"
     elif persona == "somtam":
@@ -399,68 +396,74 @@ def get_product_comments(caption=None, img_path=None):
     else:
         ending = "ครับ"
 
-    for platform in ["Shopee", "Lazada"]:
-        url_key = platform.lower()
-        url = p.get(url_key)
-        if url and "xxx" not in url:
-            # 1. ลองใช้ AI เขียนแบบ 3 ขั้นตอนก่อน
-            ai_comment = generate_comment_with_ai(p, platform, persona)
-            if ai_comment:
-                comments.append(f"{ai_comment} ช้อป {platform} ได้ที่นี่เลย → {url}")
-            else:
-                # 2. หาก AI ล้มเหลว หรือไม่มี Key ให้ใช้ Fallback Template
-                hook = random.choice(PRODUCT_HOOKS)
-                desc = p.get("desc", "").strip()
-                if not desc:
-                    desc = f"ตัวนี้เป็น {p.get('name', 'สินค้าแนะนำ')} ยอดฮิต ใช้งานง่ายและตอบโจทย์ชีวิตประจำวันมากๆ"
-                
-                template = random.choice(SHOPEE_INTROS if platform == "Shopee" else LAZADA_INTROS)
-                comments.append(template.format(hook=hook, desc=desc, ending=ending, url=url))
-                
-    return comments
+    shopee_url = p.get("shopee", "").strip()
+    lazada_url = p.get("lazada", "").strip()
+    if "xxx" in shopee_url: shopee_url = ""
+    if "xxx" in lazada_url: lazada_url = ""
+
+    if not shopee_url and not lazada_url:
+        return []
+
+    # 1. พยายามใช้ AI เขียนข้อความโปรโมทสินค้าแบบธรรมชาติ
+    ai_comment = generate_comment_with_ai(p, "Shopee & Lazada", persona)
+    
+    if ai_comment:
+        msg = ai_comment
+    else:
+        # 2. หาก AI ล้มเหลว ให้ใช้ Fallback Template
+        hook = random.choice(PRODUCT_HOOKS)
+        desc = p.get("desc", "").strip()
+        if not desc:
+            desc = f"ตัวนี้เป็น {p.get('name', 'สินค้าแนะนำ')} ที่ช่วยให้ชีวิตสะดวกสบายและตอบโจทย์มากๆ"
+        
+        msg = f"🛒 {hook} ตัวนี้เป็น {desc} แอดมินแนะนำเลย{ending}"
+
+    # รวมลิงก์
+    links = []
+    if shopee_url:
+        links.append(f"🧡 Shopee: {shopee_url}")
+    if lazada_url:
+        links.append(f"💙 Lazada: {lazada_url}")
+        
+    link_section = "\n".join(links)
+    combined_comment = f"{msg}\n\n📌 พิกัดของชิ้นนี้จิ้มได้เลยน้า:\n{link_section}"
+    
+    return [combined_comment]
 
 def get_all_comments(caption=None, img_path=None):
-    """รวม comments — promo มาก่อนเสมอ ที่เหลือสุ่มลำดับ"""
-    promo_pool = []
-    rest_pool  = []
-
-    # promo — ใส่เสมอถ้ามี (การันตี comment อันดับ 1)
+    """
+    คืนค่าคอมเมนต์สูงสุดเพียง 1 คอมเมนต์เท่านั้น เพื่อไม่ให้ดูเป็นสแปม/สแกม
+    โดยจะเลือกลงตามลำดับความสำคัญ: Promo -> Product (ถ้าจับคู่ได้) -> Web / Food (ถ้าไม่มีอะไรเลย)
+    """
+    # 1. ถ้ามีโปรโมชั่นพิเศษ (Promo) ที่ยังไม่หมดอายุและระบุใน Excel
     promo = get_promo_comment()
     if promo:
-        promo_pool.append(promo)
+        return [promo]
 
-    # website comment — ใส่เสมอ (การันตี minimum 2 comments)
+    # 2. พยายามจับคู่สินค้าด้วย AI (Product)
+    prod_comments = get_product_comments(caption=caption, img_path=img_path)
+    if prod_comments:
+        return prod_comments
+
+    # 3. ถ้าไม่มีสินค้าจับคู่ได้เลย หรือคีย์หมดโควตา ให้สุ่มเลือกระหว่าง Website หรือ Food เพียงอย่างเดียว
+    choices = []
+    
+    # website comment
     web = _rotate(WEBSITE_VARS)
     if web:
-        rest_pool.append(web)
-
-    # food comment — โอกาส 60%
-    if random.random() < 0.60:
+        choices.append(web)
+        
+    # food comment (โอกาส 40%)
+    if random.random() < 0.40:
         food = get_food_comment()
         if food:
-            rest_pool.append(food)
-
-    # product comments — โอกาส 70%
-    if random.random() < 0.70:
-        products = get_product_comments(caption=caption, img_path=img_path)
-        if len(products) == 2 and random.random() < 0.40:
-            rest_pool.append(random.choice(products))
-        else:
-            rest_pool.extend(products)
-
-    # สุ่มลำดับเฉพาะส่วนที่เหลือ
-    random.shuffle(rest_pool)
-
-    # รวม: promo ก่อน → ที่เหลือตามหลัง
-    pool = promo_pool + rest_pool
-
-    # backup ถ้าว่างทั้งหมด
-    if not pool:
-        web = _rotate(WEBSITE_VARS)
-        if web:
-            pool.append(web)
-
-    return pool
+            choices.append(food)
+            
+    if choices:
+        return [random.choice(choices)]
+        
+    # backup
+    return [_rotate(WEBSITE_VARS)]
 
 def get_next_scheduled_time(slots):
     """
