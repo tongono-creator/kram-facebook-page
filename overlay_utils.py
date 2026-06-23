@@ -475,7 +475,15 @@ def _draw_bottom_right_badge(img, text, text_color, border_w, font_path, W=1080,
     tx = pad_x * ss
     ty = (ss_h - ss_lh) // 2
     
-    _draw_cluster_text(draw, text, tx, ty, ss_font, (*text_color, 255), shadow_color=None, shift_factor=0.25)
+    # Dynamic outline if text color is too bright on white background
+    r, g, b = text_color
+    brightness = (r * 299 + g * 587 + b * 114) / 1000
+    if brightness > 180:
+        badge_shadow = (0, 0, 0, 100)
+    else:
+        badge_shadow = None
+        
+    _draw_cluster_text(draw, text, tx, ty, ss_font, (*text_color, 255), shadow_color=badge_shadow, shadow_width=2, shift_factor=0.25)
     
     badge = badge.resize((bw, bh), Image.Resampling.LANCZOS)
     img_rgba = img.convert("RGBA")
@@ -528,7 +536,8 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
         bg_blur = Image.alpha_composite(bg_blur.convert("RGBA"), dark_mask).convert("RGB")
         img = bg_blur
         
-        # 2. Foreground Photo Card (centered in the top area [50, 630])
+        # 2. Foreground Photo Card (centered in the top area [50, 800])
+        # Changed maximum height to 750px to make it almost full width/height
         if img_path and os.path.exists(img_path):
             try:
                 orig = Image.open(img_path).convert("RGB")
@@ -536,7 +545,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
                 ow, oh = orig.size
                 aspect = ow / oh
                 
-                mw, mh = 980, 580
+                mw, mh = 980, 750
                 if aspect > mw / mh:
                     iw = mw
                     ih = int(mw / aspect)
@@ -550,7 +559,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
                 mask_img = _draw_supersampled_card((iw, ih), cr, (255, 255, 255, 255))
                 
                 ix = (W - iw) // 2
-                iy = 50 + (580 - ih) // 2
+                iy = 50 + (750 - ih) // 2
                 
                 shadow_layer = _draw_soft_shadow((W, H), [ix, iy, ix + iw, iy + ih], cr, blur_radius=12)
                 img = Image.alpha_composite(img.convert("RGBA"), shadow_layer)
@@ -586,7 +595,16 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
         else:
             accent_rgb = BRAND_COLOR
             
-        headline_color = (255, 230, 0)
+        # Headline color matches the border/brand color (accent_rgb)
+        headline_color = accent_rgb
+        
+        # Calculate dynamic shadow for headline readability
+        hr, hg, hb = headline_color
+        h_brightness = (hr * 299 + hg * 587 + hb * 114) / 1000
+        if h_brightness < 100:
+            headline_shadow = (255, 255, 255, 220)  # White outline for dark text (e.g. Kram green)
+        else:
+            headline_shadow = (0, 0, 0, 220)  # Black outline for bright text
         
         if line2:
             font1, size1, lines1, lh1, gap1 = _fit_wrapped_font(draw_ctx, line1, max_w, 150, current_font_path, start=68, min_size=32)
@@ -602,7 +620,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
             bottom_margin = 30
             y_start = H - border_w - bottom_margin - total_text_h
             
-            _draw_lines_shaping(draw_ctx, lines1, font1, lh1, gap1, y_start, W, fill=headline_color, shadow=(0, 0, 0, 220))
+            _draw_lines_shaping(draw_ctx, lines1, font1, lh1, gap1, y_start, W, fill=headline_color, shadow=headline_shadow)
             
             y_start_desc = y_start + h_text1 + gap_between_lines
             _draw_lines_shaping(draw_ctx, lines2, font2, lh2, gap2, y_start_desc, W, fill=(255, 255, 255, 255), shadow=(0, 0, 0, 220))
@@ -613,7 +631,7 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
             bottom_margin = 30
             y_start1 = H - border_w - bottom_margin - h_text1
             
-            _draw_lines_shaping(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=headline_color, shadow=(0, 0, 0, 220))
+            _draw_lines_shaping(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=headline_color, shadow=headline_shadow)
             
         img = _draw_bottom_right_badge(img, watermark, BRAND_COLOR, border_w, current_font_path)
         
