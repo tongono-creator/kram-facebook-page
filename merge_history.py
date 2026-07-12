@@ -2,16 +2,16 @@
 import os
 import subprocess
 
-HISTORY_FILES = ["posted_history.txt", "posted_photos.txt", "posted_recipes.txt", "replied_comments.txt", "replied_fb_comments.txt"]
+HISTORY_FILES = ["posted_history.txt", "posted_photos.txt", "posted_recipes.txt", "replied_comments.txt", "posted_meme_topics.txt", "replied_fb_comments.txt"]
 
 def main():
     # Find which files have local modifications
     modified_files = []
     for f in HISTORY_FILES:
         if os.path.exists(f):
-            # Check if git detects modifications
-            res = subprocess.run(["git", "diff", "--quiet", f])
-            if res.returncode != 0:
+            # Check if git detects modifications or untracked files
+            res = subprocess.run(["git", "status", "--porcelain", f], capture_output=True, text=True)
+            if res.stdout.strip():
                 modified_files.append(f)
 
     if not modified_files:
