@@ -1,14 +1,23 @@
 name: Product Review Post (CatDumb Style)
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # อังคาร, พฤหัสบดี, เสาร์ 04:45 BKK (ลดความถี่เป็น พุธ, เสาร์ 18:30 BKK)
-    - cron: '30 11 * * 3,6'
+    - cron:
+  push:
+    branches:
+      - main '0 11 * * *'
   workflow_dispatch:
 
 jobs:
   review:
-    runs-on: ubuntu-latest
+    runs-on:
+  push:
+    branches:
+      - main ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -19,7 +28,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version:
+  push:
+    branches:
+      - main '3.11'
 
       - name: Install dependencies
         run: |

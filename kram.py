@@ -20,7 +20,7 @@ GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
 API_ENABLED  = True
 client       = genai.Client(api_key=GEMINI_API_KEY, http_options=HttpOptions(timeout=300000))
-TEXT_MODELS  = ["gemini-2.5-flash", "gemini-3.5-flash"]
+TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
 ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
@@ -295,7 +295,9 @@ def analyze_image(img_path, reddit_title=""):
         "'เหมือนพนักงานโดนเรียกโอที', 'หน้าเบื่องาน monday', 'rich kid', 'เด็กดื้อที่แม่รัก', 'ดราม่ามาก'\n"
         "ถ้าไม่มีอะไรน่าสนใจเลย ตอบว่า: ไม่เกี่ยว|ไม่เกี่ยว"
     )
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -491,7 +493,9 @@ def segment_thai_text(text, client=client):
         "3. Ensure words like 'หวยออก', 'เงินเก็บ', 'แสนแรก', 'ทำงาน' are segmented at their natural boundaries (e.g., 'หวย\\u200bออก' or left as 'หวยออก', but never break syllables awkwardly).\n\n"
         f"Text to segment:\n{text}"
     )
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             segmented = resp.text.strip().replace('\\u200b', '\u200b')
@@ -516,7 +520,9 @@ def verify_image_title_match(img_bytes, reddit_title):
         "Output ONLY 'yes' or 'no' in lowercase, without punctuation."
     )
     part = types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg")
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -536,7 +542,9 @@ def translate_to_thai(text):
     if not text or contains_thai(text):
         return text
     prompt = f"Translate the following English text into natural, fluent Thai language. Output ONLY the Thai translation, without explanations, notes, or labels:\n\n{text}"
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         for attempt in range(2):
             try:
                 resp = client.models.generate_content(model=model, contents=prompt)
@@ -607,7 +615,9 @@ def generate_hook(subject, vibe, subreddit):
         "แน่นอน", "จัดไป", "ตามคำขอ", "ได้เลย", "จัดให้", "ยินดี",
         "นี่คือ", "ข้อความ", "คำโปรย", "คำคม", "หัวข้อ", "ตามคำขอ"
     ]
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             lines = clean_hook_lines(resp.text)
@@ -677,7 +687,9 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             "End the caption with 3-4 relevant hashtags.\n"
             "Output ONLY the caption."
         )
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             if img_path and os.path.exists(img_path):
                 with open(img_path, "rb") as f:

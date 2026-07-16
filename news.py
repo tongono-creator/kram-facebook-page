@@ -24,7 +24,7 @@ from overlay_utils import add_overlay
 GOOGLE_API_KEY    = os.environ.get("GOOGLE_API_KEY", "")
 PAGE_ACCESS_TOKEN = os.environ.get("PAGE_ACCESS_TOKEN", "")
 PAGE_ID           = os.environ.get("PAGE_ID", "111830598532037")
-TEXT_MODELS       = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.5-pro", "gemini-1.5-pro"]
+TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
 OUTPUT_DIR        = "output"
 ACCENT_COLOR      = (11, 47, 29)  # Gold/Yellow สำหรับ Rocket21
 
@@ -156,7 +156,9 @@ def segment_thai_text(text, client=client):
         "3. Ensure words like 'หวยออก', 'เงินเก็บ', 'แสนแรก', 'ทำงาน' are segmented at their natural boundaries (e.g., 'หวย\\u200bออก' or left as 'หวยออก', but never break syllables awkwardly).\n\n"
         f"Text to segment:\n{text}"
     )
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             segmented = resp.text.strip().replace('\\u200b', '\u200b')
@@ -181,7 +183,9 @@ def verify_image_title_match(img_bytes, reddit_title):
         "Output ONLY 'yes' or 'no' in lowercase, without punctuation."
     )
     part = types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg")
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -202,8 +206,12 @@ def translate_to_thai(text):
         return ""
     if contains_thai(text):
         return text
-    prompt = f"Translate the following technology/science news text to natural Thai. Only output the translation, no explanation:\n\n{text}"
-    for model in TEXT_MODELS:
+    prompt = f"Translate the following interesting, weird, or amazing news/story text to natural Thai. Only output the translation, no explanation:
+
+{text}"
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             translated = resp.text.strip()
@@ -320,7 +328,9 @@ def select_best_news_candidate(candidates):
         "}"
     )
     
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -363,7 +373,9 @@ def generate_news_content(img_bytes, reddit_title, sub, original_link):
 
     part = types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg")
     
-    for model in TEXT_MODELS:
+    for model_idx, model in enumerate(TEXT_MODELS):
+        if model_idx > 0:
+            import time; time.sleep(2)
         for attempt in range(3):
             try:
                 resp = client.models.generate_content(

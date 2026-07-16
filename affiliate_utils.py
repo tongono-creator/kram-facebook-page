@@ -231,7 +231,7 @@ def generate_comment_with_ai(p, platform, persona):
         from google import genai
         client = genai.Client(api_key=api_key, http_options={'timeout': 90.0})
         resp = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=prompt
         )
         text = resp.text.strip()
@@ -343,7 +343,7 @@ def select_product_with_ai(products, caption=None, img_path=None):
 
         # เรียกใช้ Gemini-2.5-flash (เร็วและประหยัด)
         resp = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=contents
         )
 
