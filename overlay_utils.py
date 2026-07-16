@@ -492,6 +492,70 @@ def _draw_bottom_right_badge(img, text, text_color, border_w, font_path, W=1080,
     
     return Image.alpha_composite(img_rgba, badge_layer).convert("RGB")
 
+
+def _draw_top_left_brand_badge(img, logo_path, watermark, brand_color, border_w, font_path, W=1080, H=1080):
+    temp_img = Image.new("RGBA", (100, 100))
+    temp_draw = ImageDraw.Draw(temp_img)
+    font_size = 22
+    font = ImageFont.truetype(font_path, font_size)
+    
+    bbox = temp_draw.textbbox((0, 0), watermark, font=font)
+    tw = bbox[2] - bbox[0]
+    th = temp_draw.textbbox((0, 0), "ก A", font=font)[3]
+    
+    logo_size = 36
+    pad_x, pad_y = 20, 10
+    
+    has_logo = logo_path and os.path.exists(logo_path)
+    if has_logo:
+        bw = pad_x * 2 + logo_size + 12 + tw
+    else:
+        bw = pad_x * 2 + tw
+        
+    bh = max(logo_size, th) + pad_y * 2
+    
+    ss = 4
+    ss_w, ss_h = bw * ss, bh * ss
+    ss_r = 16 * ss
+    
+    badge = Image.new("RGBA", (ss_w, ss_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(badge)
+    
+    badge_bg = (255, 255, 255, 255)
+    draw.rectangle([0, 0, ss_w - ss_r, ss_h], fill=badge_bg)
+    draw.rectangle([ss_w - ss_r, 0, ss_w, ss_h - ss_r], fill=badge_bg)
+    draw.ellipse([ss_w - 2 * ss_r, ss_h - 2 * ss_r, ss_w, ss_h], fill=badge_bg)
+    
+    tx = pad_x * ss
+    if has_logo:
+        try:
+            logo = Image.open(logo_path).convert("RGBA")
+            mask = Image.new("L", logo.size, 0)
+            mask_draw = ImageDraw.Draw(mask)
+            mask_draw.ellipse([0, 0, logo.size[0], logo.size[1]], fill=255)
+            logo_circle = Image.new("RGBA", logo.size, (0, 0, 0, 0))
+            logo_circle.paste(logo, (0, 0), mask)
+            
+            logo_circle = logo_circle.resize((logo_size * ss, logo_size * ss), Image.Resampling.LANCZOS)
+            ly = (ss_h - logo_size * ss) // 2
+            badge.paste(logo_circle, (pad_x * ss, ly), logo_circle)
+            tx = (pad_x + logo_size + 12) * ss
+        except Exception as e:
+            print("Error drawing logo on badge:", e)
+            
+    ss_font = ImageFont.truetype(font_path, font_size * ss)
+    ss_lh = draw.textbbox((0, 0), "ก A", font=ss_font)[3]
+    ty = (ss_h - ss_lh) // 2
+    
+    draw.text((tx, ty), watermark, font=ss_font, fill=(*brand_color, 255))
+    
+    badge_resized = badge.resize((bw, bh), Image.Resampling.LANCZOS)
+    img_rgba = img.convert("RGBA")
+    badge_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    badge_layer.paste(badge_resized, (0, 0))
+    
+    return Image.alpha_composite(img_rgba, badge_layer).convert("RGB")
+
 def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=None, style="news_card", badge_text=None, watermark=None):
     """
     Overlays text directly on the image.
@@ -633,13 +697,14 @@ def add_overlay(img_path, line1, line2, accent_color, out_path=None, font_name=N
             
             _draw_lines_shaping(draw_ctx, lines1, font1, lh1, gap1, y_start1, W, fill=headline_color, shadow=headline_shadow)
             
-        img = _draw_bottom_right_badge(img, watermark, BRAND_COLOR, border_w, current_font_path)
-        
         draw_border = ImageDraw.Draw(img)
         draw_border.rectangle([0, 0, W, border_w], fill=(*BRAND_COLOR, 255))
         draw_border.rectangle([0, H - border_w, W, H], fill=(*BRAND_COLOR, 255))
         draw_border.rectangle([0, 0, border_w, H], fill=(*BRAND_COLOR, 255))
         draw_border.rectangle([W - border_w, 0, W, H], fill=(*BRAND_COLOR, 255))
+        
+        logo_file = os.path.join(os.path.dirname(__file__), "obsidian_assets", "logo.png")
+        img = _draw_top_left_brand_badge(img, logo_file, watermark, BRAND_COLOR, border_w, current_font_path)
 
     elif style == "premium_card":
         draw = ImageDraw.Draw(img)
