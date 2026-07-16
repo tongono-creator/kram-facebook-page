@@ -5,6 +5,7 @@ on:
     branches:
       - main
   schedule:
+    # โพสต์ข่าวสัปดาห์ละ 2 ครั้ง (จันทร์ และ พฤหัสบดี เวลา 12:30 น. ตามเวลาไทย)
     - cron: '30 5 * * 1,4'
   workflow_dispatch:
 
@@ -25,9 +26,9 @@ jobs:
           pip install google-genai requests Pillow feedparser beautifulsoup4
 
       - name: Run news script
-                env:
-          GOOGLE_API_KEY:    ${ secrets.GEMINI_API_KEY }
-          GEMINI_API_KEY:    ${ secrets.GEMINI_API_KEY }
-          PAGE_ACCESS_TOKEN: ${ secrets.KRAM_PAGE_ACCESS_TOKEN }
-          PAGE_ID:           ${ secrets.PAGE_ID }
+        env:
+          GOOGLE_API_KEY:    ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY:    ${{ secrets.GEMINI_API_KEY }}
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          PAGE_ID:           ${{ secrets.PAGE_ID }}
         run: python news.py
