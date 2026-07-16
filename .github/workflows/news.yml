@@ -25,8 +25,9 @@ jobs:
           pip install google-genai requests Pillow feedparser beautifulsoup4
 
       - name: Run news script
-        env:
-          GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
-          PAGE_ACCESS_TOKEN: ${{ secrets.PAGE_ACCESS_TOKEN }}
-          PAGE_ID:           ${{ secrets.PAGE_ID }}
+                env:
+          GOOGLE_API_KEY:    ${ secrets.GEMINI_API_KEY }
+          GEMINI_API_KEY:    ${ secrets.GEMINI_API_KEY }
+          PAGE_ACCESS_TOKEN: ${ secrets.KRAM_PAGE_ACCESS_TOKEN }
+          PAGE_ID:           ${ secrets.PAGE_ID }
         run: python news.py
