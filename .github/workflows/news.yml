@@ -1,9 +1,6 @@
 name: Post News to Facebook (Content Card)
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     # โพสต์ข่าวสัปดาห์ละ 2 ครั้ง (จันทร์ และ พฤหัสบดี เวลา 12:30 น. ตามเวลาไทย)
     - cron: '30 5 * * 1,4'
