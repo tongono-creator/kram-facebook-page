@@ -17,7 +17,7 @@ PAGE_ACCESS_TOKEN = os.environ.get("KRAM_PAGE_ACCESS_TOKEN", "")
 GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
 client      = genai.Client(api_key=GEMINI_API_KEY, http_options=HttpOptions(timeout=300000))
-TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
+TEXT_MODELS       = ["gemini-flash-latest", "gemini-flash-latest"]
 OUTPUT_DIR  = "output"
 FONT_PATH   = os.path.join(os.path.dirname(__file__), "fonts", "Sarabun-ExtraBold.ttf")
 HISTORY_FILE = "story_history.txt"

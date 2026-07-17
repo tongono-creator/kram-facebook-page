@@ -123,7 +123,7 @@ except ImportError:
     pass
 
 PAGE_ID = cfg["page_id"]
-TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
+TEXT_MODELS       = ["gemini-flash-latest", "gemini-flash-latest"]
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "replied_fb_comments.txt")
 
 if not PAGE_ACCESS_TOKEN:

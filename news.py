@@ -24,7 +24,7 @@ from overlay_utils import add_overlay
 GOOGLE_API_KEY    = os.environ.get("GOOGLE_API_KEY", "")
 PAGE_ACCESS_TOKEN = os.environ.get("PAGE_ACCESS_TOKEN", "")
 PAGE_ID           = os.environ.get("PAGE_ID", "111830598532037")
-TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
+TEXT_MODELS       = ["gemini-flash-latest", "gemini-flash-latest"]
 OUTPUT_DIR        = "output"
 ACCENT_COLOR      = (11, 47, 29)  # Gold/Yellow สำหรับ Rocket21
 

@@ -1,6 +1,9 @@
 name: Product Review Post (CatDumb Style)
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # อังคาร, พฤหัสบดี, เสาร์ 04:45 BKK (ลดความถี่เป็น พุธ, เสาร์ 18:30 BKK)
     - cron: '0 11 * * *'
@@ -32,17 +35,17 @@ jobs:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
           PAGE_ID:                ${{ secrets.PAGE_ID }}
           IMMEDIATE:              ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
-        run: python review.py
+        run: mkdir -p output && python review.py > output/review_run.log 2>&1
 
       - name: Commit and push if Excel updated
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add review_products.xlsx
+          git add review_products.xlsx output/review_run.log || true
           if git diff --cached --quiet; then
             echo "No changes in review_products.xlsx"
           else
-            git commit -m "Update review_products.xlsx posted status [skip ci]"
+            git commit -m "Update review_products.xlsx and logs [skip ci]"
                         # Stash other changes so pull-rebase succeeds
             HAS_CHANGES=$(git status --porcelain | grep -v "review_products.xlsx" || true)
             if [ -n "$HAS_CHANGES" ]; then

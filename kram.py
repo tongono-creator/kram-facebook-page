@@ -20,7 +20,7 @@ GEMINI_API_KEY    = os.environ.get("GEMINI_API_KEY", "") or "DUMMY_KEY"
 
 API_ENABLED  = True
 client       = genai.Client(api_key=GEMINI_API_KEY, http_options=HttpOptions(timeout=300000))
-TEXT_MODELS       = ["gemini-1.5-flash", "gemini-1.5-flash"]
+TEXT_MODELS       = ["gemini-flash-latest", "gemini-flash-latest"]
 ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KramBot/1.0; +github)"}
