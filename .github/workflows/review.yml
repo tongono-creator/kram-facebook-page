@@ -1,9 +1,6 @@
 name: Product Review Post (CatDumb Style)
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     # อังคาร, พฤหัสบดี, เสาร์ 04:45 BKK (ลดความถี่เป็น พุธ, เสาร์ 18:30 BKK)
     - cron: '0 11 * * *'
