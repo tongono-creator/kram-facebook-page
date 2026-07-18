@@ -1136,7 +1136,8 @@ if __name__ == "__main__":
         try:
             from card.render_card import render_review_card
             card_out = product_img.rsplit(".", 1)[0] + "_card.png"
-            review_img = render_review_card(product_img, line1_clean, line2_clean, card_out)
+            review_img = render_review_card(product_img, line1_clean, line2_clean, card_out,
+                                            price=product_json.get("ราคา"))
             os.unlink(product_img)
             print(f"Card render done: {review_img}")
         except Exception as card_err:

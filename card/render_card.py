@@ -18,16 +18,16 @@ FONTS = {
     "Sarabun": "fonts/Sarabun-ExtraBold.ttf",
 }
 
-# Per-page theme — override via env PAGE_THEME if ever needed
+# Per-page theme — border/badge ใช้สีประจำเพจ (เอกลักษณ์เพจ)
 THEME = {
     "watermark":   "กรามค้าง",
-    "accent":      "#00BFFF",
+    "accent":      "#4DD6FF",
     "badge_color": "#ffffff",
     "params": {
-        "border_color": "#16213e", "badge_bg": "#16213e", "badge_pos": "left",
+        "border_color": "#00BFFF", "badge_bg": "#00BFFF", "badge_pos": "left",
         "frame_radius": 36, "img_w": 1080, "img_h": 1350,
-        "photo_h": "82%", "grad_h": "60%", "text_rise": 340,
-        "text_size": 64,
+        "photo_h": "78%", "grad_h": "62%", "text_rise": 340,
+        "text_size": 78,
     },
 }
 
@@ -76,13 +76,21 @@ def render(data, out_path):
     return out_path
 
 
-def render_review_card(photo_path, line1, line2, out_path):
-    """Build the standard review card: line1 accent-colored, line2 white."""
+def render_review_card(photo_path, line1, line2, out_path, price=None):
+    """Build the standard review card: line1 accent, line2 white, price line accent.
+
+    CATDUMB style wants 3 lines of punchy text — if we only have line1+line2 and
+    a price is known (and not already mentioned), add a price line.
+    """
     lines = []
     if line1:
         lines.append(f"*{line1}*")
     if line2:
         lines.append(line2)
+    price_txt = str(price).strip() if price else ""
+    already = any("ราคา" in l or "บาท" in l for l in lines)
+    if price_txt and not already:
+        lines.append(f"ราคา *{price_txt} บาท*")
     data = {
         "photos": [photo_path],
         "lines": lines,
