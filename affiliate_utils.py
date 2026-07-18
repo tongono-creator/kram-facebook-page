@@ -525,7 +525,21 @@ def select_product_with_ai(products, caption=None, img_path=None):
 def get_product_comments(caption=None, img_path=None):
     """comments สินค้าหมุนเวียน (ใช้ AI วิเคราะห์และเลือก) — คืนค่าลิสต์ที่มี 1 คอมเมนต์รวมลิงก์ Shopee/Lazada"""
     products, _, _ = _load_excel()
-    active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"]]
+    persona = get_persona()
+    
+    # กำหนดหมวดหมู่สินค้าที่ได้รับอนุญาตตามแต่ละเพจ
+    if persona == "rocket":
+        allowed_categories = ["review", "rocket_curated.xlsx"]
+    elif persona == "kram":
+        allowed_categories = ["main", "review", "เครื่องใช้ในบ้าน.xlsx", "สินค้าสำหรับเม้นใต้คลิป.xlsx", "สินค้าขายดี.xlsx", "ค่าคอมพิเศษ.xlsx"]
+    elif persona == "somtam":
+        allowed_categories = ["main", "review", "อาหารและเครื่องดื่ม.xlsx", "สินค้าสำหรับเม้นใต้คลิป.xlsx", "สินค้าขายดี.xlsx", "ค่าคอมพิเศษ.xlsx"]
+    elif persona == "chowchow":
+        allowed_categories = ["main", "review", "สัตว์เลี้ยง.xlsx", "สินค้าสำหรับเม้นใต้คลิป.xlsx", "สินค้าขายดี.xlsx", "ค่าคอมพิเศษ.xlsx"]
+    else: # xbot
+        allowed_categories = ["main", "review", "สินค้าสำหรับเม้นใต้คลิป.xlsx", "สินค้าขายดี.xlsx", "ค่าคอมพิเศษ.xlsx"]
+        
+    active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"] and p.get("category") in allowed_categories]
     if not active:
         return []
     
@@ -611,12 +625,21 @@ def get_website_comment():
 
 def get_all_comments(caption=None, img_path=None):
     """
-    คืนค่าคอมเมนต์สูงสุด 2 คอมเมนต์ต่อโพสต์เพื่อไม่ให้สแปม:
-    1. คอมเมนต์โปรโมทหลัก (Promo -> Product -> Food)
-    2. คอมเมนต์แนะนำเว็บไซต์ (Website shopee-ranking)
+    คืนค่าคอมเมนต์สูงสุดต่อโพสต์เพื่อไม่ให้สแปม:
+    - บน Rocket: คืนค่าพิกัดสินค้า curated เพียง 1 คอมเมนต์เท่านั้น (ไม่มี website/food/promo)
+    - บนเพจอื่นๆ: คืนค่าสูงสุด 2 คอมเมนต์ (คอมเมนต์หลัก + website)
     """
+    persona = get_persona()
     comments = []
     
+    if persona == "rocket":
+        # เฉพาะ Rocket: คืนค่าคอมเมนต์สินค้า curated เพียง 1 คอมเมนต์
+        prod_comments = get_product_comments(caption=caption, img_path=img_path)
+        if prod_comments:
+            comments.extend(prod_comments)
+        return comments
+        
+    # เพจอื่นๆ (Kram, Somtam, Chow Chow, X-bot): กฎสูงสุด 2 คอมเมนต์
     # 1. คอมเมนต์หลัก (สูงสุด 1 ชิ้น)
     promo = get_promo_comment()
     if promo:

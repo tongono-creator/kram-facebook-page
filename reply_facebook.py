@@ -434,7 +434,10 @@ if __name__ == "__main__":
         
         # สำหรับ Rocket21: ตรวจสอบและโพสต์คอมเมนต์พิกัดสินค้าหลักของโพสต์ (ถ้ายังไม่มี)
         if page_key == "rocket" or page_key == "default":
-            if comments is not None and not has_affiliate_comment(comments, PAGE_ID):
+            has_existing_link = "ดูลิ้งในคอมเมนต์" in post_text or "shopee" in post_text.lower() or "s.shopee" in post_text.lower() or "lazada" in post_text.lower() or "s.lazada" in post_text.lower()
+            if has_existing_link:
+                print("  Skipping affiliate comment: This is a sales/review post (has links/CTA in caption).")
+            elif comments is not None and not has_affiliate_comment(comments, PAGE_ID):
                 print("  No affiliate comment found on this post. Generating one...")
                 from affiliate_utils import get_all_comments
                 aff_comments = get_all_comments(caption=post_text)
