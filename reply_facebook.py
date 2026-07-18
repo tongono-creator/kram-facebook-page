@@ -1,3 +1,4 @@
+import time
 # -*- coding: utf-8 -*-
 """reply_facebook.py — ตรวจสอบและตอบกลับคอมเมนต์บน Facebook Page ด้วย Gemini อัจฉริยะ"""
 
@@ -242,7 +243,7 @@ def generate_reply(post_text, commenter_name, comment_text, is_asking_link=False
     
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             result = resp.text.strip()

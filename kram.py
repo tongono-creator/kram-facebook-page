@@ -297,7 +297,7 @@ def analyze_image(img_path, reddit_title=""):
     )
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -495,7 +495,7 @@ def segment_thai_text(text, client=client):
     )
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             segmented = resp.text.strip().replace('\\u200b', '\u200b')
@@ -522,7 +522,7 @@ def verify_image_title_match(img_bytes, reddit_title):
     part = types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg")
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             resp = client.models.generate_content(
                 model=model,
@@ -544,7 +544,7 @@ def translate_to_thai(text):
     prompt = f"Translate the following English text into natural, fluent Thai language. Output ONLY the Thai translation, without explanations, notes, or labels:\n\n{text}"
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         for attempt in range(2):
             try:
                 resp = client.models.generate_content(model=model, contents=prompt)
@@ -617,7 +617,7 @@ def generate_hook(subject, vibe, subreddit):
     ]
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             resp = client.models.generate_content(model=model, contents=prompt)
             lines = clean_hook_lines(resp.text)
@@ -689,7 +689,7 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
         )
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         try:
             if img_path and os.path.exists(img_path):
                 with open(img_path, "rb") as f:

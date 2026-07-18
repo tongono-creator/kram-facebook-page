@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """story.py — ดึงเรื่องเล่าจาก Reddit แปลไทย โพส Facebook เพจกรามค้าง"""
 
-import os, re, sys, io, json, random, time, requests, hashlib
+import os, time, re, sys, io, json, random, time, requests, hashlib
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime, timezone, timedelta
@@ -130,7 +130,7 @@ def get_reddit_story(history_set):
 def gemini_text(prompt):
     for model_idx, model in enumerate(TEXT_MODELS):
         if model_idx > 0:
-            import time; time.sleep(2)
+            time.sleep(2)
         for attempt in range(2):
             try:
                 resp = client.models.generate_content(model=model, contents=prompt)
