@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+/*FONT_FACE*/
+
+:root{
+  /* ===== CATDUMB-style params — overridable from data.json "params" ===== */
+  --img-w:1080px;  --img-h:1350px;           /* canvas (4:5 default)        */
+  --border-w:14px; --border-color:#1877f2;   /* outer frame                 */
+  --frame-radius:0px;                        /* frame corner radius (0=ชนมุม) */
+  --badge-bg:#fff;                           /* badge background            */
+  --overlap:6px;                             /* photo overlap in middle     */
+  --photo-h:62%;                             /* collage height (of canvas)  */
+  --left-w:55%;                              /* left photo width (3-photo)  */
+  --text-bottom:44px;                        /* gap: text block -> bottom   */
+  --text-rise:60px;                          /* how far top line rises INTO the photo */
+  --grad-h:50%;                              /* dark gradient height        */
+  --text-side:30px;                          /* gap: text -> side edges     */
+  --line-gap:1.28;                           /* line-height ratio           */
+  --text-size:74px;                          /* max font size (auto-fit)    */
+  --accent:#00c3ff;                          /* highlighted word color      */
+  --hl-scale:1.28em;                         /* emphasized word size boost  */
+  --badge-color:#1877f2;                     /* badge text color            */
+  --badge-size:24px;
+  --badge-pad:5px 14px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+#canvas{width:var(--img-w);height:var(--img-h);position:relative;overflow:hidden;
+        font-family:'Kanit',sans-serif;background:var(--border-color);}
+.frame{position:absolute;inset:0;overflow:hidden;background:#000;
+       border-radius:var(--frame-radius);}
+/* border drawn ON TOP of photos (slight overlap); inset shadow kills white AA fringe at rounded corners */
+.borderline{position:absolute;inset:0;border:var(--border-w) solid var(--border-color);
+            border-radius:var(--frame-radius);z-index:6;pointer-events:none;
+            box-shadow:inset 0 0 0 3px var(--border-color);}
+
+/* blurred fill bg from first photo (fills area behind text) */
+.bg{position:absolute;inset:0;background-size:cover;background-position:center;
+    filter:blur(45px) brightness(.45);transform:scale(1.15);}
+
+/* ===== collage — photos run under the border, slight overlap in middle ===== */
+.collage{position:absolute;top:0;left:0;right:0;
+         height:var(--photo-h);display:flex;overflow:hidden;}
+.colL{flex:0 0 var(--left-w);height:100%;}
+.colR{flex:1;display:flex;flex-direction:column;height:100%;
+      margin-left:calc(var(--overlap)*-1);}
+.ph{width:100%;height:100%;object-fit:cover;display:block;
+    filter:saturate(1.18) contrast(1.06);}
+.colR .ph{height:auto;flex:1;min-height:0;}
+.colR .ph + .ph{margin-top:calc(var(--overlap)*-1);}
+
+/* darkening — fades from inside the photo down to solid black (text overlaps into photo) */
+.gradient{position:absolute;left:0;right:0;bottom:0;height:var(--grad-h);
+          background:linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(0,0,0,.35) 18%,rgba(0,0,0,.82) 42%,rgba(0,0,0,1) 62%);}
+
+/* ===== text block ===== */
+.textblock{position:absolute;left:var(--text-side);right:var(--text-side);
+           bottom:var(--text-bottom);text-align:center;}
+.ln{color:#fff;font-size:var(--text-size);line-height:var(--line-gap);font-weight:700;
+    word-break:break-word;
+    text-shadow:0 3px 12px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.9);}
+.ln b, .ln .hl{color:var(--accent);font-weight:700;font-size:var(--hl-scale);}
+.ln .big{color:#fff;font-weight:700;font-size:var(--hl-scale);}
+
+/* ===== badge — top corner pill (text and/or round logo) ===== */
+.badge{position:absolute;top:0;background:var(--badge-bg);color:var(--badge-color);
+       font-size:var(--badge-size);font-weight:700;padding:var(--badge-pad);
+       box-shadow:0 2px 10px rgba(0,0,0,.35);
+       letter-spacing:.5px;z-index:7;display:flex;align-items:center;gap:8px;}
+.badge.pos-right{right:0;border-bottom-left-radius:16px;}
+.badge.pos-left{left:0;border-bottom-right-radius:16px;}
+.badge img{width:calc(var(--badge-size)*1.6);height:calc(var(--badge-size)*1.6);
+           border-radius:50%;object-fit:cover;display:block;}
+</style>
+</head>
+<body>
+<div id="canvas">
+  <div class="frame">
+    <div class="bg" id="bg"></div>
+    <div class="collage" id="collage"></div>
+    <div class="gradient"></div>
+    <div class="textblock" id="tb"></div>
+    <div class="borderline"></div>
+    <div class="badge" id="badge"></div>
+  </div>
+</div>
+
+<script>
+/*__INJECT_DATA__*/
+;(function(){
+  const d = window.__DATA__ || {};
+  const root = document.documentElement.style;
+  const P = Object.assign({
+    img_w:'1080px', img_h:'1350px', border_w:'14px', border_color:'#1877f2',
+    frame_radius:'0px', badge_bg:'#fff', badge_pos:'right', overlap:'6px', photo_h:'62%', left_w:'55%',
+    text_bottom:'44px', text_rise:'60px', grad_h:'50%', text_side:'30px', line_gap:'1.28', text_size:'74px', hl_scale:'1.28em',
+    accent:'#00c3ff', badge_color:'#1877f2', badge_size:'24px', badge_pad:'5px 14px', font:'Kanit'
+  }, d.params || {});
+  const px = v => (typeof v === 'number' ? v+'px' : v);
+  const map = {
+    '--img-w':px(P.img_w),'--img-h':px(P.img_h),'--border-w':px(P.border_w),
+    '--border-color':P.border_color,'--frame-radius':px(P.frame_radius),
+    '--overlap':px(P.overlap),'--photo-h':P.photo_h,'--left-w':P.left_w,
+    '--text-bottom':px(P.text_bottom),'--text-rise':px(P.text_rise),'--grad-h':P.grad_h,'--text-side':px(P.text_side),
+    '--line-gap':P.line_gap,'--text-size':px(P.text_size),
+    '--accent':d.accent||P.accent,'--badge-color':d.badge_color||P.badge_color,
+    '--badge-bg':P.badge_bg,'--badge-size':px(P.badge_size),'--badge-pad':P.badge_pad,'--hl-scale':P.hl_scale
+  };
+  for (const k in map) root.setProperty(k, map[k]);
+
+  // collage: 1 photo = full • 2 = big left + right • 3 = left tall + 2 stacked right
+  const photos = d.photos || [];
+  const col = document.getElementById('collage');
+  if (photos[0]) document.getElementById('bg').style.backgroundImage = `url(${photos[0]})`;
+  function img(src){ const i=document.createElement('img'); i.className='ph'; i.src=src; return i; }
+  if (photos.length <= 1){
+    if (photos[0]) col.appendChild(img(photos[0]));
+    col.style.display='block';
+  } else {
+    const L=document.createElement('div'); L.className='colL'; L.appendChild(img(photos[0]));
+    const R=document.createElement('div'); R.className='colR';
+    photos.slice(1,3).forEach(s=>R.appendChild(img(s)));
+    col.appendChild(L); col.appendChild(R);
+  }
+
+  // lines: array of strings; *word* becomes accent-colored
+  const tb = document.getElementById('tb');
+  (d.lines||[]).forEach(t=>{
+    const el=document.createElement('div'); el.className='ln';
+    el.innerHTML = t.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                    .replace(/\*([^*]+)\*/g,'<span class="hl">$1</span>')
+                    .replace(/_([^_]+)_/g,'<span class="big">$1</span>');
+    tb.appendChild(el);
+  });
+
+  const badge=document.getElementById('badge');
+  badge.classList.add((P.badge_pos==='left')?'pos-left':'pos-right');
+  if (d.watermark || d.logo){
+    if (d.logo){ const li=document.createElement('img'); li.src=d.logo; badge.appendChild(li); }
+    if (d.watermark){ const sp=document.createElement('span'); sp.textContent=d.watermark; badge.appendChild(sp); }
+  } else { badge.style.display='none'; }
+
+  // auto-fit: shrink text so block stays below collage
+  function fit(){
+    const cs=getComputedStyle(document.documentElement);
+    const num=k=>parseFloat(cs.getPropertyValue(k));
+    const imgH=num('--img-h'), bW=num('--border-w');
+    const photoBottom=bW+document.getElementById('collage').offsetHeight;
+    const maxH=imgH-num('--text-bottom')-photoBottom+num('--text-rise');
+    let ts=num('--text-size'), guard=70;
+    while(tb.offsetHeight>maxH && ts>26 && guard-->0){
+      ts-=2; root.setProperty('--text-size',ts+'px');
+    }
+  }
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(()=>{ fit(); requestAnimationFrame(()=>{ window.__READY__ = true; }); });
+})();
+</script>
+</body>
+</html>

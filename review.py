@@ -217,6 +217,8 @@ def load_next_product():
             continue
         if not shopee or "xxx" in str(shopee):
             continue
+        if not imgurl or "xxx" in str(imgurl) or not str(imgurl).strip().startswith("http"):
+            continue
 
         return {
             "row": row[0].row,
@@ -610,7 +612,7 @@ def generate_hook(detail, highlights):
             "- บรรทัด 1: คำโปรย/ชื่อเล่นสั้นๆ เป็นกันเอง (3-5 คำ)\n"
             "- บรรทัด 2: จุดเด่นแก้ปัญหาของสินค้า (4-7 คำ)\n"
             "- ห้ามใส่เครื่องหมายคำพูด หรือข้อความอื่นเด็ดขาด ห้ามมี Emoji\n"
-            "- ห้ามใช้คำว่า คุ้มมาก, คุ้มสุดๆ, คุ้มค่า, ดีงาม, ของดี, ห้ามพลาด, ต้องจัด, ดีจริง\n"
+            "- ห้ามใช้คำว่า คุ้มมาก, คุ้มสุดๆ, คุ้มค่า, ดีงาม, ของดี, ห้ามพลาด, ต้องจัด, ดีจริง\n- พาดหัวต้องตรงกับชนิดสินค้าจริงตามข้อมูลเท่านั้น ห้ามแต่งสรรพคุณ/เรื่องราวที่ไม่มีในข้อมูล\n"
             f"ตัวอย่าง: เบาะรองนั่งสู้ชีวิต | นั่งทำงาน 10 ชม. ไม่ปวดหลัง\n\n"
             f"สินค้า:\n{detail}\n"
             f"จุดเด่น:\n{highlights}"
@@ -844,7 +846,7 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
             f"ข้อมูลสินค้า JSON:\n{json.dumps(product_json, ensure_ascii=False)}\n\n"
             f"กฎเหล็ก:\n- ต้องระบุราคาสินค้าจาก JSON เสมอ\n"
             f"- ห้ามเริ่มโพสต์ด้วยชื่อแบรนด์/สินค้า\n"
-            f"- ห้ามใช้คำโฆษณาจำพวก คุ้มมาก, คุ้มสุดๆ, คุ้มค่า, คุ้ม, ดีงาม, ห้ามพลาด, ของดี, ดีจริง, แนะนำเลย\n"
+            f"- ห้ามใช้คำโฆษณาจำพวก คุ้มมาก, คุ้มสุดๆ, คุ้มค่า, คุ้ม, ดีงาม, ห้ามพลาด, ของดี, ดีจริง, แนะนำเลย\n- ห้ามแต่งข้อมูลที่ไม่มีใน JSON เด็ดขาด: ห้ามอ้างของใกล้หมด/ล็อตสุดท้าย/จำนวนจำกัด, ห้ามเคลมสรรพคุณสุขภาพ ลดน้ำหนัก คุมอาหาร แคลอรี่ โปรตีน ถ้า JSON ไม่ได้ระบุ, ห้ามเดาวิธีใช้ที่ผิดธรรมชาติของสินค้าชนิดนั้น\n- เขียนถึงสินค้าให้ตรงกับสิ่งที่มันเป็นจริง ถ้าไม่แน่ใจว่าสินค้าคืออะไร ให้เล่ากลางๆ ตามชื่อสินค้า อย่ามโนรายละเอียดเพิ่ม\n- ถ้าบทบาท/Persona ไม่เข้ากับสินค้าชนิดนี้ ห้ามฝืนโยงสินค้าเข้ากับบทบาท ให้เล่าแบบคนทั่วไปที่บังเอิญเจอของน่าสนใจแทน\n"
             f"- โทนเสียง: {gender_rule}\n"
             "- เน้นทำ Social SEO: ค้นหาและใส่คำค้นหา (keywords) ยอดฮิตที่คนมักจะพิมพ์ค้นหาเกี่ยวกับสินค้านี้ลงในเนื้อหาแบบเนียนๆ เป็นธรรมชาติ\n"
             "- กระตุ้นการแชร์และเซฟโพสต์เก็บไว้ (เช่น 'เซฟเก็บไว้ดูตอนช้อป', 'แชร์ต่อให้เพื่อนที่เจอปัญหานี้') ตามความเหมาะสมกับบริบท\n\n"
@@ -1126,23 +1128,33 @@ if __name__ == "__main__":
         print(f"Hook: {line1} | {line2}")
 
         product_img = download_image(product["image_url"])
+        line1_clean = clean_overlay_text(line1)
+        line2_clean = clean_overlay_text(line2)
+        if not line1_clean:
+            line1_clean = "สินค้าแนะนำ"
+        review_img = None
         try:
-            badge_text = extract_badge_text(product.get("promo"))
-            line1_clean = clean_overlay_text(line1)
-            line2_clean = clean_overlay_text(line2)
-            if not line1_clean:
-                line1_clean = "สินค้าแนะนำ"
-            review_img = add_overlay(
-                product_img, line1_clean, line2_clean, ACCENT_COLOR,
-                font_name="Itim-Regular.ttf",
-                badge_text=badge_text,
-                watermark="คราม Kram"
-            )
+            from card.render_card import render_review_card
+            card_out = product_img.rsplit(".", 1)[0] + "_card.png"
+            review_img = render_review_card(product_img, line1_clean, line2_clean, card_out)
             os.unlink(product_img)
-            print(f"Overlay done: {review_img}")
-        except Exception as overlay_err:
-            print(f"Overlay failed, using original: {overlay_err}")
-            review_img = product_img
+            print(f"Card render done: {review_img}")
+        except Exception as card_err:
+            print(f"[Warning] Card render failed ({card_err}), falling back to PIL overlay")
+        if not review_img:
+            try:
+                badge_text = extract_badge_text(product.get("promo"))
+                review_img = add_overlay(
+                    product_img, line1_clean, line2_clean, ACCENT_COLOR,
+                    font_name="Itim-Regular.ttf",
+                    badge_text=badge_text,
+                    watermark="คราม Kram"
+                )
+                os.unlink(product_img)
+                print(f"Overlay done: {review_img}")
+            except Exception as overlay_err:
+                print(f"Overlay failed, using original: {overlay_err}")
+                review_img = product_img
         print(f"Caption:\n{caption}\n")
 
         # Save selection details
