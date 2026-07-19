@@ -598,7 +598,7 @@ def get_product_comments(caption=None, img_path=None):
         if persona == "somtam":
             msg = msg.replace("ครับ", "ค่ะ").replace("นะครับ", "นะคะ")
         elif persona == "chowchow":
-            msg = msg.replace("ครับ", "ฮะ โฮ่ง!").replace("นะครับ", "นะฮะ โฮ่ง!")"
+            msg = msg.replace("ครับ", "ฮะ โฮ่ง!").replace("นะครับ", "นะฮะ โฮ่ง!")
 
     # รวมลิงก์
     links = []
