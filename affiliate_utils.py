@@ -130,6 +130,21 @@ def _load_excel():
             expiry_raw   = row[10] if len(row) > 10 else None
             picture_url  = row[11] if len(row) > 11 else None
 
+            # Extract price and clean description to avoid advertisement words and broken grammar
+            price_val_extracted = ""
+            if desc:
+                desc_str = str(desc).strip()
+                # Extract price if present
+                price_match = re.search(r'(?:ราคาพิเศษเพียง|ราคาพิเศษ|ราคา)\s*([\d,]+)\s*บาท', desc_str)
+                if price_match:
+                    price_val_extracted = price_match.group(1).replace(",", "")
+                # Clean up desc from price and promo slogans
+                desc_clean = re.sub(r'(?:ราคาพิเศษเพียง|ราคาพิเศษ|ราคา)\s*[\d,]+\s*บาท', '', desc_str)
+                desc_clean = re.sub(r'(?:ขายดี|ยอดนิยม|แอดมินแนะนำเลย|แอดมินแนะนำ|ของมันต้องมี|สุดคุ้ม|คุ้มมาก|คุ้มค่า|ห้ามพลาด|ดีงาม|โปรเด็ด|รีบคว้า|รีบจัดด่วน)\s*', '', desc_clean)
+                desc_clean = re.sub(r'[\s|]+$', '', desc_clean).strip()
+                desc_clean = re.sub(r'^[\s|]+', '', desc_clean).strip()
+                desc = desc_clean if desc_clean else str(name or "").strip()
+
             # product rows (ต้องมี active=yes)
             if str(active).strip().lower() == "yes":
                 products.append({
@@ -137,7 +152,7 @@ def _load_excel():
                     "shopee": str(shopee or "").strip(),
                     "lazada": str(lazada or "").strip(),
                     "desc":   str(desc or "").strip(),
-                    "price":  "",
+                    "price":  price_val_extracted,
                     "category": "main",
                     "image":  "",
                 })
@@ -276,27 +291,27 @@ WEBSITE_VARS = [
 
 # ─── Shopee / Lazada fallback comment templates (3-Step: Hook -> Story -> CTA) ───────────────────────────
 SHOPEE_INTROS = [
-    "📍 เผื่อใครถามพิกัดของ {name} ราคา {price} บาท วางลิงก์ Shopee ไว้ให้ตรงนี้นะครับ → {url}",
-    "💬 มีคนถามถึง {name} ราคา {price} บาท บ่อยๆ วางพิกัด Shopee ไว้ให้ทางนี้นะครับ → {url}",
-    "💡 {name} ราคา {price} บาท ตัวที่เล่าไป ใครสนใจพิกัด Shopee ดูได้ตรงนี้ครับ → {url}",
+    "📍 เผื่อใครถามหาพิกัด {name} ราคา {price} บาท แปะลิงก์ Shopee ไว้ให้นะครับ → {url}",
+    "💬 สำหรับ {name} ราคา {price} บาท แปะพิกัดร้านใน Shopee ไว้ทางนี้นะครับ → {url}",
+    "💡 ใครสนใจ {name} ราคา {price} บาท ดูรายละเอียดใน Shopee ได้ตรงนี้ครับ → {url}",
 ]
 
 LAZADA_INTROS = [
-    "📍 เผื่อใครถามพิกัดของ {name} ราคา {price} บาท วางลิงก์ Lazada ไว้ให้ตรงนี้นะครับ → {url}",
-    "💬 มีคนถามถึง {name} ราคา {price} บาท บ่อยๆ วางพิกัด Lazada ไว้ให้ทางนี้นะครับ → {url}",
-    "💡 {name} ราคา {price} บาท ตัวที่เล่าไป ใครสนใจพิกัด Lazada ดูได้ตรงนี้ครับ → {url}",
+    "📍 เผื่อใครถามหาพิกัด {name} ราคา {price} บาท แปะลิงก์ Lazada ไว้ให้นะครับ → {url}",
+    "💬 สำหรับ {name} ราคา {price} บาท แปะพิกัดร้านใน Lazada ไว้ทางนี้นะครับ → {url}",
+    "💡 ใครสนใจ {name} ราคา {price} บาท ดูรายละเอียดใน Lazada ได้ตรงนี้ครับ → {url}",
 ]
 
 PRODUCT_HOOKS = [
-    "ชี้เป้าของใช้",
     "พิกัดของชิ้นนี้",
     "รายละเอียดสินค้า",
+    "พิกัดสินค้า",
 ]
 
 PROMO_INTROS = [
-    "📍 ส่วนลดพิเศษสำหรับ {name} ราคาพิเศษ {price} บาท ดูพิกัดตรงนี้ได้เลยครับ → {url}",
-    "⚡ ราคาพิเศษช่วงนี้กับ {name} ดูรายละเอียดเพิ่มเติมในลิงก์ได้เลยครับ → {url}",
-    "🎯 พิกัดราคาพิเศษของ {name} สนใจสั่งซื้อดูตรงนี้ได้เลยครับ → {url}",
+    "📍 เผื่อใครหาพิกัด {name} ราคาพิเศษ {price} บาท แปะลิงก์ Shopee ไว้ให้นะครับ → {url}",
+    "⚡ สำหรับ {name} ราคาพิเศษ {price} บาท แปะลิงก์ร้านค้าไว้ตรงนี้ครับ → {url}",
+    "🎯 ใครสนใจ {name} ราคาพิเศษ {price} บาท ดูข้อมูลเพิ่มเติมในลิงก์ได้เลยครับ → {url}",
 ]
 
 def get_website_with_product_comment():
@@ -380,6 +395,7 @@ def generate_comment_with_ai(p, platform, persona, caption=None):
         f"- ชื่อสินค้า: {name}\n"
         f"- ข้อมูลเด่น: {desc}\n\n"
         f"กฎการร่างข้อความ:\n"
+        f"- ห้ามใช้คำโฆษณาชวนเชื่อหรือคำที่ดูเป็นบอทเด็ดขาด เช่น ขายดี, ยอดนิยม, แอดมินแนะนำเลย, แอดมินแนะนำ, ของมันต้องมี, สุดคุ้ม, คุ้มมาก, คุ้มค่า, ห้ามพลาด, ดีงาม, โปรเด็ด, รีบคว้า, รีบจัดด่วน\n"
         f"- ห้ามใช้ bullet points, รายการตัวเลข, หรือทำเป็นข้อๆ และห้ามมีสัญลักษณ์รายการใดๆ (เช่น •, ▪️, -, 👉) ปรากฏในเนื้อหาเด็ดขาด ให้เขียนเป็นย่อหน้าเดียวต่อเนื่องเป็นธรรมชาติ\n"
         f"- ห้ามใส่ลิงก์เด็ดขาด (ลิงก์จะถูกนำไปต่อท้ายเอง)\n"
         f"- ความยาวรวมไม่เกิน 2-3 บรรทัด (สั้น กระชับ คล้ายสไตล์คุยกันใต้โพสต์)\n"
@@ -389,7 +405,7 @@ def generate_comment_with_ai(p, platform, persona, caption=None):
 
     try:
         from google import genai
-        client = genai.Client(api_key=api_key, http_options={'timeout': 90.0})
+        client = genai.Client(api_key=api_key)
         resp = client.models.generate_content(
             model="gemini-flash-latest",
             contents=prompt
@@ -420,10 +436,10 @@ def get_food_comment():
         ending = "ครับ"
 
     food_templates = [
-        "🍜 หิวตอนดึกแบบนี้ต้องจัดแล้วครับกับ {name} กลิ่นหอมๆ รสชาติเข้มข้นถึงใจแน่นอน ตอนนี้มีโปรเด็ดลดราคาพิเศษอยู่นะ กดตะกร้าสั่งผ่าน Shopee Food ได้เลย{ending} → {url}",
-        "🍱 แนะนำร้านอร่อยนี้เลย {name} รสเด็ด เมนูเด่น จัดเต็มคำ กินกี่ทีก็ไม่เบื่อ สนใจกดสั่งในตะกร้าด่วน มีโปรโมชั่นสุดพิเศษรออยู่นะ{ending} → {url}",
-        "🔖 หิวแบบนี้จะพลาดได้ไงกับ {name} อาหารสดใหม่ รสชาติกลมกล่อมฟินทุกคำ กดสั่งทางนี้เลย มีโปรลดจุกๆ วันนี้เท่านั้นนะ{ending} → {url}",
-        "🛵 เมนูอร่อยชวนน้ำลายสอเลยกับ {name} ร้อนๆ คุ้มค่าสมราคาพร้อมส่งทันที อย่ารอช้า กดตะกร้าสั่งได้เลย มีโปรส่งฟรีอยู่นะ{ending} → {url}",
+        "🍜 ใครหิวตอนดึก อยากลอง {name} ร้อนๆ รสชาติกลมกล่อม แปะพิกัดร้านใน Shopee Food ไว้ตรงนี้นะครับ{ending} → {url}",
+        "🍱 ร้าน {name} รสชาติดี อร่อยถูกปาก สั่งผ่าน Shopee Food ได้เลยนะครับ{ending} → {url}",
+        "🔖 เผื่อใครมองหาของอร่อย เมนู {name} รสชาติเข้มข้นถูกใจ สั่งร้านนี้ใน Shopee Food ได้เลยนะครับ{ending} → {url}",
+        "🛵 เมนูอร่อย {name} พร้อมส่งถึงที่ สะดวกและรวดเร็ว สั่งผ่าน Shopee Food ตรงนี้ได้เลยนะครับ{ending} → {url}",
     ]
     
     template = random.choice(food_templates)
@@ -458,7 +474,7 @@ def select_product_with_ai(products, caption=None, img_path=None):
         from google import genai
         from google.genai import types
 
-        client = genai.Client(api_key=api_key, http_options={'timeout': 90.0})
+        client = genai.Client(api_key=api_key)
         
         # จัดเตรียมรายการสินค้าที่มีในระบบ
         product_list_str = ""

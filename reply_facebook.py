@@ -138,7 +138,7 @@ if not PAGE_ACCESS_TOKEN:
 
 client = None
 if GEMINI_API_KEY:
-    client = genai.Client(api_key=GEMINI_API_KEY, http_options={'timeout': 90.0})
+    client = genai.Client(api_key=GEMINI_API_KEY)
 else:
     print("Warning: GEMINI_API_KEY ว่างเปล่า จะใช้ระบบ fallback ข้อความตอบกลับ")
 
@@ -368,7 +368,7 @@ def filter_affiliate_message(aff_msg, target_platform="shopee"):
 
 def get_reply_affiliate_message(post_text, has_shopee, has_lazada, has_shopeefood):
     """เลือกข้อความคอมเมนต์พิกัดที่เหมาะสม โดยกรองเอาเฉพาะแพลตฟอร์มที่ยังไม่เคยโพสต์ เพื่อป้องกันการสแปม"""
-    from affiliate_utils import get_all_comments, get_food_comment
+    from affiliate_utils import get_all_comments, get_food_comment, get_persona
     
     # 1. ถ้ายังไม่มี Shopee -> โพสต์ Shopee
     if not has_shopee:
@@ -385,8 +385,8 @@ def get_reply_affiliate_message(post_text, has_shopee, has_lazada, has_shopeefoo
             if "lazada" in msg_text.lower():
                 return filter_affiliate_message(msg, "lazada")
                 
-    # 3. ถ้าไม่มีลิงก์ Lazada หรือมีแล้ว แต่ยังไม่มี ShopeeFood -> โพสต์ ShopeeFood
-    if not has_shopeefood:
+    # 3. ถ้าไม่มีลิงก์ Lazada หรือมีแล้ว แต่ยังไม่มี ShopeeFood -> โพสต์ ShopeeFood (ข้ามสำหรับ Rocket)
+    if get_persona() != "rocket" and not has_shopeefood:
         food_comment = get_food_comment()
         if food_comment:
             return food_comment
