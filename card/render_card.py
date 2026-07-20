@@ -1,11 +1,9 @@
-"""render_card.py : CATDUMB-style review card renderer (self-contained per repo).
+"""render_card.py : CATDUMB-style review & news card renderer (self-contained per repo).
 
-Adapted from image-text-overlay skill's render_catdumb.py — assets live in this
-same folder so it runs identically on a local machine and a GitHub Actions runner.
-
-Usage (from review.py):
-    from card.render_card import render_review_card
+Usage:
+    from card.render_card import render_review_card, render_news_card
     out = render_review_card(photo_path, line1, line2, out_path)
+    out_news = render_news_card(photo_path, line1, line2, out_path)
 """
 import os, json, base64, mimetypes
 
@@ -46,13 +44,18 @@ def _build_html(data):
     faces = []
     for fam, rel in FONTS.items():
         p = os.path.join(ROOT, rel)
-        faces.append(
-            f"@font-face{{font-family:'{fam}';src:url(data:font/ttf;base64,"
-            f"{_b64(p)}) format('truetype');font-weight:normal;font-style:normal;}}"
-        )
+        if os.path.exists(p):
+            faces.append(
+                f"@font-face{{font-family:'{fam}';src:url(data:font/ttf;base64,"
+                f"{_b64(p)}) format('truetype');font-weight:normal;font-style:normal;}}"
+            )
     data = dict(data)
-    data["photos"] = [_data_uri(p if os.path.isabs(p) else os.path.join(os.getcwd(), p))
-                      for p in data.get("photos", [])]
+    valid_photos = []
+    for p in data.get("photos", []):
+        if p and os.path.exists(p):
+            valid_photos.append(_data_uri(p if os.path.isabs(p) else os.path.join(os.getcwd(), p)))
+    data["photos"] = valid_photos
+
     tpl = open(TEMPLATE, encoding="utf-8").read()
     tpl = tpl.replace("/*FONT_FACE*/", "\n".join(faces))
     tpl = tpl.replace("/*__INJECT_DATA__*/",
@@ -77,11 +80,6 @@ def render(data, out_path):
 
 
 def render_review_card(photo_path, line1, line2, out_path, price=None):
-    """Build the standard review card: line1 accent, line2 white, price line accent.
-
-    CATDUMB style wants 3 lines of punchy text — if we only have line1+line2 and
-    a price is known (and not already mentioned), add a price line.
-    """
     lines = []
     if line1:
         lines.append(f"*{line1}*")
@@ -92,9 +90,28 @@ def render_review_card(photo_path, line1, line2, out_path, price=None):
     if price_txt and not already:
         lines.append(f"ราคา *{price_txt} บาท*")
     data = {
-        "photos": [photo_path],
+        "photos": [photo_path] if photo_path and os.path.exists(photo_path) else [],
         "lines": lines,
         "watermark": THEME["watermark"],
+        "accent": THEME["accent"],
+        "badge_color": THEME["badge_color"],
+        "params": dict(THEME["params"]),
+    }
+    return render(data, out_path)
+
+
+def render_news_card(photo_path, line1, line2, out_path, badge_text=None):
+    lines = []
+    if line1:
+        lines.append(f"*{line1}*")
+    if line2:
+        lines.append(line2)
+        
+    watermark = badge_text if badge_text else THEME.get("watermark", "")
+    data = {
+        "photos": [photo_path] if photo_path and os.path.exists(photo_path) else [],
+        "lines": lines,
+        "watermark": watermark,
         "accent": THEME["accent"],
         "badge_color": THEME["badge_color"],
         "params": dict(THEME["params"]),
