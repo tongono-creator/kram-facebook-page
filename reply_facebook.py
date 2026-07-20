@@ -256,6 +256,27 @@ def generate_reply(post_text, commenter_name, comment_text, is_asking_link=False
     # AI ล้มเหลว: ตอบ canned เฉพาะกรณีขอลิงก์ นอกนั้นไม่ตอบดีกว่าตอบมั่ว
     return random.choice(cfg["fallbacks"])
 
+def page_already_replied(comment_id):
+    """กันตอบซ้ำชั้นที่ 2: เช็คจาก Facebook จริงว่าเพจเคยตอบใต้คอมเมนต์นี้แล้ว
+    (กันเคส history file หาย/ push ไม่สำเร็จ แล้วบอทวนตอบคอมเมนต์เดิมทุกรอบ)
+    ถ้าเช็คไม่ได้ (API error) ให้ถือว่าเคยตอบแล้ว — ยอมพลาดการตอบ ดีกว่าตอบซ้ำ"""
+    url = (f"https://graph.facebook.com/v21.0/{comment_id}/comments"
+           f"?fields=from{{id}}&limit=25&access_token={PAGE_ACCESS_TOKEN}")
+    try:
+        resp = requests.get(url, timeout=15)
+        data = resp.json()
+        if "error" in data:
+            print(f"    [Warn] reply-check API error: {str(data)[:120]} -> skip to be safe")
+            return True
+        for c in data.get("data", []):
+            if c.get("from", {}).get("id") == PAGE_ID:
+                return True
+        return False
+    except Exception as e:
+        print(f"    [Warn] reply-check failed: {e} -> skip to be safe")
+        return True
+
+
 def post_reply_comment(comment_id, text, attachment_url=None):
     """ส่งโพสต์ตอบกลับคอมเมนต์"""
     url = f"https://graph.facebook.com/v21.0/{comment_id}/comments"
@@ -471,8 +492,15 @@ if __name__ == "__main__":
             commenter_id = commenter_info.get("id", "")
             commenter_name = commenter_info.get("name", "ลูกเพจ")
             
-            # 1. ข้ามถ้าเคยตอบไปแล้ว
+            # 1. ข้ามถ้าเคยตอบไปแล้ว (history file)
             if comment_id in history:
+                continue
+
+            # 1.5 กันซ้ำชั้นที่ 2: เช็คจาก Facebook จริง — ห้ามตอบคอมเมนต์เดิมเกิน 1 ครั้งเด็ดขาด
+            if commenter_id != PAGE_ID and page_already_replied(comment_id):
+                print(f"  - Already replied on FB (API check) -> add to history, skip")
+                if not args.dry_run:
+                    history.add(comment_id)
                 continue
                 
             # 2. ข้ามคอมเมนต์ของตัวเราเอง (แอดมินตอบคอมเมนต์ตัวเอง)
