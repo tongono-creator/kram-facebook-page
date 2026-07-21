@@ -1,31 +1,37 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: น้ำยาขจัดคราบน้ำกระจกและหินปูนในห้องน้ำ MARS...
+Product: 【ส่งถึงในวันเดียวกัน】เครื่องตัดหญ้าไฟฟ้า ไร้สาย แบต2ก้อน 500...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "น้ำยาขจัดคราบ",
-  "จุดเด่น": "ขจัดคราบน้ำกระจกและหินปูน",
-  "ราคา": 249,
-  "รุ่น": "MARS"
+  "ประเภท": "เครื่องตัดหญ้า",
+  "จุดเด่น": "พับได้ ไร้สาย แบต 2 ก้อน",
+  "ราคา": 729,
+  "ขนาด": "50000mah"
 }
-[System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: คนเลี้ยงสัตว์ (R5)
-[System Log] Chosen Persona: คนสงสัยก่อนซื้อแล้วมาลอง (G)
-[System Log] Chosen Hook: มีใครเป็นเหมือนผมไหม
-[System Log] Chosen Style: มุกตลก
-Hook: ตัวช่วยกระจกใส | ขจัดคราบน้ำกระจกและหินปูน
-Product image downloaded: output/product_20260720_201112.webp
-Card render done: output/product_20260720_201112_card.png
+[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+[Warning] Caption generation failed on all models. Disabling API calls.
+[Warning] Falling back to local heuristic caption.
+[Attempt 1] Caption rejected by Excel memory! Similarity too high (0.65 > 0.60)
+[Warning] Falling back to local heuristic caption.
+[Attempt 2] Caption rejected by Excel memory! Similarity too high (0.63 > 0.60)
+[Warning] Falling back to local heuristic caption.
+[System Log] Caption approved on attempt 3!
+[System Log] Chosen Role: พ่อบ้าน (R1)
+[System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
+[System Log] Chosen Hook: อันนี้เกินคาดจริงๆ
+[System Log] Chosen Style: คำถาม
+Hook: 【ส่งถึงในวันเดียวกัน】เครื่องตัดหญ้าไฟฟ้า | 
+Product image downloaded: output/product_20260721_192730.webp
+Card render done: output/product_20260721_192730_card.png
 Caption:
-มีใครเป็นเหมือนผมไหม 
-
-ตอนแรกผมไม่ค่อยแน่ใจในคุณภาพของน้ำยาขจัดคราบ MARS ตัวนี้เลย แต่เพราะคราบกระจกห้องน้ำที่บ้านมันมัวจนผมส่องไม่เห็นความหล่อตัวเองแล้ว เลยยอมควักเงิน 249 บาทมาลองพิสูจน์ดูครับ ปรากฏว่าพวกคราบหินปูนและคราบน้ำบนกระจกที่เคยขัดจนกล้ามขึ้นก็ยังไม่ออก กลับเช็ดออกง่ายเฉยเลย ไม่ต้องถูจนเอวเคล็ดอีกต่อไปครับ ใครที่กำลังหาวิธีกำจัดคราบน้ำกระจกอยู่ เซฟโพสต์นี้เก็บไว้ดูตอนช้อป หรือแชร์ต่อให้เพื่อนที่เจอปัญหานี้ด่วนๆ เลยครับ
+อันนี้เกินคาดจริงๆ ในฐานะพ่อบ้านที่ชอบจัดบ้านดูแลงานบ้าน บอกเลยว่าถูกใจมาก มีใครเคยลอง เครื่องตัดหญ้า ตัวนี้รึยังครับ ส่วนตัวประทับใจจุดเด่น พับได้ ไร้สาย แบต 2 ก้อน ราคาแค่ 729 บาท คิดว่าไงกันบ้าง
 
 ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿249
+🔥 โปรโมชั่น: ฿729
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1784631600...
-Scheduled successfully! Photo ID: 970443509349359
+Scheduling to Facebook for timestamp 1784718000...
+Scheduled successfully! Photo ID: 971210455939331
 [DB] Successfully saved post memory.
-Marked row 163 as done
+Marked row 164 as done
