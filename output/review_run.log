@@ -1,37 +1,27 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: 【ส่งถึงในวันเดียวกัน】เครื่องตัดหญ้าไฟฟ้า ไร้สาย แบต2ก้อน 500...
+Product: หมอน ErgoLab Deep Sleep หมดปัญหาปวดคอ ไม่ต้องกังวลเรื่องกรน ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เครื่องตัดหญ้า",
-  "จุดเด่น": "พับได้ ไร้สาย แบต 2 ก้อน",
-  "ราคา": 729,
-  "ขนาด": "50000mah"
+  "ประเภท": "หมอนสุขภาพ",
+  "รุ่น": "Deep Sleep",
+  "จุดเด่น": "ลดปวดคอ ลดการกรน",
+  "ราคา": 1690
 }
-[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
-[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
-[Warning] Caption generation failed on all models. Disabling API calls.
-[Warning] Falling back to local heuristic caption.
-[Attempt 1] Caption rejected by Excel memory! Similarity too high (0.65 > 0.60)
-[Warning] Falling back to local heuristic caption.
-[Attempt 2] Caption rejected by Excel memory! Similarity too high (0.63 > 0.60)
-[Warning] Falling back to local heuristic caption.
-[System Log] Caption approved on attempt 3!
-[System Log] Chosen Role: พ่อบ้าน (R1)
+[System Log] Caption approved on attempt 1!
+[System Log] Chosen Role: แม่บ้าน (R7)
 [System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
-[System Log] Chosen Hook: อันนี้เกินคาดจริงๆ
-[System Log] Chosen Style: คำถาม
-Hook: 【ส่งถึงในวันเดียวกัน】เครื่องตัดหญ้าไฟฟ้า | 
-Product image downloaded: output/product_20260721_192730.webp
-Card render done: output/product_20260721_192730_card.png
+[System Log] Chosen Hook: ไม่คิดว่าจะ...
+[System Log] Chosen Style: มุกตลก
+Hook: หมอนบอกลาปวดคอ | ช่วยลดปวดคอและลดการกรน
+Product image downloaded: output/product_20260722_192818.webp
+Card render done: output/product_20260722_192818_card.png
 Caption:
-อันนี้เกินคาดจริงๆ ในฐานะพ่อบ้านที่ชอบจัดบ้านดูแลงานบ้าน บอกเลยว่าถูกใจมาก มีใครเคยลอง เครื่องตัดหญ้า ตัวนี้รึยังครับ ส่วนตัวประทับใจจุดเด่น พับได้ ไร้สาย แบต 2 ก้อน ราคาแค่ 729 บาท คิดว่าไงกันบ้าง
-
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿729
+ไม่คิดว่าจะตื่นมาพร้อมสภาพคอเคล็ดเหมือนโดนถีบตกเตียงทุกเช้า แถมเสียงกรนของผมก็ดังจนคนข้างๆ ระแวงว่าเปิดโรงงานโม่หินไว้ใต้เตียงครับ จนกระทั่งได้ลองเปลี่ยนมานอน หมอนสุขภาพ รุ่น Deep Sleep ราคา 1690 บาท ตัวนี้ที่เข้ามาช่วยลดปวดคอ แล้วก็ช่วยลดการกรน ได้ตรงจุดพอดี ใครที่กำลังเจอปัญหาปวดบ่าปวดคอตอนตื่นนอนหรือโดนคนข้างๆ บ่นเรื่องเสียงกรน ลองเซฟโพสต์นี้ไว้ดูหรือแชร์ต่อให้เพื่อนสายกรนได้เลยครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿1690
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1784718000...
-Scheduled successfully! Photo ID: 971210455939331
+Scheduling to Facebook for timestamp 1784804400...
+Scheduled successfully! Photo ID: 971994099194300
 [DB] Successfully saved post memory.
-Marked row 164 as done
+Marked row 165 as done
