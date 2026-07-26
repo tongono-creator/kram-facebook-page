@@ -1,28 +1,27 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: Makita เครื่องตัดหญ้าไร้สายแบบ 388Vf เครื่องเล็มหญ้าแบบดูอัล...
+Product: ZINSANO เครื่องฉีดน้ำแรงดันสูง 80-120 บาร์ รุ่น AMAZON ULTRA...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เครื่องตัดหญ้าไร้สาย",
-  "จุดเด่น": "ระบบดูอัลแอคชั่น",
-  "รุ่น": "Makita 388Vf",
-  "ราคา": 1575
+  "ประเภท": "เครื่องฉีดน้ำแรงดันสูง",
+  "รุ่น": "AMAZON ULTRA",
+  "จุดเด่น": "แรงดัน 80-120 บาร์, รับประกัน 1 ปี",
+  "ราคา": 4620
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: คนเลี้ยงสัตว์ (R5)
-[System Log] Chosen Persona: คนสงสัยก่อนซื้อแล้วมาลอง (G)
-[System Log] Chosen Hook: เมื่อวานเพิ่งเจอ...
-[System Log] Chosen Style: ประสบการณ์ส่วนตัว (PAS)
-Hook: ตัวจบปัญหาป่าหลังบ้าน | ตัดไวสองทิศทางไร้สายเกะกะ
-Product image downloaded: output/product_20260725_190521.webp
-Card render done: output/product_20260725_190521_card.png
+[System Log] Chosen Role: คนลดน้ำหนัก (R3)
+[System Log] Chosen Persona: คนแนะนำของให้ครอบครัว (H)
+[System Log] Chosen Hook: เห็นคนพูดถึงเยอะเลยลอง
+[System Log] Chosen Style: มุกตลก
+Hook: เครื่องฉีดน้ำพ่อบ้านสายลุย | ล้างรถฉีดพื้นคราบหลุดกระจุย
+Product image downloaded: output/product_20260726_190633.webp
+Card render done: output/product_20260726_190633_card.png
 Caption:
-เมื่อวานเพิ่งเจอหญ้าหลังบ้านยาวรกเต็มไปหมด แถมการต้องมาทนเหนื่อยตัดหญ้าแบบเดิมๆ มันทั้งเมื่อยล้าและเสียเวลาชีวิตสุดๆ ตอนแรกผมก็นั่งลังเลอยู่นานเพราะไม่แน่ใจว่าพวกเครื่องตัดหญ้าไร้สายมันจะใช้งานได้จริงไหม หรือซื้อมาแล้วจะตัดไม่เข้า สรุปเลยลองสั่ง Makita 388Vf ราคา 1,575 บาท ที่มีระบบดูอัลแอคชั่นมาใช้ดู ปรากฏว่าช่วยเบาแรงไปได้เยอะมาก ใครกำลังเจอปัญหานี้อยู่ลองเซฟเก็บไว้ดูหรือแชร์ต่อให้เพื่อนได้เลยครับ
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿1575
+เห็นคนพูดถึงเยอะเลยลองจัดเครื่องฉีดน้ำแรงดันสูง รุ่น AMAZON ULTRA มาไว้ให้คนที่บ้านใช้ครับ ตัวนี้มาพร้อมแรงดัน 80-120 บาร์ แถมมีรับประกัน 1 ปี กะว่าจะซื้อมาทุ่นแรง แต่สรุปผมโดนยึดไปใช้ฉีดล้างพื้นล้างรถอยู่คนเดียวซะงั้น ค่าตัวอยู่ที่ 4620 บาท พ่อบ้านคนไหนที่มองหาเครื่องฉีดน้ำแรงดันสูงล้างรถติดบ้านไว้ ลองเซฟโพสต์นี้เก็บไว้ดูตอนช้อปได้นะครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿4620
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785063600...
-Scheduled successfully! Photo ID: 974366268957083
+Scheduling to Facebook for timestamp 1785150000...
+Scheduled successfully! Photo ID: 975185922208451
 [DB] Successfully saved post memory.
-Marked row 168 as done
+Marked row 169 as done
