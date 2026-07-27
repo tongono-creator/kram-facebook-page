@@ -1,27 +1,28 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: ZINSANO เครื่องฉีดน้ำแรงดันสูง 80-120 บาร์ รุ่น AMAZON ULTRA...
+Product: ส่งจากไทย🚚Miffy แก้วกาแฟ มัทฉะ ถ้วยมัทฉะ แก้วน้ำ แก้วการ์ตูน...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เครื่องฉีดน้ำแรงดันสูง",
-  "รุ่น": "AMAZON ULTRA",
-  "จุดเด่น": "แรงดัน 80-120 บาร์, รับประกัน 1 ปี",
-  "ราคา": 4620
+  "ประเภท": "แก้วเซรามิก",
+  "จุดเด่น": "ลายการ์ตูน Miffy ตกแต่งคาเฟ่",
+  "ราคา": 337,
+  "รุ่น": "Miffy"
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: คนลดน้ำหนัก (R3)
-[System Log] Chosen Persona: คนแนะนำของให้ครอบครัว (H)
-[System Log] Chosen Hook: เห็นคนพูดถึงเยอะเลยลอง
-[System Log] Chosen Style: มุกตลก
-Hook: เครื่องฉีดน้ำพ่อบ้านสายลุย | ล้างรถฉีดพื้นคราบหลุดกระจุย
-Product image downloaded: output/product_20260726_190633.webp
-Card render done: output/product_20260726_190633_card.png
+[System Log] Chosen Role: แม่บ้าน (R7)
+[System Log] Chosen Persona: คนซื้อมาใช้แล้ว (B)
+[System Log] Chosen Hook: แชร์เผื่อมีคนกำลังหาอยู่
+[System Log] Chosen Style: คำถาม
+Hook: แก้วกระต่ายสายคาเฟ่ | วางตรงไหนก็ถ่ายรูปสวย
+Product image downloaded: output/product_20260727_204143.webp
+Card render done: output/product_20260727_204143_card.png
 Caption:
-เห็นคนพูดถึงเยอะเลยลองจัดเครื่องฉีดน้ำแรงดันสูง รุ่น AMAZON ULTRA มาไว้ให้คนที่บ้านใช้ครับ ตัวนี้มาพร้อมแรงดัน 80-120 บาร์ แถมมีรับประกัน 1 ปี กะว่าจะซื้อมาทุ่นแรง แต่สรุปผมโดนยึดไปใช้ฉีดล้างพื้นล้างรถอยู่คนเดียวซะงั้น ค่าตัวอยู่ที่ 4620 บาท พ่อบ้านคนไหนที่มองหาเครื่องฉีดน้ำแรงดันสูงล้างรถติดบ้านไว้ ลองเซฟโพสต์นี้เก็บไว้ดูตอนช้อปได้นะครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿4620
+แชร์เผื่อมีคนกำลังหาอยู่ มีใครกำลังมองหาแก้วเซรามิกไว้ใช้ใส่น้ำหรือวางตกแต่งคาเฟ่ที่บ้านอยู่ไหมครับ? ผมกดสั่งออนไลน์รุ่น Miffy ลายการ์ตูน Miffy ใบนี้มาราคา 337 บาท พอได้ลองใช้งานจริงมาระยะหนึ่งแล้วประทับใจเลย เซฟเก็บไว้ดูตอนช้อปหรือกดแชร์ต่อให้เพื่อนที่ชอบสะสมแก้วได้นะครับ
+ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿337
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785150000...
-Scheduled successfully! Photo ID: 975185922208451
+Scheduling to Facebook for timestamp 1785236400...
+Scheduled successfully! Photo ID: 976071018786608
 [DB] Successfully saved post memory.
-Marked row 169 as done
+Marked row 170 as done
