@@ -1,27 +1,28 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: Sipeau 5เเพ็ค กระดาษทิชชู่แบบแขวน หนาเป็นพิเศษ ทนน้ำ ใช้ได้ท...
+Product: Maybuck เครื่องตัดหญ้าเบนซิน GX-35 4 จังหวะสำหรับใช้ในครัวเร...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "กระดาษทิชชู่แขวน",
-  "จุดเด่น": "หนาพิเศษ ทนน้ำ",
-  "ขนาด": "5 แพ็ค",
-  "ราคา": 89
+  "ประเภท": "เครื่องตัดหญ้า",
+  "รุ่น": "GX-35",
+  "ขนาด": "เล็ก",
+  "จุดเด่น": "4 จังหวะ เบนซิน",
+  "ราคา": 2560
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: คนลดน้ำหนัก (R3)
-[System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
-[System Log] Chosen Hook: กำลังหาของแบบนี้อยู่พอดี
-[System Log] Chosen Style: การเปรียบเทียบ (BAB)
-Hook: ทิชชู่แขวนสายถึก | แผ่นหนาโดนน้ำไม่เปื่อยง่าย
-Product image downloaded: output/product_20260728_200748.webp
-Card render done: output/product_20260728_200748_card.png
+[System Log] Chosen Role: พ่อบ้าน (R1)
+[System Log] Chosen Persona: คนแนะนำของให้ครอบครัว (H)
+[System Log] Chosen Hook: ลองแล้วเข้าใจเลยว่าทำไมขายดี
+[System Log] Chosen Style: คำถาม
+Hook: ตัวปราบหญ้ารกหน้าบ้าน | สตาร์ทติดง่ายไม่ต้องผสมน้ำมัน
+Product image downloaded: output/product_20260729_200318.webp
+Card render done: output/product_20260729_200318_card.png
 Caption:
-กำลังหาของแบบนี้อยู่พอดี เมื่อก่อนเวลาผมทำน้ำหกบนโต๊ะทีไร ใช้ทิชชู่ธรรมดาเช็ดแล้วชอบเปื่อยขาดติดมือจนเลอะเทอะไปหมดครับ แต่พอเปลี่ยนมาใช้กระดาษทิชชู่แขวนอันนี้ ชีวิตสะดวกขึ้นเยอะเลยครับ เพราะเนื้อกระดาษหนาพิเศษ ทนน้ำ เช็ดรอยเปียกได้หมดจดโดยไม่เปื่อยคามือ ได้มาแบบ 5 แพ็ค ในราคา 89 บาท ช่วยแก้ปัญหาเช็ดน้ำเลอะในชีวิตประจำวันได้ตรงจุดมากๆ แชร์ต่อให้เพื่อนที่เจอปัญหานี้หรือเซฟเก็บไว้ดูได้เลยครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿89
+ลองแล้วเข้าใจเลยว่าทำไมขายดี บ้านไหนกำลังมองหาเครื่องตัดหญ้าเบนซินเอาไว้ให้คนที่บ้านใช้ดูแลสวนกันบ้างครับ? พอดีผมไปเจอเครื่องตัดหญ้า 4 จังหวะ รุ่น GX-35 ตัวนี้มา เป็นเครื่องขนาดเล็ก ราคา 2,560 บาท ลองเซฟโพสต์นี้หรือแชร์ไปให้คนในบ้านช่วยกันดูได้เลยครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿2560
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785322800...
-Scheduled successfully! Photo ID: 976903452036698
+Scheduling to Facebook for timestamp 1785409200...
+Scheduled successfully! Photo ID: 977777098616000
 [DB] Successfully saved post memory.
-Marked row 171 as done
+Marked row 172 as done
