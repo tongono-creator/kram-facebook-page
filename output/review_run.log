@@ -1,28 +1,28 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: Maybuck เครื่องตัดหญ้าเบนซิน GX-35 4 จังหวะสำหรับใช้ในครัวเร...
+Product: ZINSANO เครื่องฉีดน้ำแรงดันสูง AD Series 110,140,160,180 บาร...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เครื่องตัดหญ้า",
-  "รุ่น": "GX-35",
-  "ขนาด": "เล็ก",
-  "จุดเด่น": "4 จังหวะ เบนซิน",
-  "ราคา": 2560
+  "ประเภท": "เครื่องฉีดน้ำแรงดันสูง",
+  "รุ่น": "ZINSANO AD",
+  "ขนาด": "110-180 บาร์",
+  "จุดเด่น": "มอเตอร์ Induction ทนทาน",
+  "ราคา": 9790
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: พ่อบ้าน (R1)
-[System Log] Chosen Persona: คนแนะนำของให้ครอบครัว (H)
-[System Log] Chosen Hook: ลองแล้วเข้าใจเลยว่าทำไมขายดี
-[System Log] Chosen Style: คำถาม
-Hook: ตัวปราบหญ้ารกหน้าบ้าน | สตาร์ทติดง่ายไม่ต้องผสมน้ำมัน
-Product image downloaded: output/product_20260729_200318.webp
-Card render done: output/product_20260729_200318_card.png
+[System Log] Chosen Role: นักออกกำลังกาย (R6)
+[System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
+[System Log] Chosen Hook: มีใครเป็นเหมือนผมไหม
+[System Log] Chosen Style: การบอกต่อเฉยๆ
+Hook: เครื่องฉีดน้ำสายถึก | มอเตอร์อึดเปิดฉีดได้ทั้งวัน
+Product image downloaded: output/product_20260730_194808.webp
+Card render done: output/product_20260730_194808_card.png
 Caption:
-ลองแล้วเข้าใจเลยว่าทำไมขายดี บ้านไหนกำลังมองหาเครื่องตัดหญ้าเบนซินเอาไว้ให้คนที่บ้านใช้ดูแลสวนกันบ้างครับ? พอดีผมไปเจอเครื่องตัดหญ้า 4 จังหวะ รุ่น GX-35 ตัวนี้มา เป็นเครื่องขนาดเล็ก ราคา 2,560 บาท ลองเซฟโพสต์นี้หรือแชร์ไปให้คนในบ้านช่วยกันดูได้เลยครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿2560
+มีใครเป็นเหมือนผมไหม ที่วันหยุดทีไรต้องมานั่งออกแรงขัดพื้นกับล้างรถจนปวดหลังไปหมด จนผมเปลี่ยนมาใช้ เครื่องฉีดน้ำแรงดันสูง ZINSANO AD ขนาด 110-180 บาร์ ตัวนี้ที่มีมอเตอร์ Induction ทนทาน มาช่วยฉีดคราบออกอย่างไว ราคาอยู่ที่ 9790 บาท ใครที่กำลังเจอปัญหานี้เหมือนกัน ลองเซฟโพสต์นี้เก็บไว้หรือแชร์ต่อให้เพื่อนได้นะครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿9790
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785409200...
-Scheduled successfully! Photo ID: 977777098616000
+Scheduling to Facebook for timestamp 1785495600...
+Scheduled successfully! Photo ID: 978629791864064
 [DB] Successfully saved post memory.
-Marked row 172 as done
+Marked row 173 as done
