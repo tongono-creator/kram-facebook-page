@@ -1,26 +1,28 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: 🐕พร้อมส่ง🐶 น้องดัชชุนสุดฮิต DACHSHUND //เขียนการ์ดฟรี 🥺🤎...
+Product: ถังน้ําแข็ง ถังสแตนเลส ถังพักชา ถังน้ําแข็ง6/8/10/12ลิตร ถัง...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ตุ๊กตา",
-  "จุดเด่น": "พร้อมส่ง เขียนการ์ดฟรี",
-  "ราคา": 889
+  "ประเภท": "ถังเก็บความเย็น/ร้อน",
+  "จุดเด่น": "สแตนเลส เก็บความร้อน-เย็น",
+  "ขนาด": "6-12 ลิตร",
+  "ราคา": 389
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: สายกิน (R2)
-[System Log] Chosen Persona: คนสงสัยก่อนซื้อแล้วมาลอง (G)
-[System Log] Chosen Hook: อันนี้เกินคาดจริงๆ
-[System Log] Chosen Style: มุกตลก
-Hook: น้องดัชชุนสายอ้อน | พร้อมส่งเลยฝากเขียนการ์ดฟรีได้
-Product image downloaded: output/product_20260731_195920.webp
-Card render done: output/product_20260731_195920_card.png
+[System Log] Chosen Role: คนลดน้ำหนัก (R3)
+[System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
+[System Log] Chosen Hook: ไม่คิดว่าจะ...
+[System Log] Chosen Style: คำถาม
+Hook: ถังพักชาสายชง | แช่ชาเย็นเจี๊ยบร้อนนานทั้งวัน
+Product image downloaded: output/product_20260801_190505.webp
+Card render done: output/product_20260801_190505_card.png
 Caption:
-อันนี้เกินคาดจริงๆ ตอนแรกผมลังเลอยู่นานเพราะกลัวว่าสั่งออนไลน์แล้วจะได้น้องหน้าเบี้ยว แต่พอลองสั่งตุ๊กตาราคา 889 บาทตัวนี้มา งานเรียบร้อยน่ารักจนผมแอบรู้สึกผิดที่เคยไประแวงเขาครับ แถมทางร้านเขามีแบบพร้อมส่ง และยังช่วยเขียนการ์ดฟรีให้อีก ใครกำลังหาของขวัญน่ารักๆ ลองแชร์โพสต์นี้เก็บไว้ดูตอนเลือกซื้อกันได้เลยครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿889
+ไม่คิดว่าจะเจอปัญหาเหมือนผมไหมครับ เวลาต้องเตรียมเครื่องดื่มไว้ดื่มทั้งวันแล้วชอบชืดหรือละลายไวเกินไป? พอได้มาเจอ ถังเก็บความเย็น และ ถังเก็บความร้อน ที่ทำจาก สแตนเลส ขนาด 6-12 ลิตร ตัวนี้ก็ช่วยแก้ปัญหาเรื่องอุณหภูมิเครื่องดื่มไปได้เยอะเลย ในราคา 389 บาท ใครเจอปัญหาแบบนี้อยู่ลองเซฟเก็บไว้ดูตอนช้อป หรือแชร์ต่อให้เพื่อนที่เจอปัญหานี้ได้เลยครับ
+ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+🔥 โปรโมชั่น: ฿389
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785582000...
-Scheduled successfully! Photo ID: 979496341777409
+Scheduling to Facebook for timestamp 1785668400...
+Scheduled successfully! Photo ID: 980315938362116
 [DB] Successfully saved post memory.
-Marked row 174 as done
+Marked row 175 as done
