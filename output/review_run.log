@@ -1,28 +1,35 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: ถังน้ําแข็ง ถังสแตนเลส ถังพักชา ถังน้ําแข็ง6/8/10/12ลิตร ถัง...
+Product: เครื่องตัดหญ้าสะพายบ่า NIPPON NP35 | NP50MAX2.5HP/ NP35MAX1....
+[gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
+[gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
+[Warning] parse_detail_to_json failed on all models. Falling back to local parser.
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ถังเก็บความเย็น/ร้อน",
-  "จุดเด่น": "สแตนเลส เก็บความร้อน-เย็น",
-  "ขนาด": "6-12 ลิตร",
-  "ราคา": 389
+  "ประเภท": "เครื่องมือช่าง/ทำสวน",
+  "จุดเด่น": "เครื่องตัดหญ้าสะพายบ่า NIPPON | ./",
+  "ราคา": "1896"
 }
+[gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+[gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+[Warning] Caption generation failed on all models. Disabling API calls.
+[Warning] Falling back to local heuristic caption.
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: คนลดน้ำหนัก (R3)
+[System Log] Chosen Role: นักออกกำลังกาย (R6)
 [System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
-[System Log] Chosen Hook: ไม่คิดว่าจะ...
+[System Log] Chosen Hook: โดนป้ายยามาอีกที
 [System Log] Chosen Style: คำถาม
-Hook: ถังพักชาสายชง | แช่ชาเย็นเจี๊ยบร้อนนานทั้งวัน
-Product image downloaded: output/product_20260801_190505.webp
-Card render done: output/product_20260801_190505_card.png
+Hook: เครื่องตัดหญ้าสะพายบ่า | 
+Product image downloaded: output/product_20260802_190534.webp
+Card render done: output/product_20260802_190534_card.png
 Caption:
-ไม่คิดว่าจะเจอปัญหาเหมือนผมไหมครับ เวลาต้องเตรียมเครื่องดื่มไว้ดื่มทั้งวันแล้วชอบชืดหรือละลายไวเกินไป? พอได้มาเจอ ถังเก็บความเย็น และ ถังเก็บความร้อน ที่ทำจาก สแตนเลส ขนาด 6-12 ลิตร ตัวนี้ก็ช่วยแก้ปัญหาเรื่องอุณหภูมิเครื่องดื่มไปได้เยอะเลย ในราคา 389 บาท ใครเจอปัญหาแบบนี้อยู่ลองเซฟเก็บไว้ดูตอนช้อป หรือแชร์ต่อให้เพื่อนที่เจอปัญหานี้ได้เลยครับ
+โดนป้ายยามาอีกที หลังเวทเสร็จเหนื่อยๆ ขี้เกียจเคี้ยวอกไก่ ได้ตัวนี้ดื่มทดแทนสะดวกมาก มีใครเคยลอง เครื่องมือช่าง/ทำสวน ตัวนี้รึยังครับ ส่วนตัวประทับใจจุดเด่น เครื่องตัดหญ้าสะพายบ่า NIPPON | ./ ราคาแค่ 1896 บาท คิดว่าไงกันบ้าง
+
 ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿389
+🔥 โปรโมชั่น: ฿1896
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785668400...
-Scheduled successfully! Photo ID: 980315938362116
+Scheduling to Facebook for timestamp 1785754800...
+Scheduled successfully! Photo ID: 981172548276455
 [DB] Successfully saved post memory.
-Marked row 175 as done
+Marked row 176 as done
