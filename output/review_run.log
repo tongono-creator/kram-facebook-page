@@ -1,35 +1,35 @@
 
 --- Post 1/5 (slot 18:00) ---
-Product: เครื่องตัดหญ้าสะพายบ่า NIPPON NP35 | NP50MAX2.5HP/ NP35MAX1....
+Product: TYESO 01-01022/23/24/25/26 600ML/750MTumbler พร้อมที่จับ,ขวด...
 [gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
 [gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
 [Warning] parse_detail_to_json failed on all models. Falling back to local parser.
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เครื่องมือช่าง/ทำสวน",
-  "จุดเด่น": "เครื่องตัดหญ้าสะพายบ่า NIPPON | ./",
-  "ราคา": "1896"
+  "ประเภท": "แก้วเก็บความเย็น",
+  "จุดเด่น": "TYESO -/MTumbler พร้อมที่จับ,ขวดน้ําฉนวนสุญญา",
+  "ราคา": "349"
 }
 [gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
 [gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
 [Warning] Caption generation failed on all models. Disabling API calls.
 [Warning] Falling back to local heuristic caption.
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: นักออกกำลังกาย (R6)
-[System Log] Chosen Persona: คนเล่าเรื่องชีวิตประจำวัน (E)
-[System Log] Chosen Hook: โดนป้ายยามาอีกที
-[System Log] Chosen Style: คำถาม
-Hook: เครื่องตัดหญ้าสะพายบ่า | 
-Product image downloaded: output/product_20260802_190534.webp
-Card render done: output/product_20260802_190534_card.png
+[System Log] Chosen Role: สายกิน (R2)
+[System Log] Chosen Persona: คนเคยมีปัญหาแล้วสินค้าช่วยแก้ (D)
+[System Log] Chosen Hook: ตอนแรกไม่ได้จะซื้อ
+[System Log] Chosen Style: มุกตลก
+Hook: TYESO | 
+Product image downloaded: output/product_20260803_204328.webp
+Card render done: output/product_20260803_204328_card.png
 Caption:
-โดนป้ายยามาอีกที หลังเวทเสร็จเหนื่อยๆ ขี้เกียจเคี้ยวอกไก่ ได้ตัวนี้ดื่มทดแทนสะดวกมาก มีใครเคยลอง เครื่องมือช่าง/ทำสวน ตัวนี้รึยังครับ ส่วนตัวประทับใจจุดเด่น เครื่องตัดหญ้าสะพายบ่า NIPPON | ./ ราคาแค่ 1896 บาท คิดว่าไงกันบ้าง
+ตอนแรกไม่ได้จะซื้อ แก้วเก็บความเย็นตัวนี้เลยครับ สายของอร่อยอย่างเราลองแล้วดื่มด่ำมาก ฟินสุดๆ ตอนแรกกังวลว่าจะไม่โอเค แต่พอลองแล้วชอบเลย รอดตายแล้วเรา 555 จุดเด่นคือ TYESO -/MTumbler พร้อมที่จับ,ขวดน้ําฉนวนสุญญา ราคาแค่ 349 บาท
 
 ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿1896
+🔥 โปรโมชั่น: ฿349
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785754800...
-Scheduled successfully! Photo ID: 981172548276455
+Scheduling to Facebook for timestamp 1785841200...
+Scheduled successfully! Photo ID: 982070538186656
 [DB] Successfully saved post memory.
-Marked row 176 as done
+Marked row 177 as done
