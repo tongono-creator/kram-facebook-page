@@ -683,7 +683,7 @@ def make_caption(img_path, subject, vibe, subreddit, reddit_title=""):
             "CRITICAL: Write as a 3rd-Party Observer/Curator (บุคคลที่สาม) who read an interesting post/thread on Reddit/online and is sharing it with followers. NEVER pretend this is your own personal experience!\n"
             "Start by attributing the source (e.g., 'ไปเจอกระทู้หนึ่งใน Reddit/ต่างประเทศน่าสนใจมากครับ...', 'มีชาวเน็ตมาตั้งประเด็นถกกันว่า...'). Explain the story/dilemma in natural CatDumb spoken Thai.\n"
             "Tone: Casual, engaging, informative, and slightly sarcastic/humorous (ภาษาพูดธรรมดา สรรพนามแทนตัวเองด้วยผม/พี่ และลงท้ายสุภาพครับ/ผม).\n"
-            "คุณ MUST จบด้วยประโยคตั้งคำถามชวนคุย/ชวนดีเบตความเห็นเรื่องนั้นๆ (เช่น 'ทุกคนคิดยังไงกันบ้างครับ?', 'เป็นคุณจะเลือกแบบไหนครับ?')\n"
+            "คุณ MUST จบด้วยคำถามที่ระบุสองทางเลือกหรือรายละเอียดจากเรื่องนี้โดยตรง ห้ามถามกว้างๆ ว่า 'ทุกคนคิดยังไง' หรือ 'เป็นคุณจะเลือกแบบไหน' โดยไม่บอกตัวเลือก\n"
             "Do not use markdown like ** or bolding in the caption.\n"
             "End the caption with 3-4 relevant hashtags.\n"
             "Output ONLY the caption."
