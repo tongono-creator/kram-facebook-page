@@ -1,35 +1,27 @@
+Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-Product: TYESO 01-01022/23/24/25/26 600ML/750MTumbler พร้อมที่จับ,ขวด...
-[gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
-[gemini-flash-latest] parse_detail_to_json failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}
-[Warning] parse_detail_to_json failed on all models. Falling back to local parser.
+Product: ถุงสูญญากาศ เก็บเสื้อผ้าผ้าห่มผ้านวมจัดเก็บของกระชับพื้นที่แ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "แก้วเก็บความเย็น",
-  "จุดเด่น": "TYESO -/MTumbler พร้อมที่จับ,ขวดน้ําฉนวนสุญญา",
-  "ราคา": "349"
+  "ประเภท": "ถุงสูญญากาศ",
+  "จุดเด่น": "ประหยัดพื้นที่ พกพาสะดวก",
+  "สี": "ใส",
+  "ราคา": 10
 }
-[gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
-[gemini-flash-latest] caption generation failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
-[Warning] Caption generation failed on all models. Disabling API calls.
-[Warning] Falling back to local heuristic caption.
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: สายกิน (R2)
-[System Log] Chosen Persona: คนเคยมีปัญหาแล้วสินค้าช่วยแก้ (D)
-[System Log] Chosen Hook: ตอนแรกไม่ได้จะซื้อ
-[System Log] Chosen Style: มุกตลก
-Hook: TYESO | 
-Product image downloaded: output/product_20260803_204328.webp
-Card render done: output/product_20260803_204328_card.png
+[System Log] Chosen Role: หาข้อมูลก่อนซื้อ (R3)
+[System Log] Chosen Persona: คนเทียบตัวเลือก (E)
+[System Log] Chosen Hook: เปิดด้วยจุดเด่นจริงหนึ่งข้อจากข้อมูล
+[System Log] Chosen Style: มุกเบาๆ
+Hook: ถุงสูญญากาศย่อส่วน | ยัดกระเป๋าเดินทางได้อีกเพียบ
+Product image downloaded: output/product_20260912_205603.webp
+Card render done: output/product_20260912_205603_card.png
 Caption:
-ตอนแรกไม่ได้จะซื้อ แก้วเก็บความเย็นตัวนี้เลยครับ สายของอร่อยอย่างเราลองแล้วดื่มด่ำมาก ฟินสุดๆ ตอนแรกกังวลว่าจะไม่โอเค แต่พอลองแล้วชอบเลย รอดตายแล้วเรา 555 จุดเด่นคือ TYESO -/MTumbler พร้อมที่จับ,ขวดน้ําฉนวนสุญญา ราคาแค่ 349 บาท
-
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-🔥 โปรโมชั่น: ฿349
+ปัญหากระเป๋าเดินทางซิปแทบแตกน่าจะเบาลงได้ถ้าเน้นประหยัดพื้นที่ ซึ่งผมกำลังดูข้อมูลถุงสูญญากาศแบบใสที่พกพาสะดวกในราคาใบละ 10 บาทอยู่ครับ สำหรับทุกคนแล้ว ถุงสูญญากาศแบบใสราคา 10 บาทนี้ ตอบโจทย์เรื่องการประหยัดพื้นที่ตอนพกพาไหมครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1785841200...
-Scheduled successfully! Photo ID: 982070538186656
+Scheduling to Facebook for timestamp 1789297200...
+Scheduled successfully! Photo ID: 1015952094798500
 [DB] Successfully saved post memory.
-Marked row 177 as done
+Marked row 178 as done
