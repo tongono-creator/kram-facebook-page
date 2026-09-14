@@ -1,26 +1,27 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-Product: Goody Home ชั้นวางของแบบวางตั้ง ออกแบบให้ระบายน้ำด้านล่างได้...
+[Filter] ข้ามสินค้าที่ไม่ตรงเพจ: Deli ถุงคลุมเสื้อผ้า ถุงใส่สูท ที่คลุมเสื้อผ้า มีซิปด้านหน้า หลายขนาด 
+Product: Deli ถุงสูญญากาศ 1ใบ มีวาล์ว ถุงเก็บผ้านวม จัดเก็บผ้านวม ประ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ชั้นวางของ",
-  "จุดเด่น": "ระบายน้ำได้ วางในที่เปียกได้",
-  "ราคา": 65
+  "ประเภท": "ถุงสูญญากาศ",
+  "จุดเด่น": "มีวาล์ว ประหยัดพื้นที่ ใช้ซ้ำได้",
+  "ราคา": 17
 }
 [System Log] Caption approved on attempt 1!
 [System Log] Chosen Role: เลือกของให้บ้าน (R4)
-[System Log] Chosen Persona: คนหาข้อมูลก่อนซื้อ (B)
-[System Log] Chosen Hook: เปิดด้วยคำถามเฉพาะถึงคนที่เคยใช้จริง
-[System Log] Chosen Style: เทียบข้อมูล
-Hook: ชั้นวางของไม่กลัวน้ำ | ระบายน้ำดี วางตรงเปียกได้เลย
-Product image downloaded: output/product_20260913_215135.webp
-Card render done: output/product_20260913_215135_card.png
+[System Log] Chosen Persona: คนมองปัญหา (D)
+[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
+[System Log] Chosen Style: มุกเบาๆ
+Hook: ถุงสูญญากาศเสกตู้โล่ง | บีบผ้านวมหนาให้แบนแต๊ดแต๋
+Product image downloaded: output/product_20260914_235145.webp
+Card render done: output/product_20260914_235145_card.png
 Caption:
-บ้านไหนที่กำลังหาของใช้สำหรับโซนห้องน้ำ ชั้นวางของราคา 65 บาทตัวนี้ระบุจุดเด่นว่าระบายน้ำได้และวางในที่เปียกได้ครับ คนที่เคยใช้งานจริง ตัวฟังก์ชันระบายน้ำในที่เปียกทำงานได้ตรงตามข้อมูลไหมครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+ก่อนตัดสินใจซื้อตู้เพิ่มเพราะเสื้อผ้าเริ่มล้นจนแทบแย่งที่นอน ลองเช็กพื้นที่จัดเก็บดูก่อนว่าถุงสูญญากาศแบบมีวาล์วที่ช่วยประหยัดพื้นที่และใช้ซ้ำได้ใบละ 17 บาทนี้เหมาะกับตู้ที่บ้านไหมครับ ถ้าเป็นพี่จะเอาถุงสูญญากาศมีวาล์วราคา 17 บาทนี้ไปจัดการกับผ้านวมผืนใหญ่หรือกองเสื้อผ้าก่อนครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1789383600...
-Scheduled successfully! Photo ID: 1016815794712130
+Scheduling to Facebook for timestamp 1789470000...
+Scheduled successfully! Photo ID: 1017755084618201
 [DB] Successfully saved post memory.
-Marked row 179 as done
+Marked row 181 as done
