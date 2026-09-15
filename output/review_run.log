@@ -2,26 +2,27 @@ Direct use of automatic function calling (AFC) in Models.generate_content is not
 
 --- Post 1/5 (slot 18:00) ---
 [Filter] ข้ามสินค้าที่ไม่ตรงเพจ: Deli ถุงคลุมเสื้อผ้า ถุงใส่สูท ที่คลุมเสื้อผ้า มีซิปด้านหน้า หลายขนาด 
-Product: Deli ถุงสูญญากาศ 1ใบ มีวาล์ว ถุงเก็บผ้านวม จัดเก็บผ้านวม ประ...
+Product: ถุงคลุมเสื้อผ้า(หนาพิเศษ2ชั้น)กันฝุ่น กันยับแบบมีซิป 4ขนาด ถ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ถุงสูญญากาศ",
-  "จุดเด่น": "มีวาล์ว ประหยัดพื้นที่ ใช้ซ้ำได้",
-  "ราคา": 17
+  "ประเภท": "ถุงคลุมเสื้อผ้า",
+  "จุดเด่น": "หนาพิเศษ 2 ชั้น กันฝุ่นกันยับมีซิป",
+  "ขนาด": "4 ขนาด",
+  "ราคา": 21
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: เลือกของให้บ้าน (R4)
-[System Log] Chosen Persona: คนมองปัญหา (D)
-[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
-[System Log] Chosen Style: มุกเบาๆ
-Hook: ถุงสูญญากาศเสกตู้โล่ง | บีบผ้านวมหนาให้แบนแต๊ดแต๋
-Product image downloaded: output/product_20260914_235145.webp
-Card render done: output/product_20260914_235145_card.png
+[System Log] Chosen Role: ชี้กลุ่มที่เหมาะ (R5)
+[System Log] Chosen Persona: คนถามผู้ใช้จริง (G)
+[System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
+[System Log] Chosen Style: ปัญหาและทางเลือก
+Hook: ถุงเซฟเสื้อตัวโปรด | หนาสองชั้นกันฝุ่นเสื้อไม่ยับ
+Product image downloaded: output/product_20260915_222934.webp
+Card render done: output/product_20260915_222934_card.png
 Caption:
-ก่อนตัดสินใจซื้อตู้เพิ่มเพราะเสื้อผ้าเริ่มล้นจนแทบแย่งที่นอน ลองเช็กพื้นที่จัดเก็บดูก่อนว่าถุงสูญญากาศแบบมีวาล์วที่ช่วยประหยัดพื้นที่และใช้ซ้ำได้ใบละ 17 บาทนี้เหมาะกับตู้ที่บ้านไหมครับ ถ้าเป็นพี่จะเอาถุงสูญญากาศมีวาล์วราคา 17 บาทนี้ไปจัดการกับผ้านวมผืนใหญ่หรือกองเสื้อผ้าก่อนครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+สำหรับคนที่เจอปัญหาเสื้อผ้าแขวนทิ้งไว้นานจนฝุ่นเกาะ ถุงคลุมเสื้อผ้าแบบหนาพิเศษ 2 ชั้น กันฝุ่นกันยับมีซิป และมีให้เลือก 4 ขนาด ในราคา 21 บาทนี้น่าจะเป็นอีกตัวเลือกครับ ผมอยากถามคนที่เคยใช้ว่าความหนา 2 ชั้นกับตัวซิปของรุ่นนี้กันฝุ่นและรูดใช้งานได้ดีตามสเปกไหมครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1789470000...
-Scheduled successfully! Photo ID: 1017755084618201
+Scheduling to Facebook for timestamp 1789556400...
+Scheduled successfully! Photo ID: 1018558777871165
 [DB] Successfully saved post memory.
-Marked row 181 as done
+Marked row 182 as done
