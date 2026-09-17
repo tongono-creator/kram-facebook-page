@@ -171,63 +171,59 @@ def is_hook_clear(hook):
         return False
     return True
 
+ACCENT_COLOR = (0, 191, 255)  # ฟ้า #00BFFF
+WHITE_COLOR  = (255, 255, 255)
+
+FIRST_PERSON_TERMS = ("ผม", "ฉัน", "ดิฉัน", "หนู", "เรา", "พวกเรา", "ตัวเรา", "ของเรา")
+
+def contains_first_person(text):
+    clean = (text or "").replace("\u200b", "")
+    return any(term in clean for term in FIRST_PERSON_TERMS)
+
+def apply_slang_rules(text):
+    if not text:
+        return text
+    # Rule: แทนคำว่า ให้ไปตาย / ประหารชีวิต / ฆ่า ในบริบทเล่าเรื่องด้วย ไปคุยกับรากมะม่วง
+    text = re.sub(r'ให้(?:ไป)?ตาย|ให้ประหารชีวิต|ส่งไปตาย|เอาไปฆ่า', 'ไปคุยกับรากมะม่วง', text)
+    return text
+
 def translate_story(subreddit, title, body):
     """
-    คืน (hook, caption, x_thread)
-    hook = พาดหัวบนรูป — 1-3 บรรทัด คั่นด้วย \n
-    caption = เล่าเรื่องภาษาไทย 5 ชั้น สำหรับ Facebook caption
-    x_thread = ข้อความโพสต์ใน X 2 ทวีต
+    คืน (hook, caption, seed_comment, x_thread)
+    hook = พาดหัวบนรูป 2 บรรทัด (บรรทัดแรกสีฟ้า บรรทัดสองสีขาว) คั่นด้วย \n
+    caption = เรื่องเล่าบุคคลที่สาม 5 ชั้น + คำถามตัดสินใจ (ลงท้าย 1/2)
+    seed_comment = ความเห็นแอดมินเลือกข้างเด็ดขาดทันที (2/2)
+    x_thread = ข้อความทวีตใน X 2 ทวีต (1/2 และ 2/2)
     """
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
     prompt = (
         f"นี่คือเรื่องเล่าจริงจาก Reddit r/{subreddit} ({context}):\n\n"
         f"Title: {title}\n\n"
         f"Story: {body}\n\n"
-        "งาน: แปลงเรื่องนี้มาทำเป็น 'เรื่องเล่าให้ตัดสิน' (Stories for Judgment) ภาษาไทยสำหรับ Facebook page ผู้ชายไทย วัย 25-45 ปี\n"
-        "แอดมินต้องเป็นบุคคลที่สามที่ไปอ่านเรื่องนี้จาก Reddit แล้วนำมาเล่าต่อ ห้ามสวมบทเป็นเจ้าของเรื่องหรือใช้คำว่าแฟนผม/หัวหน้าผม/ผมทำเด็ดขาด\n"
-        "เขียนด้วยบุคลิกแอดมินผู้ชาย สบายๆ โทนจริงจังและน่าสนใจ ใช้คำลงท้ายครับเมื่อพูดกับคนอ่าน\n\n"
+        "งาน: แปลงเรื่องนี้มาทำเป็น 'เรื่องเล่าให้ตัดสิน' (Stories for Judgment / Dilemma Discussion) ภาษาไทยสำหรับ Facebook เพจกรามค้าง และ X (Twitter)\n"
+        "กลุ่มเป้าหมาย: ผู้ชายไทย วัยทำงาน 25-45 ปี\n\n"
+        "กฎเหล็กสำคัญที่สุด:\n"
+        "1. แอดมินต้องเป็น 'บุคคลที่สาม' (3rd-Party Observer) ที่ไปอ่านเจอเรื่องนี้จาก Reddit/โซเชียล แล้วนำมาเล่าต่อชวนลูกเพจคุย\n"
+        "   - ห้ามสวมบทเป็นเจ้าของเรื่องเด็ดขาด ห้ามใช้คำว่า 'แฟนผม/หัวหน้าผม/ผมทำ' ในตัวเรื่อง\n"
+        "   - ให้ระบุตัวละคร เช่น 'ชายคนหนึ่ง...', 'พนักงานคนหนึ่ง...', 'คู่รักคู่หนึ่ง...'\n"
+        "2. คำศัพท์พิเศษ: หากในเรื่องมีบริบทให้ไปตาย หรือลงโทษสูงสุด ให้ใช้คำสแลงว่า 'ไปคุยกับรากมะม่วง'\n"
+        "3. ภาษาพูดผู้ชาย สุภาพแต่เป็นกันเอง คมคาย ตลกร้าย ลงท้ายด้วย 'ครับ' หรือ 'พี่ๆ'\n\n"
         "ตอบเป็น JSON เท่านั้น (ห้ามมีข้อความอื่นนอก JSON):\n"
         '{\n'
-        '  "core_issue": "สรุปประเด็นหลักของเรื่องเป็นประโยคภาษาไทยธรรมดาและสมบูรณ์ 1 ประโยค (ระบุชัดเจนว่า ใคร ทำอะไร กับใคร/ปัญหาคืออะไร เช่น \'บริษัทบอกว่าไม่บังคับ แต่กดดันให้ผู้สมัครสัมภาษณ์งานกับ AI ก่อนเจอ HR\')",\n'
-        '  "hook": "พาดหัวสั้นๆ กระชับบนรูปภาพ คั่นบรรทัดด้วย \\\\n (ย่อ/สรุปจาก core_issue โดยอ่านแล้วต้องรู้ทันทีว่า ใคร ทำอะไร ปัญหาคืออะไร และห้ามใช้วลีที่ไม่ครบความหมาย ห้ามใช้ประโยคไม่มีประธาน และห้ามใช้คำว่า \'ที่บอก...\' เด็ดขาด)",\n'
-        '  "caption": "caption 5 ชั้น เล่าเป็นภาษาพูดธรรมชาติที่ลื่นไหล",\n'
-        '  "x_thread": [\n'
-        '    "ข้อความโพสต์ที่ 1 ของ thread ใน X (สรุปเนื้อเรื่องส่วนที่ 1/คำถามชวนคิดเพื่อดึงดูดความสนใจ, ยาวไม่เกิน 250 ตัวอักษร, จบด้วย \'1/2\')",\n'
-        '    "ข้อความโพสต์ที่ 2 ของ thread ใน X (สรุปคำเฉลย/จุดพีค/การชวนตัดสินคดี, ยาวไม่เกิน 250 ตัวอักษร, จบด้วย \'2/2\')"\n'
-        '  ]\n'
+        '  "image_line1": "พาดหัวสั้นๆ บรรทัดที่ 1 (ความยาว 8-14 ตัวอักษรไทย เน้นประธาน/ปัญหาหลัก เช่น \'แฟนขอเงินแสน\')",\n'
+        '  "image_line2": "พาดหัวสั้นๆ บรรทัดที่ 2 (ความยาว 8-14 ตัวอักษรไทย คำถามหรือทางแยก เช่น \'ควรให้ยืมไหม?\')",\n'
+        '  "caption": "caption เล่าเรื่อง 5 ชั้นเป็นความเรียงธรรมชาติ จบด้วยคำถาม 2 ทางเลือกเจาะจงกับเรื่องนี้ และปิดท้ายด้วย \'1/2\'",\n'
+        '  "seed_comment": "ความคิดเห็นของแอดมินในฐานะผู้ชาย (ลงท้ายครับ) ที่เลือกข้างอย่างเด็ดขาดข้างใดข้างหนึ่งทันทีเพื่อเปิดประเด็นถกเถียง ห้ามตอบกลางๆ ปิดท้ายด้วย \'2/2\'"\n'
         '}\n\n'
-
-        "=== วิธีสร้าง core_issue และ hook (ทำตามลำดับ) ===\n"
-        "STEP 1: เขียน core_issue = ประโยคไทยสมบูรณ์ 1 ประโยค โครงสร้าง [ประธาน] + [ทำอะไร] + [ปัญหา]\n"
-        "STEP 2: ย่อเป็น hook โดยยึดกติกา 3 ข้อนี้เท่านั้น:\n"
-        "  (ก) บรรทัดแรกของ hook ต้องเริ่มด้วยประธานที่จับต้องได้ — เลือกจาก: บริษัท / หัวหน้า / ภรรยา / แฟน / เพื่อน / ชายคนหนึ่ง / ลูกค้า ฯลฯ ห้ามใช้ 'ผม'\n"
-        "  (ข) บรรทัดสุดท้ายเป็นคำถามชวนตัดสิน ลงท้าย 'ไหมครับ?' หรือ 'ดีไหมครับ?'\n"
-        "  (ค) ยาว 2-3 บรรทัด คั่นด้วย \\n อ่านปุ๊บรู้ทันทีว่าใครทำอะไรเกิดปัญหาอะไร\n\n"
-        "เทียบให้เห็นชัด ❌ผิด vs ✅ถูก (เรื่องสัมภาษณ์ AI):\n"
-        "  ❌ 'สมัครงานเจอ AI สัมภาษณ์\\nที่บอก ไม่บังคับ มันคืออะไร?\\nใครจะไปยอมทำกันครับ!'\n"
-        "     << ผิดเพราะ: ไม่มีประธาน, 'ที่บอก...' ลอย, อ่านแล้วงงว่าใครทำอะไร >>\n"
-        "  ✅ 'บริษัทให้ AI\\nสัมภาษณ์งานแทนคน\\nแบบนี้พี่ๆ รับได้ไหมครับ?'\n"
-        "     << ถูกเพราะ: ขึ้นต้น 'บริษัท' (ประธานชัด), เล่าครบ, ปิดด้วยคำถาม >>\n\n"
-        "ตัวอย่าง hook ที่ดีอีก:\n"
-        "  ✅ 'หัวหน้าสั่งลูกน้อง\\nทำงานเสาร์อาทิตย์ฟรี\\nควรปฏิเสธไหมครับ?'\n"
-        "  ✅ 'ภรรยาขอยืมเงินแสนแรก\\nที่สามีเก็บมาทั้งชีวิต\\nควรให้ยืมดีไหมครับ?'\n\n"
-
-        "=== กฎการสร้าง x_thread ===\n"
-        "1. x_thread ต้องประกอบด้วยข้อความ 2 ข้อความ (โพสต์ที่ 1 และ 2) เพื่อนำไปโพสต์ต่อกันเป็น Thread บน X (Twitter)\n"
-        "2. โพสต์ที่ 1: ตั้งคำถามชวนคิดหรือเล่าเรื่องเกริ่นตอนต้นให้ชวนติดตาม โดยให้มีอารมณ์ดราม่าและชวนตัดสินเหมือน Facebook caption และแนบภาพเสมอ จบท้ายด้วย '1/2'\n"
-        "3. โพสต์ที่ 2: เล่าจุดจบหรือสรุปผลและยิงคำถามชวนแสดงความคิดเห็นแบบเดียวกับ Facebook caption และจบท้ายด้วย '2/2'\n"
-        "4. ทั้งสองโพสต์ต้องจำกัดความยาวไม่เกิน 250 ตัวอักษรภาษาไทยต่อโพสต์ (เพื่อไม่ให้เกินขีดจำกัด 280 ตัวอักษรของ X)\n"
-        "5. เขียนด้วยภาษาพูดสบายๆ โทนจริงจังและน่าสนใจ (ใช้หางเสียงครับ/ผม/พี่ เหมือนเดิม)\n\n"
-
-        "=== caption 5 ชั้น (เขียนต่อเนื่องเป็นความเรียงปกติ ห้ามใส่หัวข้อ ห้ามใส่หมายเลข ห้ามมี bullet points เด็ดขาด) ===\n"
-        "ชั้น 1 — ATTRIBUTION HOOK: บอกสั้นๆ ว่าไปอ่านเจอเรื่องนี้จาก Reddit แล้วเปิดความขัดแย้งทันที ห้ามเปิดด้วยสูตรกว้างๆ อย่าง 'มีเรื่องอยากให้ช่วยตัดสิน'\n"
-        "ชั้น 2 — EXPAND: ขยายบริบทสั้นๆ ยั่วให้อยากรู้เนื้อเรื่อง\n"
-        "ชั้น 3 — CLEAR CONTENT: เล่าเนื้อเรื่องหลักเรียงลำดับ ชัดเจน ไหลลื่น ภาษาคนธรรมชาติ\n"
-        "ชั้น 4 — TURNING POINT: จุดพีคที่เป็นข้อขัดแย้ง\n"
-        "ชั้น 5 — JUDGMENT CALL: ปิดด้วยคำถามที่ระบุสองทางเลือกจากเรื่องนี้โดยตรง ห้ามถามกว้างๆ ว่า 'คิดเห็นยังไง' เช่น 'ถ้าเป็นพี่ๆ จะยอมสัมภาษณ์กับ AI หรือถอนใบสมัครครับ?'"
+        "=== คำอธิบาย caption 5 ชั้น (เขียนต่อกัน ห้ามใส่ bullet points หรือหัวข้อ) ===\n"
+        "ชั้น 1 — ATTRIBUTION HOOK: บอกสั้นๆ ว่าไปอ่านเจอเรื่องนี้จาก Reddit แล้วเปิดปมขัดแย้งทันที\n"
+        "ชั้น 2 — EXPAND: ขยายบริบทสั้นๆ ยั่วให้อยากติดตาม\n"
+        "ชั้น 3 — CLEAR CONTENT: เล่าเรื่องหลักเรียงลำดับ ชัดเจน ไหลลื่น ภาษาคนธรรมชาติ\n"
+        "ชั้น 4 — TURNING POINT: จุดพีคที่เป็นทางแยกหรือข้อพิพาท\n"
+        "ชั้น 5 — JUDGMENT CALL: ปิดด้วยคำถามที่ระบุสองทางเลือกชัดเจน แล้วลงท้ายด้วย '1/2'\n"
     )
     raw = gemini_text(prompt)
-    hook, caption, core_issue, x_thread = "", "", "", []
+    hook, caption, seed_comment = "", "", ""
     if raw:
         clean_raw = raw.strip()
         if clean_raw.startswith("```"):
@@ -239,88 +235,66 @@ def translate_story(subreddit, title, body):
         if m:
             try:
                 data = json.loads(m.group())
-                hook       = data.get("hook", "").replace("\\n", "\n")
-                caption    = data.get("caption", "")
-                core_issue = data.get("core_issue", "")
-                x_thread   = data.get("x_thread", [])
+                l1 = data.get("image_line1", "").strip()
+                l2 = data.get("image_line2", "").strip()
+                if l1 and l2:
+                    hook = f"{l1}\n{l2}"
+                elif l1:
+                    hook = l1
+                caption = data.get("caption", "").strip()
+                seed_comment = data.get("seed_comment", "").strip()
             except Exception as e:
                 print(f"JSON parse error: {e}")
 
-    # Validation: ถ้า hook ไม่เคลียร์ (ไม่มีประธาน/วลีลอย/ไม่มีคำถาม) สั่งสร้างใหม่จาก core_issue 1 รอบ
-    if hook and core_issue and not is_hook_clear(hook):
-        print(f"Hook ไม่ผ่านเกณฑ์: {hook!r} — regenerate จาก core_issue")
-        fix_prompt = (
-            f"ประเด็น: {core_issue}\n\n"
-            "เขียน 'พาดหัวบนรูป' ภาษาไทย 2-3 บรรทัด คั่นบรรทัดด้วย \\n ตามกติกา:\n"
-            "1. บรรทัดแรกต้องขึ้นต้นด้วยประธานชัดเจน (บริษัท/หัวหน้า/เมีย/แฟน/เพื่อน/ผม/ลูกค้า)\n"
-            "2. บรรทัดสุดท้ายเป็นคำถามชวนตัดสิน ลงท้าย 'ไหมครับ?'\n"
-            "3. ห้ามวลีลอย เช่น 'ที่บอก...' หรือ 'มันคืออะไร'\n"
-            "ตอบเฉพาะข้อความพาดหัว ไม่ต้องมีอย่างอื่น\n"
-            "ตัวอย่าง: บริษัทให้ AI\\nสัมภาษณ์งานแทนคน\\nแบบนี้พี่ๆ รับได้ไหมครับ?"
-        )
-        fixed = gemini_text(fix_prompt)
-        if fixed:
-            fixed = fixed.strip().strip('"').replace("\\n", "\n")
-            if is_hook_clear(fixed):
-                print(f"Hook ใหม่ผ่าน: {fixed!r}")
-                hook = fixed
+    # Apply slang and clean
+    hook = apply_slang_rules(hook)
+    caption = apply_slang_rules(caption)
+    seed_comment = apply_slang_rules(seed_comment)
 
-    # Fallback to direct translation if JSON parsing failed or output has no Thai
-    if not hook or not caption or not contains_thai(hook) or not contains_thai(caption):
-        print("JSON translation failed or missing Thai. Trying direct translation fallback...")
-        fallback_prompt = (
-            f"แปลเรื่องเล่าจาก Reddit r/{subreddit} นี้เป็นภาษาไทย:\n"
-            f"Title: {title}\n"
-            f"Body: {body}\n\n"
-            "เขียนคำตอบออกมา 2 บรรทัด คั่นด้วยเครื่องหมาย | :\n"
-            "บรรทัดที่ 1: พาดหัวภาษาไทยสั้นๆ กวนๆ น่าดึงดูดใจ สำหรับใส่บนรูปภาพ (ยาวไม่เกิน 10 คำ)\n"
-            "บรรทัดที่ 2: เล่าในฐานะแอดมินบุคคลที่สามที่อ่านเจอจาก Reddit ห้ามสวมบทเป็นเจ้าของเรื่อง และจบด้วยคำถามสองทางเลือกที่เฉพาะกับเรื่องนี้\n"
-            "ห้ามใช้ JSON หรืออธิบายเพิ่มเติม ตอบเฉพาะข้อมูลที่ระบุในฟอร์แมต: พาดหัว | คำบรรยาย"
-        )
-        fallback_raw = gemini_text(fallback_prompt)
-        if fallback_raw and "|" in fallback_raw:
-            try:
-                parts = fallback_raw.split("|", 1)
-                hook = parts[0].strip()
-                caption = parts[1].strip()
-                print(f"Fallback direct translation success! Hook: {hook[:30]}")
-            except Exception as fe:
-                print(f"Fallback split error: {fe}")
-
-    # Fallback to predefined local Thai stories if all AI methods fail
-    if not hook or not caption or not contains_thai(hook) or not contains_thai(caption):
-        print("All AI translation methods failed or missing Thai. Using local fallback database.")
+    # Fallback to local high-quality presets if failed or missing Thai
+    if not hook or not caption or not seed_comment or not contains_thai(hook) or not contains_thai(caption):
+        print("AI generation failed or missing Thai. Using local dilemma presets.")
         fallbacks = [
             {
-                "hook": "แฟนนัดเจอคนเก่า\nโดยไม่บอกกัน\nควรคุยหรือเลิกครับ?",
-                "caption": "ไปอ่านเจอเรื่องหนึ่งใน Reddit ครับ ชายคนหนึ่งพบว่าแฟนยังคุยกับแฟนเก่าและนัดเจอกันนอกรอบ ทั้งที่บอกว่าเป็นแค่เพื่อนร่วมงาน เขาลังเลว่าจะคุยให้ชัดอีกครั้งหรือจบความสัมพันธ์เลย ถ้าเป็นพี่ๆ จะให้โอกาสอธิบายหรือเลิกครับ?"
+                "line1": "แฟนแอบนัดคนเก่า",
+                "line2": "ควรคุยหรือเลิก?",
+                "caption": "ไปเจอเรื่องหนึ่งใน Reddit ครับ ชายคนหนึ่งพบว่าแฟนยังแอบคุยและนัดเจอแฟนเก่านอกรอบ ทั้งที่บอกว่าเป็นแค่เพื่อนร่วมงานธรรมดา ตอนนี้เขาลังเลว่าจะยอมนั่งคุยเปิดอกอีกรอบ หรือตัดสินใจตัดใจจบความสัมพันธ์ไปเลยดี ถ้าเป็นพี่ๆ จะให้โอกาสอธิบายหรือพอแค่นี้ครับ? 1/2",
+                "seed_comment": "เคสนี้ถ้าแอบนัดเจอลับหลังคือทำลายความไว้ใจไปแล้ว แนะนำให้ถอยออกมาดีกว่าครับ 2/2"
             },
             {
-                "hook": "ลูกน้องรับปากงานใหญ่\nทั้งที่ทำไม่เป็น\nควรสารภาพไหมครับ?",
-                "caption": "มีคนหนึ่งเล่าใน Reddit ว่าเขารับปากหัวหน้าว่าทำโปรเจกต์คนเดียวได้ ทั้งที่ยังไม่เข้าใจระบบ ตอนนี้เหลือสามวันแต่งานแทบไม่เดิน ถ้าเป็นพี่ๆ จะรีบบอกความจริงเพื่อขอความช่วยเหลือ หรือกัดฟันทำต่อเองครับ?"
+                "line1": "งานมั่นคงแต่ใจพัง",
+                "line2": "ควรทนหรือถอย?",
+                "caption": "ไปอ่านเจอกระทู้คนทำงานใน Reddit ครับ พนักงานคนหนึ่งทำงานบริษัทใหญ่เงินเดือนดีมาก แต่ตื่นมาพร้อมความเครียดจนนอนไม่หลับทุกคืน ถ้าต้องเลือกระหว่างความมั่นคงทางการเงิน กับการรักษาชีวิตและสุขภาพจิต ถ้าเป็นพี่ๆ จะยอมกัดฟันทนต่อหรือยื่นใบลาออกครับ? 1/2",
+                "seed_comment": "งานหาใหม่เมื่อไหร่ก็ได้ แต่สุขภาพจิตพังแล้วรักษายากมาก เคสนี้ควรรีบวางแผนหางานใหม่แล้วถอยครับ 2/2"
             },
             {
-                "hook": "เพื่อนชักช้าจนเกือบตกเครื่อง\nกลุ่มเลยทิ้งไว้ที่ปั๊ม\nใครผิดครับ?",
-                "caption": "ไปเจอกระทู้หนึ่งใน Reddit ครับ กลุ่มเพื่อนกำลังรีบไปสนามบิน แต่คนหนึ่งตื่นสายและยังหายไปซื้อของที่ปั๊ม คนที่เหลือจึงออกเดินทางโดยไม่รอจนเธอตกเครื่อง ถ้าเป็นพี่ๆ จะรอเพื่อนต่อหรือรักษาเวลาของทั้งกลุ่มครับ?"
+                "line1": "เพื่อนยืมเงินแต่งงาน",
+                "line2": "ทวงแล้วทำเงียบ",
+                "caption": "มีโพสต์หนึ่งแชร์ใน Reddit ครับ ชายคนหนึ่งให้เพื่อนสนิทยืมเงินก้อนไปจัดงานแต่งงาน ผ่านมาสองปีเพื่อนไม่ยอมคืนเงินสักบาท แต่ลงรูปไปเที่ยวต่างประเทศฉ่ำๆ ถ้าเป็นพี่ๆ จะแตกหักทวงหน้าฟีด หรือยอมตัดใจเสียเงินเพื่อรักษาคำว่าเพื่อนครับ? 1/2",
+                "seed_comment": "เพื่อนที่เห็นเราเดือดร้อนแต่ตัวเองไปเที่ยวสบายใจ ไม่ใช่เพื่อนแท้แล้วครับ เคสนี้ควรทวงให้ถึงที่สุด 2/2"
             }
         ]
         chosen = random.choice(fallbacks)
-        hook = chosen["hook"]
+        hook = f"{chosen['line1']}\n{chosen['line2']}"
         caption = chosen["caption"]
+        seed_comment = chosen["seed_comment"]
 
-    # Ensure x_thread is populated
-    if not x_thread or len(x_thread) < 2:
-        # Split the caption into two parts for thread
-        lines = [l.strip() for l in caption.split("\n") if l.strip()]
-        half = len(lines) // 2
-        p1 = " ".join(lines[:half])[:250] + " 1/2"
-        p2 = " ".join(lines[half:])[:250] + " 2/2"
-        x_thread = [p1, p2]
+    # Ensure 1/2 and 2/2 markings
+    if "1/2" not in caption:
+        caption = caption.rstrip() + " 1/2"
+    if "2/2" not in seed_comment:
+        seed_comment = seed_comment.rstrip() + " 2/2"
 
-    # Clean thread elements just to be safe
-    x_thread = [t.strip() for t in x_thread]
+    # Build X thread
+    t1 = caption[:245]
+    if "1/2" not in t1:
+        t1 = t1.rstrip() + " 1/2"
+    t2 = seed_comment[:245]
+    if "2/2" not in t2:
+        t2 = t2.rstrip() + " 2/2"
+    x_thread = [t1, t2]
 
-    return hook, caption, x_thread
+    return hook, caption, seed_comment, x_thread
 
 # ── Thai text wrap (leading vowel safe) ──────────────────────────────────────
 _LEADING_VOWELS  = set("เแโใไ")
@@ -389,9 +363,9 @@ def wrap_text(draw, text, font, max_width):
     return lines
 
 
-# ── Generate image ───────────────────────────────────────────────────────────
+# # ── Generate image ───────────────────────────────────────────────────────────
 def generate_image(hook):
-    """Dark card 1080x1080 — hook text ขาว font size เดียว auto-fit ให้ใหญ่สุด"""
+    """Dark card 1080x1080 — line 1 ฟ้า (#00BFFF), line 2 ขาว (#FFFFFF) auto-fit กึ่งกลาง"""
     bkk  = timezone(timedelta(hours=7))
     ts   = datetime.now(bkk).strftime("%Y%m%d_%H%M%S")
     path = os.path.join(OUTPUT_DIR, f"story_{ts}.jpg")
@@ -403,28 +377,27 @@ def generate_image(hook):
     PAD      = 80
     max_w    = W - PAD * 2   # 920px
     LINE_GAP = 28
-    COLOR    = (255, 255, 255)
 
     # แยก hook เป็นบรรทัด (ตาม \n ที่ Gemini กำหนด)
     raw_lines = [l.strip() for l in hook.strip().split("\n") if l.strip()]
 
-    # auto-fit: เริ่ม 120px ลดลงทีละ 4 จนพอดี
-    font_size = 120
+    # auto-fit: เริ่ม 110px ลดลงทีละ 4 จนพอดี
+    font_size = 110
     best_font = None
     best_lines = []
     while font_size >= 36:
         font = ImageFont.truetype(FONT_PATH, font_size)
-        # wrap แต่ละบรรทัดถ้ายาวเกิน max_w
         wrapped = []
-        for l in raw_lines:
-            wrapped.extend(wrap_text(draw, l, font, max_w))
+        for idx, l in enumerate(raw_lines):
+            for w in wrap_text(draw, l, font, max_w):
+                wrapped.append((w, idx == 0))
 
         def lh(text):
             bb = draw.textbbox((0, 0), text, font=font)
             return bb[3] - bb[1]
 
-        total_h  = sum(lh(t) + LINE_GAP for t in wrapped)
-        width_ok = all(draw.textbbox((0, 0), t, font=font)[2] <= max_w for t in wrapped)
+        total_h  = sum(lh(t) + LINE_GAP for t, _ in wrapped)
+        width_ok = all(draw.textbbox((0, 0), t, font=font)[2] <= max_w for t, _ in wrapped)
 
         if total_h <= H - PAD * 2 and width_ok:
             best_font  = font
@@ -435,26 +408,27 @@ def generate_image(hook):
     if not best_font:
         best_font  = ImageFont.truetype(FONT_PATH, 36)
         best_lines = []
-        for l in raw_lines:
-            best_lines.extend(wrap_text(draw, l, best_font, max_w))
+        for idx, l in enumerate(raw_lines):
+            for w in wrap_text(draw, l, best_font, max_w):
+                best_lines.append((w, idx == 0))
 
     print(f"Story image font size: {font_size} | lines: {len(best_lines)}")
 
-    # คำนวณ total_h จริงก่อนวาด
     def lh(text):
         bb = draw.textbbox((0, 0), text, font=best_font)
         return bb[3] - bb[1]
-    total_h = sum(lh(t) + LINE_GAP for t in best_lines)
+    total_h = sum(lh(t) + LINE_GAP for t, _ in best_lines)
 
     y = (H - total_h) // 2
 
-    for text in best_lines:
+    for text, is_first in best_lines:
         bb = draw.textbbox((0, 0), text, font=best_font)
         w  = bb[2] - bb[0]
         x  = (W - w) // 2
         dy = y - bb[1]
-        # Native stroke in PIL for clean text outline
-        draw.text((x, dy), text, font=best_font, fill=COLOR, stroke_width=3, stroke_fill=(0, 0, 0))
+        line_color = ACCENT_COLOR if is_first else WHITE_COLOR
+        draw.text((x + 3, dy + 3), text, font=best_font, fill=(30, 30, 30))
+        draw.text((x, dy), text, font=best_font, fill=line_color)
         y += lh(text) + LINE_GAP
 
     # watermark
@@ -534,7 +508,18 @@ def post_to_x_thread(tweets, image_path=None):
         return None
 
 # ── Post to Facebook ────────────────────────────────────────────────────────
-def post_facebook(img_path, caption):
+def post_seed_comment(post_id, seed_comment):
+    if not seed_comment:
+        return
+    try:
+        data = {"access_token": PAGE_ACCESS_TOKEN, "message": seed_comment}
+        resp = requests.post(f"https://graph.facebook.com/v25.0/{post_id}/comments", data=data, timeout=60)
+        res = resp.json()
+        print(f"Admin Seed Comment: {'OK id=' + res.get('id', '') if 'id' in res else res}")
+    except Exception as e:
+        print(f"Error posting admin seed comment: {e}")
+
+def post_facebook(img_path, caption, seed_comment=None):
     print("Posting story to Facebook (using two-step publish)...")
     try:
         # Step 1: Upload photo as unpublished
@@ -567,6 +552,9 @@ def post_facebook(img_path, caption):
         if "id" in feed_result:
             post_id = feed_result["id"]
             print(f"Posted to feed! ID: {post_id}")
+            # Step 3: Publish admin seed comment immediately (2/2)
+            if seed_comment:
+                post_seed_comment(post_id, seed_comment)
             add_comment(post_id)
             return post_id
         else:
@@ -583,7 +571,7 @@ def add_comment(post_id):
     except Exception:
         return
     delay = random.uniform(60, 180)
-    print(f"Waiting {delay:.0f}s before first comment...")
+    print(f"Waiting {delay:.0f}s before first affiliate comment...")
     time.sleep(delay)
     for i, msg in enumerate(comments, 1):
         if isinstance(msg, dict):
@@ -626,10 +614,11 @@ if __name__ == "__main__":
         print("No suitable story found after 5 attempts")
         raise SystemExit(1)
 
-    hook, caption, x_thread = translate_story(post["subreddit"], post["title"], post["body"])
+    hook, caption, seed_comment, x_thread = translate_story(post["subreddit"], post["title"], post["body"])
 
-    print(f"\nHook:\n{hook}")
-    print(f"\nCaption preview:\n{caption[:300]}\n")
+    print(f"\nHook (Line 1 Cyan / Line 2 White):\n{hook}")
+    print(f"\nCaption (1/2):\n{caption}\n")
+    print(f"Seed Comment (2/2):\n{seed_comment}\n")
     if x_thread:
         print(f"X Thread Preview:\n- Tweet 1: {x_thread[0]}\n- Tweet 2: {x_thread[1] if len(x_thread) > 1 else ''}\n")
 
@@ -637,16 +626,21 @@ if __name__ == "__main__":
         print("Translation failed — no hook generated")
         raise SystemExit(1)
 
+    img = generate_image(hook)
+
     if args.dry_run:
-        print("[DRY RUN] Image and post skipped.")
+        sample_path = os.path.join(OUTPUT_DIR, "kram_dilemma_sample.jpg")
+        import shutil
+        shutil.copy(img, sample_path)
+        print(f"[DRY RUN] Generated sample card saved to: {sample_path}")
+        print("[DRY RUN] Posting skipped.")
         raise SystemExit(0)
 
-    img = generate_image(hook)
     caption_full = (
         caption
         + f"\n\n#เรื่องจริง #ดราม่า #ชีวิตจริงยิ่งกว่าละคร"
     )
-    post_facebook(img, caption_full)
+    post_facebook(img, caption_full, seed_comment=seed_comment)
     post_to_x_thread(x_thread, img)
     save_to_history(post["permalink"])
     save_to_history(reddit_title_key(post["title"]))
