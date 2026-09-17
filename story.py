@@ -196,11 +196,19 @@ def translate_story(subreddit, title, body):
     x_thread = ข้อความทวีตใน X 2 ทวีต (1/2 และ 2/2)
     """
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
+    angles = [
+        "มุมมองที่ 1: ดราม่าข้อพิพาทความสัมพันธ์ (ความรัก/ครอบครัว/เพื่อนร่วมงาน)",
+        "มุมมองที่ 2: บทเรียนราคาแพง / รู้งี้ไม่น่าทำ (The Cost of Cheap — ความผิดพลาดที่เสียเงินก้อนโตเพราะประหยัดผิดจุดหรือไว้ใจผิดคน)",
+        "มุมมองที่ 3: ศาลดราม่าความรับผิดชอบ (ใครผิด / ใครควรเป็นฝ่ายจ่ายชดใช้)"
+    ]
+    chosen_angle = random.choice(angles)
+
     prompt = (
         f"นี่คือเรื่องเล่าจริงจาก Reddit r/{subreddit} ({context}):\n\n"
         f"Title: {title}\n\n"
         f"Story: {body}\n\n"
-        "งาน: แปลงเรื่องนี้มาทำเป็น 'เรื่องเล่าให้ตัดสิน' (Stories for Judgment / Dilemma Discussion) ภาษาไทยสำหรับ Facebook เพจกรามค้าง และ X (Twitter)\n"
+        f"งาน: แปลงเรื่องนี้มาทำเป็นคอนเทนต์สไตล์ Threads ชวนถกและตัดสิน ภาษาไทยสำหรับ Facebook เพจกรามค้าง และ X (Twitter)\n"
+        f"ทิศทางคอนเทนต์รอบนี้: {chosen_angle}\n"
         "กลุ่มเป้าหมาย: ผู้ชายไทย วัยทำงาน 25-45 ปี\n\n"
         "กฎเหล็กสำคัญที่สุด:\n"
         "1. แอดมินต้องเป็น 'บุคคลที่สาม' (3rd-Party Observer) ที่ไปอ่านเจอเรื่องนี้จาก Reddit/โซเชียล แล้วนำมาเล่าต่อชวนลูกเพจคุย\n"
@@ -213,7 +221,7 @@ def translate_story(subreddit, title, body):
         '  "image_line1": "พาดหัวสั้นๆ บรรทัดที่ 1 (ความยาว 8-14 ตัวอักษรไทย เน้นประธาน/ปัญหาหลัก เช่น \'แฟนขอเงินแสน\')",\n'
         '  "image_line2": "พาดหัวสั้นๆ บรรทัดที่ 2 (ความยาว 8-14 ตัวอักษรไทย คำถามหรือทางแยก เช่น \'ควรให้ยืมไหม?\')",\n'
         '  "caption": "caption เล่าเรื่อง 5 ชั้นเป็นความเรียงธรรมชาติ จบด้วยคำถาม 2 ทางเลือกเจาะจงกับเรื่องนี้ และปิดท้ายด้วย \'1/2\'",\n'
-        '  "seed_comment": "ความคิดเห็นของแอดมินในฐานะผู้ชาย (ลงท้ายครับ) ที่เลือกข้างอย่างเด็ดขาดข้างใดข้างหนึ่งทันทีเพื่อเปิดประเด็นถกเถียง ห้ามตอบกลางๆ ปิดท้ายด้วย \'2/2\'"\n'
+        '  "seed_comment": "ความคิดเห็นของแอดมินในฐานะผู้ชาย (ลงท้ายครับ) ที่เลือกข้างอย่างเด็ดขาดข้างใดข้างหนึ่งทันทีเพื่อเปิดประเด็นถกเถียง ห้ามตอบกลางๆ พร้อมหยอดข้อคิดหรือวิธีแก้ปัญหาในชีวิตจริงสั้นๆ และปิดท้ายด้วย \'2/2\'"\n'
         '}\n\n'
         "=== คำอธิบาย caption 5 ชั้น (เขียนต่อกัน ห้ามใส่ bullet points หรือหัวข้อ) ===\n"
         "ชั้น 1 — ATTRIBUTION HOOK: บอกสั้นๆ ว่าไปอ่านเจอเรื่องนี้จาก Reddit แล้วเปิดปมขัดแย้งทันที\n"
@@ -555,7 +563,7 @@ def post_facebook(img_path, caption, seed_comment=None):
             # Step 3: Publish admin seed comment immediately (2/2)
             if seed_comment:
                 post_seed_comment(post_id, seed_comment)
-            add_comment(post_id)
+            add_comment(post_id, caption=caption)
             return post_id
         else:
             print(f"Feed publishing failed: {feed_result}")
@@ -564,10 +572,10 @@ def post_facebook(img_path, caption, seed_comment=None):
         print(f"Error posting to FB: {e}")
         raise SystemExit(1)
 
-def add_comment(post_id):
+def add_comment(post_id, caption=None):
     try:
         from affiliate_utils import get_all_comments
-        comments = get_all_comments()
+        comments = get_all_comments(caption=caption)
     except Exception:
         return
     delay = random.uniform(60, 180)
