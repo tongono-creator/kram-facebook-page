@@ -559,12 +559,20 @@ def main():
             final_img = None if is_static_fallback else temp_path
 
         # โพสต์หรือหยุดทำแห้ง (dry-run)
+        if not final_img or not os.path.exists(final_img):
+            print(f"[Warning] Invalid final image path: {final_img}. Skipping candidate.")
+            candidates.remove(news)
+            continue
+
         if args.dry_run:
             print(f"Dry-run mode complete. Local image path: {final_img}")
         else:
             post_facebook(final_img, caption)
             if os.path.exists(final_img):
-                os.unlink(final_img)
+                try:
+                    os.unlink(final_img)
+                except Exception:
+                    pass
         
         news_posted = True
         break
