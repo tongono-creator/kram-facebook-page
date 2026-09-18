@@ -3,31 +3,26 @@ Direct use of automatic function calling (AFC) in Models.generate_content is not
 --- Post 1/5 (slot 18:00) ---
 [Filter] ข้ามสินค้าที่ไม่ตรงเพจ: Deli ถุงคลุมเสื้อผ้า ถุงใส่สูท ที่คลุมเสื้อผ้า มีซิปด้านหน้า หลายขนาด 
 [Filter] ข้ามสินค้าที่ไม่ตรงเพจ: 🐻💖ถุงสูญญากาศ จัดเก็บผ้านวม ถุงสูญญากาศประหยัดพื้นที่ มีจุกวาล์ว(ราคา1
-Product: 🥳ถุงสูญญากาศ จัดเก็บเสื้อผ้าผ้านวมเป็นระเบียบ ถุงเก็บผ้านวมม...
+Product: ถุงสูญญากาศ 1ใบ มีวาล์ว ถุงเก็บผ้านวม ถุงสุญญากาศ จัดเก็บผ้า...
 [System Log] Converted Product JSON:
 {
   "ประเภท": "ถุงสูญญากาศ",
-  "จุดเด่น": "ซิปล็อค2ชั้นมีวาล์ว ประหยัดพื้นที่",
-  "รุ่น": "ลายแบร์บริค",
-  "ราคา": 11
+  "จุดเด่น": "มีวาล์ว ประหยัดพื้นที่",
+  "ราคา": 9
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: ชี้กลุ่มที่เหมาะ (R5)
+[System Log] Chosen Role: สรุปสั้น (R7)
 [System Log] Chosen Persona: คนเทียบตัวเลือก (E)
-[System Log] Chosen Hook: เปิดด้วยปัญหาเฉพาะที่สินค้าประเภทนี้แก้
-[System Log] Chosen Style: บอกต่อแบบกลางๆ
-Hook: ถุงสูญญากาศลายหมี | รีดผ้านวมแบนแต๊ดแต๋ ตู้เสื้อผ้าโล่งขึ้นเยอะ
-Product image downloaded: output/product_20260917_222851.webp
-Card render done: output/product_20260917_222851_card.png
+[System Log] Chosen Hook: เปิดด้วยจุดเด่นจริงหนึ่งข้อจากข้อมูล
+[System Log] Chosen Style: คำถามเฉพาะ
+Hook: ถุงย่อส่วนผ้านวม | มีวาล์วดูดลม ตู้โล่งขึ้นเยอะ
+Product image downloaded: output/product_20260918_215052.webp
+Card render done: output/product_20260918_215052_card.png
 Caption:
-ใครเจอปัญหาเสื้อผ้าล้นกระเป๋าจนจัดไม่ลง ผมมองว่าถุงสูญญากาศ ลายแบร์บริค ที่มีซิปล็อค2ชั้นมีวาล์ว ช่วยประหยัดพื้นที่ ในราคา 11 บาท น่าจะเหมาะกับคนที่กำลังหาตัวช่วยแพ็กของเดินทางครับ
-
-ราคา 11 บาทกับซิปล็อค2ชั้นมีวาล์วแบบนี้ ตอบโจทย์การจัดกระเป๋าของพี่ๆ ไหมครับ?
-
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+การออกแบบที่มีวาล์วช่วยให้บีบอัดและประหยัดพื้นที่จัดเก็บได้ง่ายขึ้น โดยถุงสูญญากาศชิ้นนี้ราคาอยู่ที่ 9 บาทครับ ด้วยฟังก์ชันมีวาล์วในราคา 9 บาท คิดว่าจะเอาไปใช้ประหยัดพื้นที่เสื้อผ้าในตู้หรือในกระเป๋าเดินทางมากกว่ากันครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1789729200...
-Scheduled successfully! Photo ID: 1020250307702012
+Scheduling to Facebook for timestamp 1789815600...
+Scheduled successfully! Photo ID: 1021071134286596
 [DB] Successfully saved post memory.
-Marked row 185 as done
+Marked row 186 as done
