@@ -5,7 +5,8 @@ import os, time, re, sys, io, json, random, time, requests, hashlib
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime, timezone, timedelta
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from google import genai
 from google.genai import types
@@ -601,28 +602,23 @@ def add_comment(post_id, caption=None):
             time.sleep(random.uniform(30, 90))
 
 # ── Main ─────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args()
-
+def main(dry_run=False):
     history_list = load_history()
     history_set  = {h for h in history_list}
 
     post = None
-    for _ in range(5):
+    for _ in range(2):
         post = get_reddit_story(history_set)
         if post:
             break
         print("Retrying story fetch...")
-        time.sleep(3)
+        time.sleep(2)
 
     if not post:
-        print("No suitable story found after 5 attempts")
-        raise SystemExit(1)
+        print("No suitable story found from Reddit. Using local high-quality dilemma preset...")
+        post = {"subreddit": "AITA", "title": "", "body": ""}
 
-    hook, caption, seed_comment, x_thread = translate_story(post["subreddit"], post["title"], post["body"])
+    hook, caption, seed_comment, x_thread = translate_story(post.get("subreddit", "AITA"), post.get("title", ""), post.get("body", ""))
 
     print(f"\nHook (Line 1 Cyan / Line 2 White):\n{hook}")
     print(f"\nCaption (1/2):\n{caption}\n")
@@ -632,17 +628,17 @@ if __name__ == "__main__":
 
     if not hook:
         print("Translation failed — no hook generated")
-        raise SystemExit(1)
+        return False
 
     img = generate_image(hook)
 
-    if args.dry_run:
+    if dry_run:
         sample_path = os.path.join(OUTPUT_DIR, "kram_dilemma_sample.jpg")
         import shutil
         shutil.copy(img, sample_path)
         print(f"[DRY RUN] Generated sample card saved to: {sample_path}")
         print("[DRY RUN] Posting skipped.")
-        raise SystemExit(0)
+        return True
 
     caption_full = (
         caption
@@ -650,10 +646,21 @@ if __name__ == "__main__":
     )
     post_facebook(img, caption_full, seed_comment=seed_comment)
     post_to_x_thread(x_thread, img)
-    save_to_history(post["permalink"])
-    save_to_history(reddit_title_key(post["title"]))
+    if post.get("permalink"):
+        save_to_history(post["permalink"])
+    if post.get("title"):
+        save_to_history(reddit_title_key(post["title"]))
 
     try:
         os.unlink(img)
     except Exception:
         pass
+    return True
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+    main(dry_run=args.dry_run)
+

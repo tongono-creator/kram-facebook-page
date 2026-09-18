@@ -8,7 +8,8 @@ import tempfile
 import xml.etree.ElementTree as ET
 import sys
 import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 from google import genai
 from google.genai import types
 from google.genai.types import HttpOptions
@@ -819,14 +820,30 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Run without posting to Facebook")
+    parser.add_argument("--mode", default="default", help="Mode: dilemma, video, image, or default")
     args = parser.parse_args()
 
     print("=== กรามค้าง Bot ===")
     if args.dry_run:
         print("[DRY RUN MODE ACTIVE]")
 
-    # 40% video mode / 60% image mode
-    use_video = random.random() < 0.40
+    if args.mode == "dilemma":
+        import story
+        story.main(dry_run=args.dry_run)
+        return
+
+    # Decide mode (50% dilemma card ฟ้า-ขาว, 25% video, 25% image)
+    if args.mode == "video":
+        use_video = True
+    elif args.mode == "image":
+        use_video = False
+    else:
+        chosen = random.choices(["dilemma", "video", "image"], weights=[50, 25, 25])[0]
+        if chosen == "dilemma":
+            import story
+            story.main(dry_run=args.dry_run)
+            return
+        use_video = (chosen == "video")
     print(f"Mode: {'VIDEO' if use_video else 'IMAGE'}")
 
     # ── VIDEO MODE ───────────────────────────────────────────────────

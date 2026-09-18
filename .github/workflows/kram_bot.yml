@@ -6,6 +6,11 @@ on:
     - cron: "0 8 * * *"   # 15:00 BKK
     - cron: "0 13 * * *"  # 20:00 BKK
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Mode to run (default, dilemma, video, image)'
+        required: false
+        default: 'default'
 
 jobs:
   post:
@@ -22,12 +27,21 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y ffmpeg
-          pip install google-genai requests openpyxl Pillow
+          pip install google-genai requests openpyxl Pillow tweepy
       - name: Run bot
         env:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python kram.py
+          X_CONSUMER_KEY: ${{ secrets.X_CONSUMER_KEY }}
+          X_CONSUMER_SECRET: ${{ secrets.X_CONSUMER_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          if [ -n "${{ inputs.mode }}" ] && [ "${{ inputs.mode }}" != "default" ]; then
+            python kram.py --mode=${{ inputs.mode }}
+          else
+            python kram.py
+          fi
 
       - name: Commit and push if history updated
         run: |
