@@ -35,12 +35,15 @@ def _b64(path):
         return base64.b64encode(f.read()).decode()
 
 
+ECOMMERCE_TEMPLATE = os.path.join(ROOT, "ecommerce.html")
+
+
 def _data_uri(path):
     mime = mimetypes.guess_type(path)[0] or "image/png"
     return f"data:{mime};base64,{_b64(path)}"
 
 
-def _build_html(data):
+def _build_html(data, template_path=TEMPLATE):
     faces = []
     for fam, rel in FONTS.items():
         p = os.path.join(ROOT, rel)
@@ -54,18 +57,19 @@ def _build_html(data):
     for p in data.get("photos", []):
         if p and os.path.exists(p):
             valid_photos.append(_data_uri(p if os.path.isabs(p) else os.path.join(os.getcwd(), p)))
-    data["photos"] = valid_photos
+    if valid_photos:
+        data["photos"] = valid_photos
 
-    tpl = open(TEMPLATE, encoding="utf-8").read()
+    tpl = open(template_path, encoding="utf-8").read()
     tpl = tpl.replace("/*FONT_FACE*/", "\n".join(faces))
     tpl = tpl.replace("/*__INJECT_DATA__*/",
                       "window.__DATA__ = " + json.dumps(data, ensure_ascii=False) + ";")
     return tpl
 
 
-def render(data, out_path):
+def render(data, out_path, template_path=TEMPLATE):
     from playwright.sync_api import sync_playwright
-    html = _build_html(data)
+    html = _build_html(data, template_path=template_path)
     w = int(str(data.get("params", {}).get("img_w", 1080)).replace("px", ""))
     h = int(str(data.get("params", {}).get("img_h", 1350)).replace("px", ""))
     with sync_playwright() as p:
@@ -79,7 +83,31 @@ def render(data, out_path):
     return out_path
 
 
-def render_review_card(photo_path, line1, line2, out_path, price=None):
+def render_review_card(photo_path, line1, line2, out_path, price=None, price_sub=None, chips=None, is_mall=True):
+    if os.path.exists(ECOMMERCE_TEMPLATE):
+        valid_photo = ""
+        if photo_path and os.path.exists(photo_path):
+            valid_photo = _data_uri(photo_path if os.path.isabs(photo_path) else os.path.join(os.getcwd(), photo_path))
+        
+        default_chips = ["🚚 ส่งฟรีถึงบ้าน", "✨ ของดีบอกต่อ", "🛡️ รับประกันของแท้"]
+        if chips:
+            default_chips = chips
+            
+        data = {
+            "photo": valid_photo,
+            "watermark": THEME.get("watermark", "รีวิวของเด็ด"),
+            "trust_text": "🛡️ Shopee Mall ของแท้ 100%" if is_mall else "⭐ ร้านแนะนำ ยอดขายปัง",
+            "line1": line1,
+            "line2": line2,
+            "price": price or "",
+            "price_sub": price_sub or "",
+            "chips": default_chips,
+            "primary": THEME["params"].get("border_color", "#00BFFF"),
+            "primary_dark": "#0080FF",
+            "params": dict(THEME["params"]),
+        }
+        return render(data, out_path, template_path=ECOMMERCE_TEMPLATE)
+
     lines = []
     if line1:
         lines.append(f"*{line1}*")

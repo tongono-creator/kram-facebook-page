@@ -1,0 +1,300 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+/*FONT_FACE*/
+
+:root {
+  --primary: #FF6B35;
+  --primary-dark: #D84315;
+  --accent: #FF9800;
+  --bg-top: #FFF9F5;
+  --bg-bottom: #FFF0E6;
+  --card-bg: #FFFFFF;
+  --text-dark: #1A202C;
+  --text-sub: #4A5568;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+#canvas {
+  width: 1080px;
+  height: 1350px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Kanit', sans-serif;
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+}
+
+/* Outer Border Frame */
+.border-frame {
+  position: absolute;
+  inset: 0;
+  border: 14px solid var(--primary);
+  border-radius: 36px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Top Bar / Badges */
+.top-bar {
+  position: absolute;
+  top: 32px;
+  left: 36px;
+  right: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.brand-badge {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(216, 67, 21, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trust-badge {
+  background: #fff;
+  color: #E53935;
+  border: 2px solid #FFCDD2;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Product Visual Area - Immersive edge-to-edge with slight bottom overlap */
+.product-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 840px;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Benefit Chips Floating above lower card */
+.feature-chips {
+  position: absolute;
+  top: 805px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  z-index: 15;
+}
+
+.chip {
+  background: #FFFFFF;
+  color: #1A202C;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 10px 22px;
+  border-radius: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border: 2px solid #FFCC80;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Bottom Information Card */
+.bottom-card {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 32px;
+  height: 440px;
+  background: #FFFFFF;
+  border-radius: 36px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 2px solid #FFE0B2;
+  z-index: 10;
+}
+
+.content-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title-line {
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  word-break: break-word;
+}
+
+.subtitle-line {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-sub);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1.5px dashed #E2E8F0;
+}
+
+.price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.price-label {
+  font-size: 26px;
+  color: #718096;
+  font-weight: 600;
+}
+
+.price-val {
+  font-size: 60px;
+  font-weight: 900;
+  color: #E53935;
+  line-height: 1;
+}
+
+.price-unit {
+  font-size: 26px;
+  font-weight: 700;
+  color: #E53935;
+}
+
+.price-sub {
+  font-size: 22px;
+  color: #4CAF50;
+  font-weight: 700;
+  margin-left: 8px;
+  background: #E8F5E9;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #FFFFFF;
+  font-size: 26px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+</style>
+</head>
+<body>
+<div id="canvas">
+  <div class="top-bar">
+    <div class="brand-badge" id="brand-badge">🔥 พริก 10 เม็ด</div>
+    <div class="trust-badge" id="trust-badge">🛡️ ของแท้ 100% Shopee Mall</div>
+  </div>
+
+  <div class="product-stage">
+    <img id="product-img" class="product-img" src="" alt="Product">
+  </div>
+
+  <div class="feature-chips" id="chips">
+    <div class="chip">🚚 ส่งฟรีถึงบ้าน</div>
+    <div class="chip" id="chip-sub">✨ ตกขวดละ 74.-</div>
+    <div class="chip">📦 ยกลังสุดคุ้ม</div>
+  </div>
+
+  <div class="bottom-card">
+    <div class="content-top">
+      <div class="title-line" id="title-line">น้ำมันพืชตรามรกต ยกลัง 12 ลิตร</div>
+      <div class="subtitle-line" id="subtitle-line">ทอดกรอบฟู ไม่อมน้ำมัน ใช้ยาวหลายเดือน</div>
+    </div>
+    <div class="footer-row">
+      <div class="price-box">
+        <span class="price-label">ราคา</span>
+        <span class="price-val" id="price-val">893</span>
+        <span class="price-unit">.-</span>
+        <span class="price-sub" id="price-sub">(เฉลี่ย 74.-/ขวด)</span>
+      </div>
+      <div class="cta-button">
+        <span>จิ้มลิงก์ในคอมเมนต์</span> 🛒
+      </div>
+    </div>
+  </div>
+
+  <div class="border-frame"></div>
+</div>
+
+<script>
+/*__INJECT_DATA__*/
+(function() {
+  const d = window.__DATA__ || {};
+  const root = document.documentElement.style;
+  if (d.primary) root.setProperty('--primary', d.primary);
+  if (d.primary_dark) root.setProperty('--primary-dark', d.primary_dark);
+
+  if (d.photo) document.getElementById('product-img').src = d.photo;
+  if (d.watermark) document.getElementById('brand-badge').textContent = d.watermark;
+  if (d.trust_text) document.getElementById('trust-badge').textContent = d.trust_text;
+  if (d.line1) document.getElementById('title-line').textContent = d.line1;
+  if (d.line2) document.getElementById('subtitle-line').textContent = d.line2;
+
+  if (d.price) {
+    const rawPrice = String(d.price).replace(/[^0-9\.]/g, '');
+    document.getElementById('price-val').textContent = rawPrice || d.price;
+  }
+  if (d.price_sub) {
+    document.getElementById('price-sub').textContent = d.price_sub;
+  } else {
+    document.getElementById('price-sub').style.display = 'none';
+  }
+
+  if (d.chips && Array.isArray(d.chips)) {
+    const container = document.getElementById('chips');
+    container.innerHTML = '';
+    d.chips.forEach(c => {
+      const chipEl = document.createElement('div');
+      chipEl.className = 'chip';
+      chipEl.textContent = c;
+      container.appendChild(chipEl);
+    });
+  }
+
+  window.__READY__ = true;
+})();
+</script>
+</body>
+</html>
