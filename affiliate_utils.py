@@ -558,22 +558,57 @@ def get_product_comments(caption=None, img_path=None):
     active = [p for p in products if p["shopee"] and "xxx" not in p["shopee"] and p.get("category") in allowed_categories]
     if not active:
         return []
-    
-    # Cap candidates to 25 to prevent token bloat
-    if len(active) > 25:
-        active = random.sample(active, 25)
-        print(f"Capped active products to 25 candidates for AI selector.")
-    
+    # กลยุทธ์ตามคำสั่ง: ช่วงนี้ให้ทุกเพจที่ขายสินค้าใต้คอมเมนต์ขาย iPhone ก่อน แล้วค่อยสลับเป็นสินค้าตัวอื่น
+    iphone_products = [p for p in active if "iphone" in p.get("name", "").lower() or "iphone" in p.get("desc", "").lower()]
+    other_products = [p for p in active if p not in iphone_products]
+
+    comment_state_file = os.path.join(os.path.dirname(__file__), "comment_product_state.json")
+    comment_state = {"last_was_iphone": False, "iphone_idx": 0}
+    if os.path.exists(comment_state_file):
+        try:
+            import json
+            with open(comment_state_file, "r", encoding="utf-8") as csf:
+                comment_state.update(json.load(csf))
+        except Exception:
+            pass
+
+    # เช็คว่าเนื้อหาถามหา iPhone/โทรศัพท์มือถือโดยตรงหรือไม่
+    force_iphone = False
+    if caption:
+        cap_lower = caption.lower()
+        if any(kw in cap_lower for kw in ["iphone", "ไอโฟน", "โทรศัพท์", "มือถือ", "สมาร์ทโฟน", "apple"]):
+            force_iphone = True
+
     selected_p = None
-    if caption or img_path:
-        selected_p = select_product_with_ai(active, caption=caption, img_path=img_path)
-        
-    if not selected_p:
-        # หาก AI เลือกไม่ได้ หรือคีย์หมดโควตา — สุ่มเลือกสินค้าที่แอคทีฟมาแนะนำแทน
-        print("AI Selector: No relevant product matched. Falling back to random active product.")
-        selected_p = random.choice(active)
+    if iphone_products and (force_iphone or not comment_state.get("last_was_iphone", False)):
+        idx = comment_state.get("iphone_idx", 0) % len(iphone_products)
+        selected_p = iphone_products[idx]
+        comment_state["last_was_iphone"] = True
+        comment_state["iphone_idx"] = idx + 1
+        print(f"[Comment Strategy] Prioritizing iPhone under comment: {selected_p['name']}")
     else:
-        print(f"AI Selector: Selected product -> {selected_p['name']}")
+        pool = other_products if other_products else active
+        if len(pool) > 25:
+            pool = random.sample(pool, 25)
+            print(f"Capped active products to 25 candidates for AI selector.")
+
+        if caption or img_path:
+            selected_p = select_product_with_ai(pool, caption=caption, img_path=img_path)
+
+        if not selected_p:
+            print("AI Selector: No relevant product matched. Falling back to random active product.")
+            selected_p = random.choice(pool)
+        else:
+            print(f"AI Selector: Selected product -> {selected_p['name']}")
+        comment_state["last_was_iphone"] = False
+        print(f"[Comment Strategy] Alternated to other product: {selected_p['name']}")
+
+    try:
+        import json
+        with open(comment_state_file, "w", encoding="utf-8") as csf:
+            json.dump(comment_state, csf, ensure_ascii=False)
+    except Exception:
+        pass
 
     p = selected_p
     persona = get_persona()
