@@ -380,12 +380,23 @@ def generate_comment_with_ai(p, platform, persona, caption=None):
     name = p.get("name", "สินค้าแนะนำ")
     desc = p.get("desc", "").strip()
 
+    is_iphone = "iphone" in name.lower() or "iphone" in desc.lower() or "apple" in name.lower()
+    mall_instruction = ""
+    if is_iphone:
+        mall_instruction = (
+            "\n*** กฎพิเศษสำหรับ iPhone / Apple (โดยเฉพาะ iPhone 18) ***:\n"
+            "- ต้องเขียนไปในแนวทาง 'ไว้ใจร้านค้าได้ 100% เพราะเป็นร้านค้าทางการ Shopee Mall / Apple Flagship Store'\n"
+            "- ชูจุดเด่นเรื่องความสบายใจ เป็นเครื่องศูนย์ไทยแท้ มีประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงเครื่องย้อมแมว เครื่องหิ้ว หรือกลัวโดนโกง\n"
+            "- สั่งซื้ออุปกรณ์มูลค่าสูง เลือกร้าน Mall มั่นใจ ปลอดภัย อุ่นใจที่สุด\n"
+        )
+
     prompt = (
         f"คุณคือแอดมินเพจโซเชียลมีเดียที่เป็น: {persona_inst}\n\n"
         f"ช่วยเขียนคอมเมนต์แนะนำสินค้าเพื่อโปรโมทลิงก์แอฟฟิลิเอต (Affiliate) บน {platform} โดยใช้เทคนิค 3 ขั้นตอนในการเขียน:\n"
         f"1. เปิดให้น่าสนใจ (Hook): ประโยคเปิดหัวสั้นๆ กระชับ โดยพยายามเชื่อมโยงหรือเปรียบเทียบเนื้อหาของโพสต์หลัก (ถ้ามี) เข้ากับสินค้าอย่างเนียนๆ ตลกขบขัน หรือเปรียบเปรยประเด็นชีวิตคนทำงาน/ศึกสงครามให้ดึงดูดใจ\n"
         f"2. เล่าให้เห็นภาพ (Vivid Storytelling): บรรยายสั้นๆ ให้คนเห็นภาพประโยชน์การใช้งานสินค้า\n"
-        f"3. ปิดจบต้องบอกว่า 'ควรทำอะไร' (Call to Action): ชี้เป้าให้กดตะกร้าสั่งซื้อ บังคับมีคำลงท้ายตามบุคลิกภาพของคุณ\n\n"
+        f"3. ปิดจบต้องบอกว่า 'ควรทำอะไร' (Call to Action): ชี้เป้าให้กดตะกร้าสั่งซื้อ บังคับมีคำลงท้ายตามบุคลิกภาพของคุณ\n"
+        f"{mall_instruction}\n"
     )
     if caption:
         prompt += f"ข้อความแคปชั่นโพสต์หลักเพื่อใช้ในการเชื่อมโยงมุก:\n\"\"\"\n{caption}\n\"\"\"\n\n"
@@ -545,7 +556,7 @@ def get_product_comments(caption=None, img_path=None):
     
     # กำหนดหมวดหมู่สินค้าที่ได้รับอนุญาตตามแต่ละเพจ
     if persona == "rocket":
-        allowed_categories = ["review", "rocket_curated.xlsx"]
+        allowed_categories = ["main", "review", "rocket_curated.xlsx"]
     elif persona == "kram":
         allowed_categories = ["main", "review", "เครื่องใช้ในบ้าน.xlsx", "สินค้าสำหรับเม้นใต้คลิป.xlsx", "สินค้าขายดี.xlsx", "ค่าคอมพิเศษ.xlsx"]
     elif persona == "somtam":
@@ -638,12 +649,21 @@ def get_product_comments(caption=None, img_path=None):
         # 2. หาก AI ล้มเหลว ให้ใช้ Fallback Template
         price_str = p.get("price", "")
         price_val = f" ราคา {price_str} บาท" if price_str else ""
-        templates = [
-            f"📍 เผื่อใครถามพิกัดของ {p['name']}{price_val} ที่เห็นในโพสต์นะครับ",
-            f"💬 มีคนถามถึง {p['name']}{price_val} บ่อยๆ วางพิกัดไว้ให้ทางนี้เลยครับ",
-            f"💡 {p['name']}{price_val} ตัวที่เล่าไป ใครสนใจดูรายละเอียดและสั่งซื้อได้ตรงนี้ครับ",
-            f"🛒 ใครหา {p['name']}{price_val} อยู่ แปะลิงก์ร้านค้าไว้ให้เรียบร้อยครับ"
-        ]
+        is_p_iphone = "iphone" in p.get("name", "").lower() or "iphone" in p.get("desc", "").lower() or "apple" in p.get("name", "").lower()
+        if is_p_iphone:
+            templates = [
+                f"🛒 ใครเล็ง {p['name']}{price_val} แนะนำสั่งจากร้านค้าทางการ Shopee Mall เลยครับ เครื่องศูนย์ไทยแท้ ประกันเต็ม 1 ปี สบายใจ ไม่ต้องเสี่ยงเครื่องย้อมแมว",
+                f"📍 แปะพิกัด {p['name']}{price_val} ร้านทางการ Shopee Mall ให้แล้วครับ สั่งของราคาสูงเลือกร้าน Mall อุ่นใจ ได้ของแท้ 100% แน่นอน",
+                f"💡 เผื่อใครมองหา {p['name']}{price_val} อยู่ แปะพิกัดร้าน Shopee Mall ไว้ให้ครับ เครื่องศูนย์แท้ มีประกันศูนย์ไทย สบายใจไว้ใจได้หายห่วง",
+                f"🔒 ชี้เป้า {p['name']}{price_val} ร้านค้าทางการ Shopee Mall มั่นใจได้ของแท้ 100% ไม่ต้องลุ้นเครื่องหิ้ว ปลอดภัยที่สุดครับ"
+            ]
+        else:
+            templates = [
+                f"📍 เผื่อใครถามพิกัดของ {p['name']}{price_val} ที่เห็นในโพสต์นะครับ",
+                f"💬 มีคนถามถึง {p['name']}{price_val} บ่อยๆ วางพิกัดไว้ให้ทางนี้เลยครับ",
+                f"💡 {p['name']}{price_val} ตัวที่เล่าไป ใครสนใจดูรายละเอียดและสั่งซื้อได้ตรงนี้ครับ",
+                f"🛒 ใครหา {p['name']}{price_val} อยู่ แปะลิงก์ร้านค้าไว้ให้เรียบร้อยครับ"
+            ]
         msg = random.choice(templates)
         # ปรับสรรพนามและลงท้ายตามเพจ
         if persona == "somtam":
