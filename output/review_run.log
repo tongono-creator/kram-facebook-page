@@ -1,32 +1,31 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Prioritizing iPhone review: Apple iPhone 18 Pro Max (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ช
-Product: Apple iPhone 18 Pro Max (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ช...
+[Review Strategy] Alternating to other product: ที่วางแก้ว แบบหนีบโต๊ะ ปรับ 3 ระดับ หมุน 360 องศา ประหยัดพื้
+Product: ที่วางแก้ว แบบหนีบโต๊ะ ปรับ 3 ระดับ หมุน 360 องศา ประหยัดพื้...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "สมาร์ตโฟน",
-  "รุ่น": "iPhone 18 Pro Max",
-  "จุดเด่น": "ชิป A20 Pro, ประกันศูนย์ 1 ปี",
-  "ราคา": 48900
+  "ประเภท": "ที่วางแก้วหนีบโต๊ะ",
+  "จุดเด่น": "หมุน 360 องศา ปรับ 3 ระดับ",
+  "ราคา": 97
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: ข้อควรพิจารณา (R8)
-[System Log] Chosen Persona: คนมองปัญหา (D)
-[System Log] Chosen Hook: เปิดด้วยคำถามเฉพาะถึงคนที่เคยใช้จริง
-[System Log] Chosen Style: มุกเบาๆ
-Hook: เครื่องศูนย์แท้ประกันเต็ม | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
-Product image downloaded: output/product_20260919_211358.jpg
-Card render done: output/product_20260919_211358_card.png
+[System Log] Chosen Role: สรุปสั้น (R7)
+[System Log] Chosen Persona: คนถามผู้ใช้จริง (G)
+[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
+[System Log] Chosen Style: คำถามเฉพาะ
+Hook: ที่วางแก้วหมุนหลบ | หมุนเก็บใต้โต๊ะ ปรับได้สามระดับ
+Product image downloaded: output/product_20260920_213721.webp
+Card render done: output/product_20260920_213721_card.png
 Caption:
-ใครที่เจอปัญหามือถือค้างตอนกำลังจะกดจ่ายเงินแล้วอยากเปลี่ยนมาใช้ iPhone 18 Pro Max ราคา 48,900 บาท สิ่งที่ผมอยากให้ตรวจเช็กให้ดีก่อนตัดสินใจคือต้องเลือกร้านค้าทางการ Shopee Mall เพื่อให้ได้เครื่องศูนย์ไทยแท้พร้อมประกันศูนย์ 1 ปีเต็ม จะได้อุ่นใจเรื่องบริการหลังการขายและไม่เสี่ยงเจอเครื่องย้อมแมวครับ
+จุดที่ผมอยากให้เช็กก่อนคือความแข็งแรงของตัวล็อก ตัวนี้เป็นที่วางแก้วหนีบโต๊ะ ราคา 97 บาท ที่ระบุจุดเด่นว่าหมุนได้ 360 องศาและปรับได้ 3 ระดับครับ
 
-คนที่ได้สัมผัสชิป A20 Pro เครื่องจริงไปแล้ว มองว่าความเร็วในการประมวลผลต่างจากรุ่นก่อนเยอะไหมครับ
+คนที่ใช้อยู่จริง พอปรับระดับแล้วหมุน 360 องศาไปมา ตัวหนีบยังยึดกับโต๊ะได้แน่น ไม่เลื่อนหลุดใช่ไหมครับ
 
 ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1789902000...
-Scheduled successfully! Photo ID: 1021884774205232
+Scheduling to Facebook for timestamp 1789988400...
+Scheduled successfully! Photo ID: 1022754340784942
 [DB] Successfully saved post memory.
-Marked row 218 as done
+Marked row 187 as done
