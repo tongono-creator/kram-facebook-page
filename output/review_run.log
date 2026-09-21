@@ -1,31 +1,28 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Alternating to other product: ที่วางแก้ว แบบหนีบโต๊ะ ปรับ 3 ระดับ หมุน 360 องศา ประหยัดพื้
-Product: ที่วางแก้ว แบบหนีบโต๊ะ ปรับ 3 ระดับ หมุน 360 องศา ประหยัดพื้...
+[Review Strategy] Prioritizing iPhone review: Apple iPhone 17 Pro (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ชิป A
+Product: Apple iPhone 17 Pro (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ชิป A...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ที่วางแก้วหนีบโต๊ะ",
-  "จุดเด่น": "หมุน 360 องศา ปรับ 3 ระดับ",
-  "ราคา": 97
+  "ประเภท": "สมาร์ตโฟน",
+  "รุ่น": "iPhone 17 Pro",
+  "จุดเด่น": "ชิป A19 Pro, จอ ProMotion 120Hz",
+  "ราคา": 39900
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: สรุปสั้น (R7)
-[System Log] Chosen Persona: คนถามผู้ใช้จริง (G)
-[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
-[System Log] Chosen Style: คำถามเฉพาะ
-Hook: ที่วางแก้วหมุนหลบ | หมุนเก็บใต้โต๊ะ ปรับได้สามระดับ
-Product image downloaded: output/product_20260920_213721.webp
-Card render done: output/product_20260920_213721_card.png
+[System Log] Chosen Role: ตั้งคำถามจากสเปก (R6)
+[System Log] Chosen Persona: แอดมินคัดของ (A)
+[System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
+[System Log] Chosen Style: เทียบข้อมูล
+Hook: เครื่องศูนย์ไทยประกันเต็ม | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
+Product image downloaded: output/product_20260921_235249.jpg
+Card render done: output/product_20260921_235249_card.png
 Caption:
-จุดที่ผมอยากให้เช็กก่อนคือความแข็งแรงของตัวล็อก ตัวนี้เป็นที่วางแก้วหนีบโต๊ะ ราคา 97 บาท ที่ระบุจุดเด่นว่าหมุนได้ 360 องศาและปรับได้ 3 ระดับครับ
-
-คนที่ใช้อยู่จริง พอปรับระดับแล้วหมุน 360 องศาไปมา ตัวหนีบยังยึดกับโต๊ะได้แน่น ไม่เลื่อนหลุดใช่ไหมครับ
-
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+สำหรับคนที่กำลังมองหาสมาร์ตโฟนสเปกแรง การเลือกรุ่นราคาสูงอย่าง iPhone 17 Pro ราคา 39,900 บาท ผ่านร้านค้าทางการ Shopee Mall ทำให้ไว้ใจได้ 100% ว่าได้เครื่องศูนย์ไทยแท้พร้อมประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงกับเครื่องหิ้วหรือโดนโกงเรื่องบริการหลังการขายครับ ผมอยากถามคนที่เคยใช้งานจริงว่าชิป A19 Pro ควบคู่กับจอ ProMotion 120Hz เวลาเปิดกราฟิกสูงต่อเนื่อง มีอาการหน่วงหรือแบตเตอรี่ลดไวกว่าปกติไหมครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1789988400...
-Scheduled successfully! Photo ID: 1022754340784942
+Scheduling to Facebook for timestamp 1790074800...
+Scheduled successfully! Photo ID: 1023698034023906
 [DB] Successfully saved post memory.
-Marked row 187 as done
+Marked row 219 as done
