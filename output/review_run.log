@@ -1,28 +1,27 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Prioritizing iPhone review: Apple iPhone 17 Pro (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ชิป A
-Product: Apple iPhone 17 Pro (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) ชิป A...
+[Review Strategy] Alternating to other product: ขวดแก้วใส่เครื่องปรุงอาหารพร้อมช้อนตักในตัว ใช้งานง่าย สะดวก
+Product: ขวดแก้วใส่เครื่องปรุงอาหารพร้อมช้อนตักในตัว ใช้งานง่าย สะดวก...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "สมาร์ตโฟน",
-  "รุ่น": "iPhone 17 Pro",
-  "จุดเด่น": "ชิป A19 Pro, จอ ProMotion 120Hz",
-  "ราคา": 39900
+  "ประเภท": "ขวดเครื่องปรุง",
+  "จุดเด่น": "มีช้อนตักในตัว ใช้งานสะดวก",
+  "ราคา": 14
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: ตั้งคำถามจากสเปก (R6)
-[System Log] Chosen Persona: แอดมินคัดของ (A)
-[System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
-[System Log] Chosen Style: เทียบข้อมูล
-Hook: เครื่องศูนย์ไทยประกันเต็ม | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
-Product image downloaded: output/product_20260921_235249.jpg
-Card render done: output/product_20260921_235249_card.png
+[System Log] Chosen Role: หาข้อมูลก่อนซื้อ (R3)
+[System Log] Chosen Persona: คนเทียบตัวเลือก (E)
+[System Log] Chosen Hook: เปิดด้วยราคาเทียบกับฟังก์ชันที่ได้
+[System Log] Chosen Style: ปัญหาและทางเลือก
+Hook: ขวดเครื่องปรุงช้อนติดฝา | ตักง่ายไม่ต้องควานหาช้อน
+Product image downloaded: output/product_20260922_222809.webp
+Card render done: output/product_20260922_222809_card.png
 Caption:
-สำหรับคนที่กำลังมองหาสมาร์ตโฟนสเปกแรง การเลือกรุ่นราคาสูงอย่าง iPhone 17 Pro ราคา 39,900 บาท ผ่านร้านค้าทางการ Shopee Mall ทำให้ไว้ใจได้ 100% ว่าได้เครื่องศูนย์ไทยแท้พร้อมประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงกับเครื่องหิ้วหรือโดนโกงเรื่องบริการหลังการขายครับ ผมอยากถามคนที่เคยใช้งานจริงว่าชิป A19 Pro ควบคู่กับจอ ProMotion 120Hz เวลาเปิดกราฟิกสูงต่อเนื่อง มีอาการหน่วงหรือแบตเตอรี่ลดไวกว่าปกติไหมครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+จ่าย 14 บาทแล้วได้ขวดเครื่องปรุงที่มีช้อนตักในตัว ผมว่าก็น่าสนใจสำหรับคนที่เจอปัญหาช้อนจมหายหรือเลอะเทอะเวลาหยิบใช้ครับ คิดว่าขวดเครื่องปรุงราคา 14 บาทที่มีฟังก์ชันช้อนในตัวแบบนี้จะตักใช้งานได้สะดวกจริงไหมครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1790074800...
-Scheduled successfully! Photo ID: 1023698034023906
+Scheduling to Facebook for timestamp 1790161200...
+Scheduled successfully! Photo ID: 1024493730611003
 [DB] Successfully saved post memory.
-Marked row 219 as done
+Marked row 188 as done
