@@ -1,27 +1,32 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Alternating to other product: ขวดแก้วใส่เครื่องปรุงอาหารพร้อมช้อนตักในตัว ใช้งานง่าย สะดวก
-Product: ขวดแก้วใส่เครื่องปรุงอาหารพร้อมช้อนตักในตัว ใช้งานง่าย สะดวก...
+[Review Strategy] Prioritizing iPhone review: Apple iPhone 16 Plus (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) จอให
+Product: Apple iPhone 16 Plus (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) จอให...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "ขวดเครื่องปรุง",
-  "จุดเด่น": "มีช้อนตักในตัว ใช้งานสะดวก",
-  "ราคา": 14
+  "ประเภท": "มือถือ",
+  "รุ่น": "iPhone 16 Plus",
+  "จุดเด่น": "จอใหญ่ แบตอึด ชิป A18",
+  "ราคา": 34900
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: หาข้อมูลก่อนซื้อ (R3)
-[System Log] Chosen Persona: คนเทียบตัวเลือก (E)
-[System Log] Chosen Hook: เปิดด้วยราคาเทียบกับฟังก์ชันที่ได้
-[System Log] Chosen Style: ปัญหาและทางเลือก
-Hook: ขวดเครื่องปรุงช้อนติดฝา | ตักง่ายไม่ต้องควานหาช้อน
-Product image downloaded: output/product_20260922_222809.webp
-Card render done: output/product_20260922_222809_card.png
+[System Log] Chosen Role: ตั้งคำถามจากสเปก (R6)
+[System Log] Chosen Persona: คนหาข้อมูลก่อนซื้อ (B)
+[System Log] Chosen Hook: เปิดด้วยปัญหาเฉพาะที่สินค้าประเภทนี้แก้
+[System Log] Chosen Style: บอกต่อแบบกลางๆ
+Hook: ไอโฟนเครื่องศูนย์แท้ | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
+Product image downloaded: output/product_20260923_222222.jpg
+Card render done: output/product_20260923_222222_card.png
 Caption:
-จ่าย 14 บาทแล้วได้ขวดเครื่องปรุงที่มีช้อนตักในตัว ผมว่าก็น่าสนใจสำหรับคนที่เจอปัญหาช้อนจมหายหรือเลอะเทอะเวลาหยิบใช้ครับ คิดว่าขวดเครื่องปรุงราคา 14 บาทที่มีฟังก์ชันช้อนในตัวแบบนี้จะตักใช้งานได้สะดวกจริงไหมครับ? ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+ใครที่เจอปัญหาแบตมือถือหมดไวระหว่างวัน การเลือกซื้อสมาร์ตโฟนราคาสูงอย่าง iPhone 16 Plus จุดเด่นจอใหญ่ แบตอึด ชิป A18 ในราคา 34,900 บาท ผ่านร้านค้าทางการ Apple Flagship Store บน Shopee Mall ทำให้ไว้ใจได้ 100% ว่าเป็นเครื่องศูนย์ไทยแท้ มีประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงกับเครื่องย้อมแมวและอุ่นใจเรื่องบริการหลังการขายครับ 
+
+คนที่ใช้งานจริงอยู่ อยากทราบว่าชิป A18 ตัวนี้ช่วยจัดการพลังงานให้แบตเตอรี่ใช้งานทั่วไปพ้นวันโดยไม่ต้องพกที่ชาร์จสำรองได้จริงไหมครับ?
+
+ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1790161200...
-Scheduled successfully! Photo ID: 1024493730611003
+Scheduling to Facebook for timestamp 1790247600...
+Scheduled successfully! Photo ID: 1025345113859198
 [DB] Successfully saved post memory.
-Marked row 188 as done
+Marked row 220 as done
