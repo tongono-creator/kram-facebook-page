@@ -1,32 +1,34 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Prioritizing iPhone review: Apple iPhone 16 Plus (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) จอให
-Product: Apple iPhone 16 Plus (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) จอให...
+[Review Strategy] Alternating to other product: 【มาพร้อมกับ 12 หน้า】สมุดเก็บเอกสาร、แฟ้มจัดเก็บขนาดใหญ่ ที่จั
+Product: 【มาพร้อมกับ 12 หน้า】สมุดเก็บเอกสาร、แฟ้มจัดเก็บขนาดใหญ่ ที่จั...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "มือถือ",
-  "รุ่น": "iPhone 16 Plus",
-  "จุดเด่น": "จอใหญ่ แบตอึด ชิป A18",
-  "ราคา": 34900
+  "ประเภท": "แฟ้มเอกสาร",
+  "จุดเด่น": "12 หน้า กันฝุ่นและความชื้น",
+  "ขนาด": "A4/B5",
+  "ราคา": 69
 }
+[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+[gemini-flash-latest] caption generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+[Warning] Caption generation failed on all models. Disabling API calls.
+[Warning] Falling back to local heuristic caption.
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: ตั้งคำถามจากสเปก (R6)
-[System Log] Chosen Persona: คนหาข้อมูลก่อนซื้อ (B)
-[System Log] Chosen Hook: เปิดด้วยปัญหาเฉพาะที่สินค้าประเภทนี้แก้
-[System Log] Chosen Style: บอกต่อแบบกลางๆ
-Hook: ไอโฟนเครื่องศูนย์แท้ | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
-Product image downloaded: output/product_20260923_222222.jpg
-Card render done: output/product_20260923_222222_card.png
+[System Log] Chosen Role: สรุปสั้น (R7)
+[System Log] Chosen Persona: แอดมินเล่าสั้น (F)
+[System Log] Chosen Hook: เปิดด้วยจุดเด่นจริงหนึ่งข้อจากข้อมูล
+[System Log] Chosen Style: เทียบข้อมูล
+Hook: 【มาพร้อมกับ 12 | 
+Product image downloaded: output/product_20260924_224525.webp
+Card render done: output/product_20260924_224525_card.png
 Caption:
-ใครที่เจอปัญหาแบตมือถือหมดไวระหว่างวัน การเลือกซื้อสมาร์ตโฟนราคาสูงอย่าง iPhone 16 Plus จุดเด่นจอใหญ่ แบตอึด ชิป A18 ในราคา 34,900 บาท ผ่านร้านค้าทางการ Apple Flagship Store บน Shopee Mall ทำให้ไว้ใจได้ 100% ว่าเป็นเครื่องศูนย์ไทยแท้ มีประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงกับเครื่องย้อมแมวและอุ่นใจเรื่องบริการหลังการขายครับ 
-
-คนที่ใช้งานจริงอยู่ อยากทราบว่าชิป A18 ตัวนี้ช่วยจัดการพลังงานให้แบตเตอรี่ใช้งานทั่วไปพ้นวันโดยไม่ต้องพกที่ชาร์จสำรองได้จริงไหมครับ?
+สรุปข้อมูลของ แฟ้มเอกสาร ตัวนี้แบบสั้นๆ คือ 12 หน้า กันฝุ่นและความชื้น ราคา 69 บาทครับ ถ้าต้องเลือก แฟ้มเอกสาร สักตัว พี่ๆ ให้ความสำคัญกับจุดไหนที่สุดครับ?
 
 ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1790247600...
-Scheduled successfully! Photo ID: 1025345113859198
+Scheduling to Facebook for timestamp 1790334000...
+Scheduled successfully! Photo ID: 1026266050433771
 [DB] Successfully saved post memory.
-Marked row 220 as done
+Marked row 189 as done
