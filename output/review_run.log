@@ -1,28 +1,31 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Prioritizing iPhone review: Apple iPhone 15 (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) พอร์ต USB
-Product: Apple iPhone 15 (เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี) พอร์ต USB...
+[Review Strategy] Alternating to other product: 【จัดส่งที่รวดเร็ว】แผ่นปา DIY แผ่นรูพลาสติกสำหรับจัดเก็บบนโต๊
+Product: 【จัดส่งที่รวดเร็ว】แผ่นปา DIY แผ่นรูพลาสติกสำหรับจัดเก็บบนโต๊...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "สมาร์ทโฟน",
-  "รุ่น": "iPhone 15",
-  "จุดเด่น": "กล้อง 48MP, พอร์ต USB-C",
-  "ราคา": 26900
+  "ประเภท": "แผ่นรูจัดระเบียบ",
+  "จุดเด่น": "จัดระเบียบโต๊ะ, พร้อมชุดติดตั้ง",
+  "ราคา": 43
 }
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: มองปัญหาใช้งาน (R1)
-[System Log] Chosen Persona: คนถามผู้ใช้จริง (G)
-[System Log] Chosen Hook: เปิดด้วยคำถามเฉพาะถึงคนที่เคยใช้จริง
-[System Log] Chosen Style: เทียบข้อมูล
-Hook: เครื่องศูนย์ไทยประกันเต็ม | สั่งร้าน Mall อุ่นใจไม่เสี่ยงย้อมแมว
-Product image downloaded: output/product_20260925_224634.jpg
-Card render done: output/product_20260925_224634_card.png
+[System Log] Chosen Role: เลือกของให้บ้าน (R4)
+[System Log] Chosen Persona: คนชี้กลุ่มเหมาะ (H)
+[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
+[System Log] Chosen Style: บอกต่อแบบกลางๆ
+Hook: บอร์ดรูเคลียร์โต๊ะรก | มีชุดติดให้ โต๊ะหายรกทันที
+Product image downloaded: output/product_20260926_215559.webp
+Card render done: output/product_20260926_215559_card.png
 Caption:
-คนที่ใช้งาน iPhone 15 ราคา 26,900 บาทอยู่ รู้สึกว่าพอร์ต USB-C กับกล้อง 48MP ช่วยให้ถ่ายโอนและจัดการไฟล์ภาพได้สะดวกกว่ารุ่นเดิมชัดเจนไหมครับ? สำหรับสมาร์ทโฟนราคาสูงแบบนี้ ผมมองว่าการเลือกซื้อเครื่องศูนย์ไทยแท้ที่มีประกันศูนย์ 1 ปีเต็มจากร้านค้าทางการ Shopee Mall มั่นใจได้ 100% เรื่องของแท้และบริการหลังการขาย ไม่ต้องเสี่ยงกับเครื่องย้อมแมวครับ ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
+ก่อนตัดสินใจลองเช็กพื้นที่ผนังข้างโต๊ะกันก่อนนะครับ ผมมองว่าแผ่นรูจัดระเบียบตัวนี้น่าจะเหมาะกับคนที่อยากจัดระเบียบโต๊ะ โดยมีพร้อมชุดติดตั้งมาให้ในราคา 43 บาท
+
+ในงบ 43 บาทที่ได้พร้อมชุดติดตั้ง คิดว่าแผ่นรูจัดระเบียบนี้จะเพียงพอกับอุปกรณ์บนโต๊ะของคุณไหมครับ?
+
+ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
 
 Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1790420400...
-Scheduled successfully! Photo ID: 1027298766997166
+Scheduling to Facebook for timestamp 1790506800...
+Scheduled successfully! Photo ID: 1028214823572227
 [DB] Successfully saved post memory.
-Marked row 221 as done
+Marked row 190 as done
