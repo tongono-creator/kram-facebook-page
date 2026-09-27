@@ -1043,8 +1043,12 @@ def _post_one_comment(post_id, text):
     except Exception as e:
         print(f"Comment error: {e}")
 
-def post_link_comment(post_id, shopee, lazada, promo):
+def post_link_comment(post_id, shopee, lazada, promo, **kwargs):
     """โพส comment ลิ้งใต้โพส แยก Shopee / Lazada คนละคอมเม้น"""
+    from affiliate_post_products import remember_product
+    remember_product("facebook", post_id, shopee)
+    print("[affiliate] Deferred to auto_affiliate.py reconciler")
+    return None
     promo_line = f"\n🔥 โปร: {promo}" if promo else ""
     if shopee and "xxx" not in shopee:
         _post_one_comment(post_id, f"👉 ซื้อได้ที่ Shopee → {shopee}{promo_line}")
@@ -1062,16 +1066,6 @@ def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None, schedu
         scheduled_time = get_next_scheduled_time(slots)
     
     if scheduled_time:
-        comment_texts = []
-        promo_line = f"\n🔥 โปร: {promo}" if promo else ""
-        if shopee and "xxx" not in shopee:
-            comment_texts.append(f"👉 ซื้อได้ที่ Shopee → {shopee}{promo_line}")
-        if lazada and "xxx" not in lazada:
-            comment_texts.append(f"🛍️ หรือสั่งทาง Lazada → {lazada}")
-            
-        if comment_texts:
-            caption += "\n\n📌 ชี้เป้าของดีน่าสนใจ:\n" + "\n".join(comment_texts)
-            
         print(f"Scheduling to Facebook for timestamp {scheduled_time}...")
         with open(img_path, "rb") as f:
             resp = requests.post(
@@ -1090,6 +1084,8 @@ def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None, schedu
         if "id" in result:
             photo_id = result.get("post_id") or result["id"]
             print(f"Scheduled successfully! Photo ID: {photo_id}")
+            from affiliate_post_products import remember_product
+            remember_product("facebook", photo_id, shopee)
             return photo_id, True
         else:
             print(f"FB Error: {result}")
@@ -1106,6 +1102,8 @@ def post_to_page(img_path, caption, shopee=None, lazada=None, promo=None, schedu
     if "id" in result:
         post_id = result.get("post_id") or result["id"]
         print(f"Page Posted! ID: {post_id}")
+        from affiliate_post_products import remember_product
+        remember_product("facebook", post_id, shopee)
         print(f"https://www.facebook.com/{post_id}")
         return post_id, False
     else:

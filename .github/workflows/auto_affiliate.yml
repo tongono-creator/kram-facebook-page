@@ -1,0 +1,47 @@
+name: Automatic Shopee affiliate comments
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run reads only; publish posts missing comments'
+        type: choice
+        options: [dry-run, publish]
+        default: dry-run
+  workflow_run:
+    workflows: ["All-in-One Bot Controller", "Kram Bot", "Lotto Bot", "Post News to Facebook (Content Card)", "Facebook AI Auto-Reply", "Product Review Post (CatDumb Style)", "Story Bot (Reddit Drama)"]
+    types: [completed]
+concurrency:
+  group: automatic-shopee-comments
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install comment dependencies
+        run: pip install requests
+      - name: Configure state commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Reconcile facebook affiliate comments
+        id: facebook
+        continue-on-error: true
+        env:
+          AFFILIATE_STATE_BRANCH: main
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+        run: python auto_affiliate.py --platform facebook --config auto_affiliate_config.json --state auto_affiliate_state.json --${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'publish' }} --git-state
+
+      - name: Report any channel failure
+        if: steps.facebook.outcome == 'failure'
+        run: exit 1

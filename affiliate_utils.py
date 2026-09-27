@@ -700,6 +700,8 @@ def get_all_comments(caption=None, img_path=None):
     - บน Rocket: คืนค่าพิกัดสินค้า curated เพียง 1 คอมเมนต์เท่านั้น (ไม่มี website/food/promo)
     - บนเพจอื่นๆ: คืนค่าสูงสุด 2 คอมเมนต์ (คอมเมนต์หลัก + website)
     """
+    print("[affiliate] Deferred to auto_affiliate.py reconciler")
+    return []
     persona = get_persona()
     comments = []
     

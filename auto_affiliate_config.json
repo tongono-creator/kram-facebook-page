@@ -1,0 +1,30 @@
+{
+  "facebook": {
+    "account_id": "116701184708556",
+    "expected_username": "",
+    "rollout_since": "2026-09-27T02:40:00Z",
+    "approved_fallback": {
+      "name": "ถุงคลุมเสื้อผ้า Deli",
+      "url": "https://s.shopee.co.th/1gGwo5adCO"
+    },
+    "post_products": {
+      "116701184708556_1028671816859861": {
+        "name": "ถุงคลุมเสื้อผ้า Deli",
+        "url": "https://s.shopee.co.th/1gGwo5adCO"
+      }
+    },
+    "post_products_file": "affiliate_post_products.json",
+    "catalog": [
+      {
+        "name": "ถุงคลุมเสื้อผ้า Deli",
+        "url": "https://s.shopee.co.th/1gGwo5adCO",
+        "keywords": [
+          "Deli",
+          "ถุงคลุมเสื้อ"
+        ]
+      }
+    ],
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "lookback_hours": 72
+  }
+}
