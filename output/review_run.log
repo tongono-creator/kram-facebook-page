@@ -1,31 +1,28 @@
 Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
 
 --- Post 1/5 (slot 18:00) ---
-[Review Strategy] Alternating to other product: 【จัดส่งที่รวดเร็ว】แผ่นปา DIY แผ่นรูพลาสติกสำหรับจัดเก็บบนโต๊
-Product: 【จัดส่งที่รวดเร็ว】แผ่นปา DIY แผ่นรูพลาสติกสำหรับจัดเก็บบนโต๊...
+[Review Strategy] Prioritizing iPhone review: XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป 
+Product: XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "แผ่นรูจัดระเบียบ",
-  "จุดเด่น": "จัดระเบียบโต๊ะ, พร้อมชุดติดตั้ง",
-  "ราคา": 43
+  "ประเภท": "เคสไอโฟน",
+  "รุ่น": "iPhone 14-18",
+  "จุดเด่น": "จอ E-Ink เปลี่ยนรูปได้ผ่าน NFC",
+  "ราคา": 2250,
+  "ชื่อสินค้า": "XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป"
 }
 [System Log] Caption approved on attempt 1!
 [System Log] Chosen Role: เลือกของให้บ้าน (R4)
-[System Log] Chosen Persona: คนชี้กลุ่มเหมาะ (H)
-[System Log] Chosen Hook: เปิดด้วยข้อที่ควรตรวจสอบก่อนซื้อ
+[System Log] Chosen Persona: แอดมินคัดของ (A)
+[System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
 [System Log] Chosen Style: บอกต่อแบบกลางๆ
-Hook: บอร์ดรูเคลียร์โต๊ะรก | มีชุดติดให้ โต๊ะหายรกทันที
-Product image downloaded: output/product_20260926_215559.webp
-Card render done: output/product_20260926_215559_card.png
-Caption:
-ก่อนตัดสินใจลองเช็กพื้นที่ผนังข้างโต๊ะกันก่อนนะครับ ผมมองว่าแผ่นรูจัดระเบียบตัวนี้น่าจะเหมาะกับคนที่อยากจัดระเบียบโต๊ะ โดยมีพร้อมชุดติดตั้งมาให้ในราคา 43 บาท
-
-ในงบ 43 บาทที่ได้พร้อมชุดติดตั้ง คิดว่าแผ่นรูจัดระเบียบนี้จะเพียงพอกับอุปกรณ์บนโต๊ะของคุณไหมครับ?
-
-ดูลิ้งในคอมเมนต์แรกเลยครับ 👇
-
-Posting to Facebook Page...
-Scheduling to Facebook for timestamp 1790506800...
-Scheduled successfully! Photo ID: 1028214823572227
-[DB] Successfully saved post memory.
-Marked row 190 as done
+Traceback (most recent call last):
+  File "/home/runner/work/kram-facebook-page/kram-facebook-page/review.py", line 1131, in <module>
+    review_img = render_review_card(product_photos, line1_clean, line2_clean,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/kram-facebook-page/kram-facebook-page/card/render_card.py", line 91, in render_review_card
+    return render_sales_card(photo_path, line1, line2, out_path, theme=THEME,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/kram-facebook-page/kram-facebook-page/card/sales_card.py", line 98, in render_sales_card
+    raise ValueError('Sales card render rejected: '+str(error))
+ValueError: Sales card render rejected: ข้อความยาวเกินไป กรุณาย่อหัวเรื่องหรือคำอธิบาย
