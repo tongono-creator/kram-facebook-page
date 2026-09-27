@@ -1245,43 +1245,21 @@ if __name__ == "__main__":
         print(f"[System Log] Chosen Hook: {chosen_h}")
         print(f"[System Log] Chosen Style: {chosen_s['name']}")
 
-        # Image generation using overlay
-        highlights = product_json.get("จุดเด่น", "")
-        line1, line2 = generate_hook(product["detail"], highlights)
-        if "segment_thai_text" in globals():
-            line1 = segment_thai_text(line1, client)
-            line2 = segment_thai_text(line2, client)
-        print(f"Hook: {line1} | {line2}")
-
-        product_img = download_image(product["image_url"])
-        line1_clean = clean_overlay_text(line1)
-        line2_clean = clean_overlay_text(line2)
-        if not line1_clean:
-            line1_clean = "สินค้าแนะนำ"
-        review_img = None
+        # Sales card: real gallery images, grounded title, no implicit promo claims.
+        from card.render_card import render_review_card
+        from card.sales_card import download_sales_photos, sales_title
+        product_photos = download_sales_photos(product["image_url"], OUTPUT_DIR)
         try:
-            from card.render_card import render_review_card
-            card_out = product_img.rsplit(".", 1)[0] + "_card.png"
-            review_img = render_review_card(product_img, line1_clean, line2_clean, card_out,
-                                            price=product_json.get("ราคา"))
-            os.unlink(product_img)
-            print(f"Card render done: {review_img}")
-        except Exception as card_err:
-            print(f"[Warning] Card render failed ({card_err}), falling back to PIL overlay")
-        if not review_img:
-            try:
-                badge_text = extract_badge_text(product.get("promo"))
-                review_img = add_overlay(
-                    product_img, line1_clean, line2_clean, ACCENT_COLOR,
-                    font_name="Itim-Regular.ttf",
-                    badge_text=badge_text,
-                    watermark="คราม Kram"
-                )
-                os.unlink(product_img)
-                print(f"Overlay done: {review_img}")
-            except Exception as overlay_err:
-                print(f"Overlay failed, using original: {overlay_err}")
-                review_img = product_img
+            card_out = product_photos[0].rsplit(".", 1)[0] + "_card.png"
+            line1_clean = sales_title(product.get("graphic_title") or product["detail"])
+            line2_clean = str(product.get("graphic_subtitle") or "ดูรายละเอียดรุ่นและตัวเลือกก่อนสั่งซื้อ")
+            review_img = render_review_card(product_photos, line1_clean, line2_clean,
+                card_out, platform="facebook")
+            print(f"Sales card ready: {review_img}")
+        finally:
+            for source_photo in product_photos:
+                if os.path.exists(source_photo):
+                    os.unlink(source_photo)
         print(f"Caption:\n{caption}\n")
 
         # Save selection details

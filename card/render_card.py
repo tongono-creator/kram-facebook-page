@@ -83,49 +83,14 @@ def render(data, out_path, template_path=TEMPLATE):
     return out_path
 
 
-def render_review_card(photo_path, line1, line2, out_path, price=None, price_sub=None, chips=None, is_mall=True):
-    if os.path.exists(ECOMMERCE_TEMPLATE):
-        valid_photo = ""
-        if photo_path and os.path.exists(photo_path):
-            valid_photo = _data_uri(photo_path if os.path.isabs(photo_path) else os.path.join(os.getcwd(), photo_path))
-        
-        default_chips = ["🚚 ส่งฟรีถึงบ้าน", "✨ ของดีบอกต่อ", "🛡️ รับประกันของแท้"]
-        if chips:
-            default_chips = chips
-            
-        data = {
-            "photo": valid_photo,
-            "watermark": THEME.get("watermark", "รีวิวของเด็ด"),
-            "trust_text": "🛡️ Shopee Mall ของแท้ 100%" if is_mall else "⭐ ร้านแนะนำ ยอดขายปัง",
-            "line1": line1,
-            "line2": line2,
-            "price": price or "",
-            "price_sub": price_sub or "",
-            "chips": default_chips,
-            "primary": THEME["params"].get("border_color", "#00BFFF"),
-            "primary_dark": "#0080FF",
-            "params": dict(THEME["params"]),
-        }
-        return render(data, out_path, template_path=ECOMMERCE_TEMPLATE)
-
-    lines = []
-    if line1:
-        lines.append(f"*{line1}*")
-    if line2:
-        lines.append(line2)
-    price_txt = str(price).strip() if price else ""
-    already = any("ราคา" in l or "บาท" in l for l in lines)
-    if price_txt and not already:
-        lines.append(f"ราคา *{price_txt} บาท*")
-    data = {
-        "photos": [photo_path] if photo_path and os.path.exists(photo_path) else [],
-        "lines": lines,
-        "watermark": THEME["watermark"],
-        "accent": THEME["accent"],
-        "badge_color": THEME["badge_color"],
-        "params": dict(THEME["params"]),
-    }
-    return render(data, out_path)
+def render_review_card(photo_path, line1, line2, out_path, price=None, price_sub=None,
+                       chips=None, is_mall=False, badge_text=None, *, platform="facebook",
+                       price_verified=False, width=1080, height=1080):
+    """Photo-led sales path. Legacy claim arguments do not imply verification."""
+    from .sales_card import render_sales_card
+    return render_sales_card(photo_path, line1, line2, out_path, theme=THEME,
+        platform=platform, badge_text=badge_text, price=price,
+        price_verified=price_verified, width=width, height=height)
 
 
 def render_news_card(photo_path, line1, line2, out_path, badge_text=None):
