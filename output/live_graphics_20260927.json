@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "channel": "kram",
+      "post_id": "116701184708556_1028671816859861",
+      "url": "https://www.facebook.com/1028669333526776/posts/1028671816859861",
+      "state": "live_image_verified",
+      "published_at": "2026-09-27T02:46:04.532285+00:00",
+      "verified_at": "2026-09-27T02:46:05.601420+00:00",
+      "image_sha256": "33a710c3c702d4cdcff9cb3774d5956c8d423a40e4ab433015fd6d48ec3e580b"
+    }
+  ],
+  "queue_updates": [
+    {
+      "row": 180,
+      "before": null,
+      "after": "done 2026-09-27T02:46:04.532285+00:00 live-graphics 116701184708556_1028671816859861",
+      "channel": "kram"
+    }
+  ],
+  "scope": "Image publishing only; no affiliate comments"
+}
