@@ -182,10 +182,7 @@ def contains_first_person(text):
     return any(term in clean for term in FIRST_PERSON_TERMS)
 
 def apply_slang_rules(text):
-    if not text:
-        return text
-    # Rule: แทนคำว่า ให้ไปตาย / ประหารชีวิต / ฆ่า ในบริบทเล่าเรื่องด้วย ไปคุยกับรากมะม่วง
-    text = re.sub(r'ให้(?:ไป)?ตาย|ให้ประหารชีวิต|ส่งไปตาย|เอาไปฆ่า', 'ไปคุยกับรากมะม่วง', text)
+    """Kept for callers; slang substitution was removed (content_quality.py)."""
     return text
 
 def translate_story(subreddit, title, body):
@@ -196,92 +193,77 @@ def translate_story(subreddit, title, body):
     seed_comment = ความเห็นแอดมินเลือกข้างเด็ดขาดทันที (2/2)
     x_thread = ข้อความทวีตใน X 2 ทวีต (1/2 และ 2/2)
     """
+    import content_quality as cq
     context = SUB_CONTEXT.get(subreddit, "เรื่องเล่าจากชีวิตจริง")
     angles = [
-        "มุมมองที่ 1: ดราม่าข้อพิพาทความสัมพันธ์ (ความรัก/ครอบครัว/เพื่อนร่วมงาน)",
-        "มุมมองที่ 2: บทเรียนราคาแพง / รู้งี้ไม่น่าทำ (The Cost of Cheap — ความผิดพลาดที่เสียเงินก้อนโตเพราะประหยัดผิดจุดหรือไว้ใจผิดคน)",
-        "มุมมองที่ 3: ศาลดราม่าความรับผิดชอบ (ใครผิด / ใครควรเป็นฝ่ายจ่ายชดใช้)"
+        "ความสัมพันธ์ ครอบครัว หรือเพื่อนร่วมงาน ที่ต้องเลือกระหว่างสองทาง",
+        "การตัดสินใจเรื่องเงินหรืองานที่มีราคาต้องจ่าย",
+        "ใครควรรับผิดชอบ เมื่อทั้งสองฝ่ายมีเหตุผล",
     ]
-    chosen_angle = random.choice(angles)
-
     prompt = (
         f"นี่คือเรื่องเล่าจริงจาก Reddit r/{subreddit} ({context}):\n\n"
         f"Title: {title}\n\n"
         f"Story: {body}\n\n"
-        f"งาน: แปลงเรื่องนี้มาทำเป็นคอนเทนต์สไตล์ Threads ชวนถกและตัดสิน ภาษาไทยสำหรับ Facebook เพจกรามค้าง และ X (Twitter)\n"
-        f"ทิศทางคอนเทนต์รอบนี้: {chosen_angle}\n"
-        "กลุ่มเป้าหมาย: ผู้ชายไทย วัยทำงาน 25-45 ปี\n\n"
-        "กฎเหล็กสำคัญที่สุด:\n"
-        "1. แอดมินต้องเป็น 'บุคคลที่สาม' (3rd-Party Observer) ที่ไปอ่านเจอเรื่องนี้จาก Reddit/โซเชียล แล้วนำมาเล่าต่อชวนลูกเพจคุย\n"
-        "   - ห้ามสวมบทเป็นเจ้าของเรื่องเด็ดขาด ห้ามใช้คำว่า 'แฟนผม/หัวหน้าผม/ผมทำ' ในตัวเรื่อง\n"
-        "   - ให้ระบุตัวละคร เช่น 'ชายคนหนึ่ง...', 'พนักงานคนหนึ่ง...', 'คู่รักคู่หนึ่ง...'\n"
-        "2. คำศัพท์พิเศษ: หากในเรื่องมีบริบทให้ไปตาย หรือลงโทษสูงสุด ให้ใช้คำสแลงว่า 'ไปคุยกับรากมะม่วง'\n"
-        "3. ภาษาพูดผู้ชาย สุภาพแต่เป็นกันเอง คมคาย ตลกร้าย ลงท้ายด้วย 'ครับ' หรือ 'พี่ๆ'\n\n"
+        "งาน: สรุปเรื่องนี้เป็นโพสต์ภาษาไทยให้เพจกรามค้าง อ่านรอบเดียวเข้าใจ แล้วชวนคนอ่านตัดสิน\n"
+        f"มุมที่เน้น: {random.choice(angles)}\n"
+        "กลุ่มผู้อ่าน: คนทำงานวัย 25-45 ปี\n\n"
+        f"{cq.story_rules('kram', 650)}"
+        "9. เล่าแบบบุคคลที่สาม เช่น 'ชายคนหนึ่ง...', 'พนักงานคนหนึ่ง...' ห้ามอ้างว่าเป็นเรื่องของแอดมิน\n"
+        "10. ใส่ที่มาสั้นๆ ไว้ท้ายย่อหน้าแรกหรือก่อนคำถาม เช่น '(เรื่องจาก Reddit)' ไม่ต้องเปิดด้วยที่มา\n\n"
         "ตอบเป็น JSON เท่านั้น (ห้ามมีข้อความอื่นนอก JSON):\n"
-        '{\n'
-        '  "image_line1": "พาดหัวสั้นๆ บรรทัดที่ 1 (ความยาว 8-14 ตัวอักษรไทย เน้นประธาน/ปัญหาหลัก เช่น \'แฟนขอเงินแสน\')",\n'
-        '  "image_line2": "พาดหัวสั้นๆ บรรทัดที่ 2 (ความยาว 8-14 ตัวอักษรไทย คำถามหรือทางแยก เช่น \'ควรให้ยืมไหม?\')",\n'
-        '  "caption": "caption เล่าเรื่อง 5 ชั้นเป็นความเรียงธรรมชาติ จบด้วยคำถาม 2 ทางเลือกเจาะจงกับเรื่องนี้ และปิดท้ายด้วย \'1/2\'",\n'
-        '  "seed_comment": "ความคิดเห็นของแอดมินในฐานะผู้ชาย (ลงท้ายครับ) ที่เลือกข้างอย่างเด็ดขาดข้างใดข้างหนึ่งทันทีเพื่อเปิดประเด็นถกเถียง ห้ามตอบกลางๆ พร้อมหยอดข้อคิดหรือวิธีแก้ปัญหาในชีวิตจริงสั้นๆ และปิดท้ายด้วย \'2/2\'"\n'
-        '}\n\n'
-        "=== คำอธิบาย caption 5 ชั้น (เขียนต่อกัน ห้ามใส่ bullet points หรือหัวข้อ) ===\n"
-        "ชั้น 1 — ATTRIBUTION HOOK: บอกสั้นๆ ว่าไปอ่านเจอเรื่องนี้จาก Reddit แล้วเปิดปมขัดแย้งทันที\n"
-        "ชั้น 2 — EXPAND: ขยายบริบทสั้นๆ ยั่วให้อยากติดตาม\n"
-        "ชั้น 3 — CLEAR CONTENT: เล่าเรื่องหลักเรียงลำดับ ชัดเจน ไหลลื่น ภาษาคนธรรมชาติ\n"
-        "ชั้น 4 — TURNING POINT: จุดพีคที่เป็นทางแยกหรือข้อพิพาท\n"
-        "ชั้น 5 — JUDGMENT CALL: ปิดด้วยคำถามที่ระบุสองทางเลือกชัดเจน แล้วลงท้ายด้วย '1/2'\n"
+        "{\n"
+        '  "image_line1": "พาดหัวบรรทัด 1 ยาว 8-14 ตัวอักษร บอกปัญหาหลัก เช่น \'แฟนขอยืมเงินแสน\'",\n'
+        '  "image_line2": "พาดหัวบรรทัด 2 ยาว 8-14 ตัวอักษร เป็นคำถามทางแยก เช่น \'ควรให้ยืมไหม?\'",\n'
+        '  "caption": "โพสต์ตามกฎข้างบน จบด้วยคำถาม 2 ทางเลือก และลงท้ายด้วย 1/2",\n'
+        '  "seed_comment": "ความเห็นแอดมิน 1-2 ประโยค เลือกข้างพร้อมเหตุผลสั้นๆ และข้อคิดที่ทำได้จริง ลงท้ายด้วย 2/2"\n'
+        "}"
     )
-    raw = gemini_text(prompt)
     hook, caption, seed_comment = "", "", ""
-    if raw:
-        clean_raw = raw.strip()
-        if clean_raw.startswith("```"):
-            clean_raw = re.sub(r"^```(?:json)?\n", "", clean_raw)
-            clean_raw = re.sub(r"\n```$", "", clean_raw)
-            clean_raw = clean_raw.strip()
+    feedback = ""
+    # Without a real source the model would invent a "true story"; use presets instead.
+    has_source = bool(str(title).strip() and str(body).strip())
+    for _attempt in range(2 if has_source else 0):
+        raw = gemini_text(prompt + feedback)
+        m = re.search(r"\{.*\}", raw or "", re.DOTALL)
+        if not m:
+            continue
+        try:
+            data = json.loads(m.group())
+        except Exception as e:
+            print(f"JSON parse error: {e}")
+            continue
+        l1, l2 = str(data.get("image_line1", "")).strip(), str(data.get("image_line2", "")).strip()
+        cap, seed = str(data.get("caption", "")).strip(), str(data.get("seed_comment", "")).strip()
+        issues = cq.find_issues(cap, "story", 720) + [i for i in cq.find_issues(seed, "story", 400) if not i.startswith("stale_opener")]
+        issues += [f"headline:{w}" for w in cq.BANNED_SLANG if w in l1 + l2]
+        if l1 and cap and seed and contains_thai(l1) and contains_thai(cap) and not issues:
+            hook = f"{l1}\n{l2}" if l2 else l1
+            caption, seed_comment = cap, seed
+            break
+        print(f"Story rejected: {issues or 'missing fields'}")
+        feedback = "\n\nร่างก่อนหน้าผิดกฎ: " + ", ".join(issues or ["ข้อมูลไม่ครบ"]) + " เขียนใหม่ให้ผ่านทุกข้อ"
 
-        m = re.search(r'\{.*?\}', clean_raw, re.DOTALL)
-        if m:
-            try:
-                data = json.loads(m.group())
-                l1 = data.get("image_line1", "").strip()
-                l2 = data.get("image_line2", "").strip()
-                if l1 and l2:
-                    hook = f"{l1}\n{l2}"
-                elif l1:
-                    hook = l1
-                caption = data.get("caption", "").strip()
-                seed_comment = data.get("seed_comment", "").strip()
-            except Exception as e:
-                print(f"JSON parse error: {e}")
-
-    # Apply slang and clean
-    hook = apply_slang_rules(hook)
-    caption = apply_slang_rules(caption)
-    seed_comment = apply_slang_rules(seed_comment)
-
-    # Fallback to local high-quality presets if failed or missing Thai
-    if not hook or not caption or not seed_comment or not contains_thai(hook) or not contains_thai(caption):
-        print("AI generation failed or missing Thai. Using local dilemma presets.")
+    if not caption:
+        print("AI generation failed or broke the rules. Using local dilemma presets.")
         fallbacks = [
             {
                 "line1": "แฟนแอบนัดคนเก่า",
                 "line2": "ควรคุยหรือเลิก?",
-                "caption": "ไปเจอเรื่องหนึ่งใน Reddit ครับ ชายคนหนึ่งพบว่าแฟนยังแอบคุยและนัดเจอแฟนเก่านอกรอบ ทั้งที่บอกว่าเป็นแค่เพื่อนร่วมงานธรรมดา ตอนนี้เขาลังเลว่าจะยอมนั่งคุยเปิดอกอีกรอบ หรือตัดสินใจตัดใจจบความสัมพันธ์ไปเลยดี ถ้าเป็นพี่ๆ จะให้โอกาสอธิบายหรือพอแค่นี้ครับ? 1/2",
-                "seed_comment": "เคสนี้ถ้าแอบนัดเจอลับหลังคือทำลายความไว้ใจไปแล้ว แนะนำให้ถอยออกมาดีกว่าครับ 2/2"
+                "caption": "ถ้ารู้ว่าแฟนยังแอบนัดเจอแฟนเก่า ทั้งที่เคยบอกว่าเป็นแค่เพื่อนร่วมงาน\n\nจะเปิดใจคุยกันอีกครั้ง หรือจบความสัมพันธ์ไปเลย\n\nถ้าเป็นพี่ๆ จะให้โอกาสอธิบาย หรือพอแค่นี้ครับ? 1/2",
+                "seed_comment": "ผมว่าควรคุยให้ชัดก่อนครับ ถ้าเขายอมรับและเลิกติดต่อได้จริงค่อยไปต่อ ถ้ายังปิดบังก็ถึงเวลาถอย 2/2",
             },
             {
-                "line1": "งานมั่นคงแต่ใจพัง",
+                "line1": "งานมั่นคงแต่เครียดหนัก",
                 "line2": "ควรทนหรือถอย?",
-                "caption": "ไปอ่านเจอกระทู้คนทำงานใน Reddit ครับ พนักงานคนหนึ่งทำงานบริษัทใหญ่เงินเดือนดีมาก แต่ตื่นมาพร้อมความเครียดจนนอนไม่หลับทุกคืน ถ้าต้องเลือกระหว่างความมั่นคงทางการเงิน กับการรักษาชีวิตและสุขภาพจิต ถ้าเป็นพี่ๆ จะยอมกัดฟันทนต่อหรือยื่นใบลาออกครับ? 1/2",
-                "seed_comment": "งานหาใหม่เมื่อไหร่ก็ได้ แต่สุขภาพจิตพังแล้วรักษายากมาก เคสนี้ควรรีบวางแผนหางานใหม่แล้วถอยครับ 2/2"
+                "caption": "ถ้างานได้เงินเดือนดีในบริษัทใหญ่ แต่เครียดจนนอนไม่หลับแทบทุกคืน\n\nต้องเลือกระหว่างความมั่นคงทางการเงิน กับสุขภาพใจของตัวเอง\n\nถ้าเป็นพี่ๆ จะอดทนต่ออีกสักพัก หรือเริ่มหางานใหม่ครับ? 1/2",
+                "seed_comment": "ผมเลือกหางานใหม่ครับ แต่ไม่ลาออกทันที หาที่ใหม่ให้ได้ก่อนแล้วค่อยยื่นใบลา 2/2",
             },
             {
-                "line1": "เพื่อนยืมเงินแต่งงาน",
-                "line2": "ทวงแล้วทำเงียบ",
-                "caption": "มีโพสต์หนึ่งแชร์ใน Reddit ครับ ชายคนหนึ่งให้เพื่อนสนิทยืมเงินก้อนไปจัดงานแต่งงาน ผ่านมาสองปีเพื่อนไม่ยอมคืนเงินสักบาท แต่ลงรูปไปเที่ยวต่างประเทศฉ่ำๆ ถ้าเป็นพี่ๆ จะแตกหักทวงหน้าฟีด หรือยอมตัดใจเสียเงินเพื่อรักษาคำว่าเพื่อนครับ? 1/2",
-                "seed_comment": "เพื่อนที่เห็นเราเดือดร้อนแต่ตัวเองไปเที่ยวสบายใจ ไม่ใช่เพื่อนแท้แล้วครับ เคสนี้ควรทวงให้ถึงที่สุด 2/2"
-            }
+                "line1": "เพื่อนยืมเงินไม่คืน",
+                "line2": "ทวงหรือปล่อย?",
+                "caption": "ถ้าให้เพื่อนสนิทยืมเงินไปจัดงานแต่ง ผ่านไปสองปียังไม่ได้คืน แต่เพื่อนลงรูปเที่ยวต่างประเทศ\n\nจะทวงตรงๆ หรือยอมเสียเงินเพื่อรักษามิตรภาพ\n\nถ้าเป็นพี่ๆ จะทวงให้ชัด หรือปล่อยผ่านครับ? 1/2",
+                "seed_comment": "ผมว่าทวงได้ครับ คุยส่วนตัวสุภาพๆ แล้วขอแผนผ่อนคืน เงินกับเพื่อนแยกกันให้ชัดดีกว่าเก็บไว้ในใจ 2/2",
+            },
         ]
         chosen = random.choice(fallbacks)
         hook = f"{chosen['line1']}\n{chosen['line2']}"

@@ -179,47 +179,10 @@ EXCEL_PATH        = os.path.join(os.path.dirname(__file__), "review_products.xls
 AFFILIATE_DIR     = os.path.join(os.path.dirname(__file__), "affiliate_data")
 
 def is_product_suitable_for_page(detail):
-    text = str(detail or "").lower()
-    if "iphone" in text or "apple" in text:
-        return True
     """Hard filter before AI generation so each page only receives relevant products."""
-    text = str(detail or "").lower()
-    path = os.path.abspath(__file__).replace("\\", "/").lower()
+    import content_quality as cq
+    return cq.is_on_topic(detail, cq.page_from_path(__file__))
 
-    if "chowchow" in path:
-        blocked = ("แมว", "cat", "kitten", "ทรายแมว", "ห้องน้ำแมว")
-        dog_terms = (
-            "หมา", "สุนัข", "dog", "puppy", "ลูกสุนัข", "สายจูง", "ปลอกคอ",
-            "แผ่นรองฉี่", "ขนสุนัข", "ชิวาวา", "ชิสุ", "ปอม", "คอร์กี้",
-            "โกลเด้น", "ลาบราดอร์",
-        )
-        return not any(word in text for word in blocked) and any(word in text for word in dog_terms)
-
-    if "somtam" in path:
-        blocked = ("อาหารแมว", "อาหารหมา", "สุนัข", "เครื่องสำอาง", "เสื้อผ้า", "รองเท้า")
-        food_terms = (
-            "อาหาร", "ขนม", "เครื่องดื่ม", "กาแฟ", "ชา", "นม", "น้ำ", "กุ้ง",
-            "ปลา", "หมู", "ไก่", "เนื้อ", "ข้าว", "เส้น", "บะหมี่", "ซอส",
-            "น้ำปลา", "พริก", "ผลไม้", "ผัก", "ครัว", "กระทะ", "หม้อ", "มีด",
-            "จาน", "ชาม", "แก้ว", "เตา", "อบ", "ทอด",
-        )
-        return not any(word in text for word in blocked) and any(word in text for word in food_terms)
-
-    if "kram-facebook-page" in path:
-        blocked = (
-            "เสื้อผ้าผู้หญิง", "เดรส", "กระโปรง", "ลิป", "ครีมหน้า", "เครื่องสำอาง",
-            "อาหารแมว", "อาหารหมา", "ทรายแมว", "ห้องน้ำแมว",
-        )
-        useful_terms = (
-            "บ้าน", "ครัว", "ห้อง", "โต๊ะ", "เก้าอี้", "ชั้น", "ตู้", "กล่อง",
-            "แก้ว", "ขวด", "พัดลม", "ไฟ", "โคม", "ปลั๊ก", "สายชาร์จ", "ชาร์จ",
-            "เครื่องมือ", "สว่าน", "ไขควง", "รถ", "มอเตอร์ไซค์", "gadget",
-            "อุปกรณ์", "ทำความสะอาด", "ซัก", "ดูดฝุ่น", "เก็บของ", "กันน้ำ",
-            "ทิชชู่", "กระดาษชำระ", "ตัดหญ้า", "ล้างรถ",
-        )
-        return not any(word in text for word in blocked) and any(word in text for word in useful_terms)
-
-    return True
 ACCENT_COLOR      = (0, 191, 255) # ฟ้า #00BFFF สำหรับกรามค้าง
 
 if not GEMINI_API_KEY:
@@ -273,9 +236,8 @@ def load_next_product(state=None):
         is_iphone = "iphone" in detail_str.lower() or "apple" in detail_str.lower()
 
         # กรองสินค้าเฉพาะเพจ (iPhone ได้รับการยกเว้นเป็นแคมเปญพิเศษเสมอ)
-        if not is_iphone and "is_product_suitable_for_page" in globals():
-            if not is_product_suitable_for_page(detail):
-                continue
+        if not is_product_suitable_for_page(detail_str):
+            continue
 
         candidate = {
             "row": row[0].row,
@@ -875,141 +837,57 @@ def parse_detail_to_json(detail, promo=None, client=None):
     return local_parse_detail_to_json(detail, promo)
 
 def generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, selected_role, in_post_body=False):
-    prod_type = product_json.get("ประเภท", "ของกินของใช้")
-    highlights = product_json.get("จุดเด่น", "คุณภาพดี ใช้งานสะดวก")
-    price = format_thai_price(product_json.get("ราคา", ""))
-    
-    if "somtam" in path_norm:
-        ending = "ค่ะ"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วนะคะ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
-    elif "chowchow" in path_norm:
-        ending = "ฮะ"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วฮะ 👇" if in_post_body else "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
-    elif "x-bot" in path_norm:
-        ending = "ครับ"
-        closing = ""
-    else:
-        ending = "ครับ"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วครับ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
-        
-    price_str = f" ราคา {price} บาท" if price else ""
-    
-    is_iphone = "iphone" in prod_type.lower() or "iphone" in str(product_json).lower() or "apple" in str(product_json).lower()
-    if is_iphone:
-        if "somtam" in path_norm:
-            body = f"Apple iPhone 18 Pro Max เครื่องศูนย์ไทย ประกันศูนย์ 1 ปีเต็ม สั่งซื้อผ่านร้านค้าทางการ Shopee Mall มั่นใจได้ของแท้ 100% ไม่ต้องเสี่ยงกับเครื่องย้อมแมวหรือเครื่องหิ้วค่ะ พี่ๆ คิดว่าการสั่งมือถือราคาสูงกับร้าน Mall ทางการช่วยให้สบายใจเรื่องประกันที่สุดจริงไหมคะ?"
-        elif "chowchow" in path_norm:
-            body = f"Apple iPhone 18 Pro Max เครื่องศูนย์ไทย ประกันศูนย์ 1 ปีเต็ม สั่งซื้อผ่านร้านทางการ Shopee Mall อุ่นใจได้ของแท้ 100% ไม่ต้องกลัวเครื่องย้อมแมวฮะ พี่ๆ คิดว่าสั่งมือถือกับร้าน Mall สบายใจกว่าร้านทั่วไปจริงไหมฮะ โฮ่ง!"
-        elif is_x:
-            body = f"Apple iPhone 18 Pro Max เครื่องศูนย์ไทย ประกันศูนย์ 1 ปี สั่งผ่านร้านค้าทางการ Shopee Mall มั่นใจของแท้ 100% ไม่เสี่ยงเครื่องย้อมแมว ซื้อของราคาสูงเลือกร้าน Mall อุ่นใจที่สุดครับ"
-        else:
-            body = f"Apple iPhone 18 Pro Max เครื่องศูนย์ไทย ประกันศูนย์ 1 ปีเต็ม สั่งซื้อผ่านร้านค้าทางการ Shopee Mall มั่นใจได้ของแท้ 100% ไม่ต้องเสี่ยงกับเครื่องย้อมแมวหรือเครื่องหิ้วครับ พี่ๆ คิดว่าการซื้อสมาร์ตโฟนรุ่นท็อปกับร้าน Mall โดยตรง สบายใจเรื่องประกันที่สุดจริงไหมครับ?"
-        if is_x:
-            return body[:200]
-        else:
-            return f"{body}\n\n{closing}"
-
-    role_name = selected_role["name"]
-    role_phrase = get_role_context(role_name, prod_type)
-    if "somtam" in path_norm:
-        question = f"ถ้าเอา {prod_type} ไปทำเมนูเดียว พี่ๆ จะเลือกทำเมนูอะไรคะ?"
-    elif "chowchow" in path_norm:
-        question = f"บ้านไหนเคยใช้ {prod_type} แบบนี้ จุดที่ต้องเช็กก่อนซื้อคืออะไรฮะ?"
-    elif is_x:
-        question = f"คนเคยใช้ {prod_type} ให้คะแนนจุดนี้เท่าไรครับ?"
-    else:
-        question = f"ถ้าต้องเลือก {prod_type} สักตัว พี่ๆ ให้ความสำคัญกับจุดไหนที่สุดครับ?"
-
-    body = f"{role_phrase} {highlights}{price_str}{ending} {question}"
-        
-    if is_x:
-        return body[:200]
-    else:
-        return f"{body}\n\n{closing}"
+    import content_quality as cq
+    page = cq.page_from_path(__file__)
+    return cq.review_fallback(product_json.get("ชื่อสินค้า", ""), product_json.get("ประเภท", ""), page)
 
 def generate_caption(product_json, selected_persona, selected_hook, selected_style, shopee, lazada, promo, selected_role, in_post_body=False):
+    """Honest, easy-to-read product post; rules and checks live in content_quality.py."""
     global API_ENABLED
     import json
-    
-    path_norm = __file__.replace("\\", "/").lower()
-    is_x = "x-bot" in path_norm
-    
-    if "somtam" in path_norm:
-        gender_rule = "ใช้คำลงท้ายว่า 'ค่ะ' หรือ 'คะ' และสรรพนามแทนตัวว่า 'หนู' หรือ 'เรา' เท่านั้น"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วนะคะ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยนะคะ 👇"
-    elif "chowchow" in path_norm:
-        gender_rule = "ใช้คำลงท้ายว่า 'ฮะ' หรือ 'โฮ่ง' และสรรพนามแทนตัวว่า 'น้องตูบ' หรือ 'ผม' เท่านั้น และมีกลิ่นอายความซนแบบน้องหมา"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วฮะ 👇" if in_post_body else "กดลิ้งในคอมเมนต์แรกได้เลยฮะ 👇"
-    elif "x-bot" in path_norm:
-        gender_rule = "ใช้คำลงท้าย 'ครับ' สรรพนามแทนตัว 'ผม'"
-        closing = ""
-    else:
-        gender_rule = "ใช้คำลงท้ายว่า 'ครับ' และสรรพนามแทนตัวว่า 'ผม' หรือ 'พี่' เท่านั้น"
-        closing = "แปะพิกัดลิงก์ร้านค้าไว้ในโพสต์แล้วครับ 👇" if in_post_body else "ดูลิ้งในคอมเมนต์แรกเลยครับ 👇"
+    import content_quality as cq
 
+    page = cq.page_from_path(__file__)
+    is_x = page == "x"
+    closing = {
+        "somtam": "ลิงก์ร้านอยู่ในคอมเมนต์นะคะ 👇",
+        "chowchow": "ลิงก์ร้านอยู่ในคอมเมนต์ฮะ 👇",
+        "kram": "ลิงก์ร้านอยู่ในคอมเมนต์ครับ 👇",
+    }.get(page, "")
+    # Excel prices go stale, so they never reach the model or the caption.
+    facts = {k: v for k, v in product_json.items() if k != "ราคา"}
+    limit = 200 if is_x else 320
     caption = None
-    
+
     active_client = globals().get("client")
     if API_ENABLED and active_client:
-        is_iphone = "iphone" in str(product_json).lower() or "apple" in str(product_json).lower()
-        iphone_caption_guide = ""
-        if is_iphone:
-            iphone_caption_guide = (
-                "\n*** กฎพิเศษสำหรับ iPhone / Apple (โดยเฉพาะ iPhone 18) ***:\n"
-                "- ต้องเขียนไปในแนวทาง 'ไว้ใจร้านค้าได้ 100% เพราะเป็นร้านค้าทางการ Shopee Mall / Apple Flagship Store'\n"
-                "- เน้นย้ำว่าเป็นเครื่องศูนย์ไทยแท้ มีประกันศูนย์ 1 ปีเต็ม ไม่ต้องเสี่ยงกับเครื่องย้อมแมว เครื่องหิ้ว หรือกลัวโดนโกง\n"
-                "- การซื้อสมาร์ตโฟนราคาสูง เลือกร้าน Mall ทางการอุ่นใจเรื่องของแท้และบริการหลังการขายที่สุด\n"
-            )
-
-        prompt = (
-            "เขียนในฐานะแอดมินคัดของที่ยังไม่ได้ซื้อหรือทดลองสินค้า เป็นกันเองและตรงไปตรงมา\n"
-            f"Persona: {selected_persona['desc']}\n"
-            f"มุมเล่า: {selected_role['desc']}\n"
-            f"สไตล์การเขียน: {selected_style['desc']}\n\n"
-            f"แนวทางเปิดเรื่อง: {selected_hook} ใช้เป็นมุมคิดเท่านั้น ห้ามคัดลอกข้อความนี้ตรงๆ\n\n"
-            f"ข้อมูลสินค้า JSON:\n{json.dumps(product_json, ensure_ascii=False)}\n\n"
-            f"{iphone_caption_guide}\n"
-            f"กฎเหล็ก:\n- ต้องระบุราคาสินค้าจาก JSON เสมอ\n"
-            f"- ห้ามเริ่มโพสต์ด้วยชื่อแบรนด์/สินค้า\n"
-            f"- ห้ามใช้คำโฆษณาจำพวก คุ้มมาก, คุ้มสุดๆ, คุ้มค่า, คุ้ม, ดีงาม, ห้ามพลาด, ของดี, ดีจริง, แนะนำเลย\n- ห้ามแต่งข้อมูลที่ไม่มีใน JSON เด็ดขาด: ห้ามอ้างของใกล้หมด/ล็อตสุดท้าย/จำนวนจำกัด, ห้ามเคลมสรรพคุณสุขภาพ ลดน้ำหนัก คุมอาหาร แคลอรี่ โปรตีน ถ้า JSON ไม่ได้ระบุ, ห้ามเดาวิธีใช้ที่ผิดธรรมชาติของสินค้าชนิดนั้น\n- สำคัญที่สุด: แอดมินยังไม่ได้ซื้อหรือใช้สินค้า ห้ามเขียนว่า ลองใช้, ใช้จริง, ซื้อมา, กดสั่ง, จัดมา, ใช้มาแล้ว, ส่วนตัวประทับใจ หรือสร้างเหตุการณ์ในชีวิตสมมติ\n- เขียนถึงสินค้าให้ตรงกับสิ่งที่มันเป็นจริง ถ้าไม่แน่ใจว่าสินค้าคืออะไร ให้เล่ากลางๆ ตามชื่อสินค้า อย่ามโนรายละเอียดเพิ่ม\n"
-            f"- โทนเสียง: {gender_rule}\n"
-            "- ใช้คำค้นหาที่อยู่ใน JSON อย่างเป็นธรรมชาติเท่านั้น ห้ามยัด SEO หรือคำค้นที่ไม่มีในข้อมูล\n"
-            "- ใช้ CTA เพียงหนึ่งอย่าง: ถามคำถามเฉพาะจากสเปก/ราคา หรือบอกพิกัด ห้ามสั่งทั้งแชร์และเซฟในโพสต์เดียว\n"
-            "- ห้ามใช้คำถามกว้างๆ เช่น 'คิดเห็นยังไง', 'ใครเป็นเหมือนกัน', 'มีใครสนใจไหม' คำถามต้องอ้างถึงสินค้านี้โดยตรง\n\n"
+        fmt = (
+            "รูปแบบ X: 1-2 ประโยค ไม่เกิน 180 ตัวอักษร" if is_x
+            else "รูปแบบ Facebook: 2-3 ประโยค เว้นบรรทัดระหว่างปัญหากับจุดที่ต้องเช็ก"
         )
-        
-        if is_x:
-            prompt += (
-                "รูปแบบโพสต์สำหรับ X (Twitter):\n"
-                "1. ความยาวสั้นกระชับ รวมกันไม่เกิน 150-200 ตัวอักษร\n"
-                "2. เล่าความเห็นส่วนตัวสั้นๆ สอดรับกับ Persona และ Style\n"
-                "3. ลงท้ายด้วยสรรพนามธรรมชาติ ไม่ต้องมีข้อความปิดท้ายอื่น\n"
-                "ตอบกลับเฉพาะเนื้อความโพสต์เท่านั้น"
-            )
-        else:
-            prompt += (
-                f"รูปแบบโพสต์สำหรับ Facebook:\n"
-                f"1. ความยาว 2-3 ประโยคเท่านั้น\n"
-                f"2. เล่าข้อมูลจริงหนึ่งประเด็น แล้วถามคำถามเฉพาะหนึ่งคำถาม ห้ามสร้างเรื่องราวประสบการณ์ส่วนตัว\n"
-                f"3. ปิดท้ายด้วยประโยคนี้เป๊ะๆ: \"{closing}\"\n"
-                f"ตอบกลับเฉพาะเนื้อความโพสต์เท่านั้น ไม่ต้องมีข้อความนำ/อธิบายใดๆ"
-            )
-            
-        for model_idx, model in enumerate(TEXT_MODELS):
-            if model_idx > 0:
+        base_prompt = (
+            "เขียนโพสต์แนะนำสินค้าภาษาไทยให้คนอ่านรอบเดียวเข้าใจ\n"
+            f"มุมเปิด: {random.choice(cq.REVIEW_ANGLES)}\n\n"
+            f"{cq.review_rules(page)}\n{fmt}\n\n"
+            f"ข้อมูลสินค้า JSON:\n{json.dumps(facts, ensure_ascii=False)}\n\n"
+            "ตอบเฉพาะเนื้อโพสต์ ไม่ต้องใส่ลิงก์หรือประโยคปิดท้าย"
+        )
+        feedback = ""
+        for attempt, model in enumerate(TEXT_MODELS + TEXT_MODELS[:1]):
+            if attempt > 0:
                 time.sleep(2)
             try:
-                resp = active_client.models.generate_content(model=model, contents=prompt)
-                caption_text = resp.text.strip()
-                if caption_text:
-                    lines = caption_text.splitlines()
-                    while lines and (
-                        re.search(r'^(ได้เลย|นี่คือ|แน่นอน|โพสต์รีวิว|ครับ|ค่ะ|---)', lines[0].strip(), re.IGNORECASE)
-                        or lines[0].strip() in ("", "---")
-                    ):
-                        lines.pop(0)
-                    caption = "\n".join(lines).strip()
+                resp = active_client.models.generate_content(model=model, contents=base_prompt + feedback)
+                lines = (resp.text or "").strip().splitlines()
+                while lines and (not lines[0].strip() or re.search(r'^(ได้เลย|นี่คือ|แน่นอน|โพสต์|---)', lines[0].strip())):
+                    lines.pop(0)
+                text = "\n".join(lines).strip()
+                issues = cq.find_issues(text, "review", max_chars=limit)
+                if not issues:
+                    caption = text
                     break
+                print(f"[{model}] caption rejected: {issues}")
+                feedback = "\n\nร่างก่อนหน้าผิดกฎ: " + ", ".join(issues) + " เขียนใหม่ให้ผ่านทุกข้อ"
             except Exception as e:
                 err_msg = str(e)
                 print(f"[{model}] caption generation failed: {err_msg[:80]}")
@@ -1017,16 +895,13 @@ def generate_caption(product_json, selected_persona, selected_hook, selected_sty
                     print("API key or connection issue detected. Disabling API calls.")
                     API_ENABLED = False
                     break
-                    
-        if not caption and API_ENABLED:
-            print("[Warning] Caption generation failed on all models. Disabling API calls.")
-            API_ENABLED = False
 
     if not caption:
-        print("[Warning] Falling back to local heuristic caption.")
-        caption = generate_local_fallback_caption(product_json, selected_persona, selected_hook, selected_style, path_norm, is_x, selected_role, in_post_body=in_post_body)
-        
-    return caption
+        print("[Warning] Using honest fallback caption.")
+        return cq.review_fallback(facts.get("ชื่อสินค้า", ""), facts.get("ประเภท", ""), page, closing)
+    if is_x:
+        return caption[:200]
+    return f"{caption}\n\n{closing}"
 
 def _post_one_comment(post_id, text):
     try:
@@ -1181,6 +1056,8 @@ if __name__ == "__main__":
         state = load_state(wb) if 'state' not in locals() else state
         promo_clean = clean_promo(product["promo"])
         product_json = parse_detail_to_json(product["detail"], promo_clean, client)
+        import content_quality as cq
+        product_json["ชื่อสินค้า"] = cq.short_name(product["detail"], 60)
         print(f"[System Log] Converted Product JSON:\n{json.dumps(product_json, ensure_ascii=False, indent=2)}")
 
         # Loop to generate unique caption with similarity checks
