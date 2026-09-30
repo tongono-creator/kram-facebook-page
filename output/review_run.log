@@ -5,18 +5,18 @@ Direct use of automatic function calling (AFC) in Models.generate_content is not
 Product: XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เคสไอโฟน",
+  "ประเภท": "เคสโทรศัพท์",
+  "จุดเด่น": "จอ E-Ink เปลี่ยนรูปได้ เชื่อมต่อ NFC",
   "รุ่น": "iPhone 14-18",
-  "จุดเด่น": "จอ E-Ink เปลี่ยนรูปได้ผ่าน NFC",
   "ราคา": 2250,
   "ชื่อสินค้า": "XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป"
 }
 [gemini-flash-latest] caption rejected: ['fake_experience:กดสั่ง']
 [System Log] Caption approved on attempt 1!
 [System Log] Chosen Role: หาข้อมูลก่อนซื้อ (R3)
-[System Log] Chosen Persona: คนเทียบตัวเลือก (E)
+[System Log] Chosen Persona: คนถามผู้ใช้จริง (G)
 [System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
-[System Log] Chosen Style: มุกเบาๆ
+[System Log] Chosen Style: คำถามเฉพาะ
 Traceback (most recent call last):
   File "/home/runner/work/kram-facebook-page/kram-facebook-page/review.py", line 1131, in <module>
     review_img = render_review_card(product_photos, line1_clean, line2_clean,
