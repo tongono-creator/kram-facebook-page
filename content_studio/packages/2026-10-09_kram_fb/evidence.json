@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "url": "https://www.command.com/3M/en_US/command/contact-us/faqs/",
+      "title": "Command FAQ",
+      "claim": "ผู้ผลิตให้เลือกผลิตภัณฑ์ตามสิ่งที่แขวน พื้นผิว และน้ำหนัก อ่านพิกัดและขั้นตอนบนบรรจุภัณฑ์ของรุ่นนั้น",
+      "checked_at": "2026-10-04T16:43:01+00:00",
+      "source_type": "primary",
+      "verification": "web_source_opened_and_relevant_passage_checked"
+    }
+  ],
+  "fictional": false,
+  "checked_at": "2026-10-04T16:43:01+00:00",
+  "editorial_note": "ข้อสังเกตและคำแนะนำแยกจากข้ออ้างที่แหล่งต้นทางรองรับ ไม่ใช่ประสบการณ์ใช้สินค้าของแอดมิน",
+  "limitations": [
+    "ข้อมูลของ Command ใช้เป็นตัวอย่างเกณฑ์อ่านคู่มือ ไม่ย้ายพิกัดหรือเวลาไปยัง SKU ยี่ห้ออื่น"
+  ]
+}

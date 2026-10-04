@@ -1,0 +1,34 @@
+{
+  "product_id": "23503393020",
+  "shop_id": "19450016",
+  "name": "ตะกร้าพลาสติก A4 มีหูจับ สีขาว — FJ.Shop",
+  "seller_name": "FJ.Shop สินค้าเบ็ดเตล็ด",
+  "url": "https://s.shopee.co.th/6q1E5AGgio",
+  "destination_url": "https://shopee.co.th/product/19450016/23503393020",
+  "category": "organization",
+  "eligible_channels": [
+    "kram_fb"
+  ],
+  "subids": [
+    "kram",
+    "20261008",
+    "bags",
+    "basket",
+    "comment"
+  ],
+  "variants": [
+    "ขาว"
+  ],
+  "variant_note": "Root clicked white and saw tick, actual stock4. Green/blue/brown available; pink/lightbrown/mixedhandle disabled. Seller body says storage of general items and A4 paper; exact dimensions and load rating not provided. No food-contact approval, strength or stacking safety promised.",
+  "verification_status": "verified",
+  "verified_at": "2026-10-04T19:19:36.936432+00:00",
+  "verification_method": "Root read actual logged-in Affiliate link, canonical shop/item and embedded five SubIDs, full seller body, available variant and purchase-enabled stock.",
+  "disclosure": "ลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้",
+  "comment": "คัดถุงที่ยังมีงานใช้ต่อแล้ว ค่อยเลือกพื้นที่เก็บครับ ตัวเลือกนี้คือตะกร้าพลาสติก A4 มีหูจับ สีขาว ร้าน FJ.Shop ก่อนซื้อถามขนาดจริงแล้วเทียบช่องตู้กับถุงที่พับไว้ ร้านไม่ได้ระบุพิกัดรับน้ำหนักไว้ในรายละเอียดที่ตรวจ จึงไม่ควรเดาว่าวางซ้อนของหนักได้ ภาพในโพสต์เป็นฉากสมมติ ไม่ใช่ภาพตะกร้ารุ่นนี้ที่เพจทดลองใช้\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/6q1E5AGgio",
+  "proof_files": [
+    "audience_audit/affiliate/kram-basket-link/modal.txt",
+    "audience_audit/affiliate/kram-basket-link/product.txt",
+    "audience_audit/affiliate/kram-basket-link/product.jpg"
+  ],
+  "price_in_comment": false
+}

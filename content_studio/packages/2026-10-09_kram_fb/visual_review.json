@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-09_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:56:03.048108+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "7412f2e4855942cc5ce7ae39b5455000a6fdce066c51543143c889c198554d1a",
+    "mobile.png": "d16a91c29156fc9b282a94855245cb2bec82702a2c09232cd707189dcab1549f"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root read entire caption and Command primary FAQ on exact package weight, suitable clean smooth surface and excluded wallpaper/rough surfaces. Actual single17067 seller says225g and extra restrictions; comment defers to actual package without promising no marks or converting brandUS waittime to this seller variant. Actual matching SKU and comment checked from approved_products proof.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}

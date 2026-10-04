@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-08_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:56:03.048108+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "74774820712343a9c92b6db08ed721e33fb640908f63132848962df46072e87d",
+    "mobile.png": "412ba66c9d8992a887a80115f1b56d224fbe22948e0e1695c6d1d4d7c936d4c3"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root read entire hypothetical bags caption with no experimental claim; actual selected white basket has stock4. Exact size and load are unavailable, so comment asks buyer to check and makes no stacking/strength promise. Actual matching SKU and comment checked from approved_products proof.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}

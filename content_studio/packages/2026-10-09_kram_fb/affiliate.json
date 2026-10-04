@@ -1,0 +1,32 @@
+{
+  "product_id": "26906586893",
+  "shop_id": "1317008348",
+  "name": "3M Command 17067 — บจก.เสรี ภู่พิสิฐ",
+  "seller_name": "บจก.เสรี ภู่พิสิฐ",
+  "url": "https://s.shopee.co.th/7KxUfz5Jci",
+  "destination_url": "https://shopee.co.th/product/1317008348/26906586893",
+  "category": "organization",
+  "eligible_channels": [
+    "kram_fb"
+  ],
+  "subids": [
+    "kram",
+    "20261009",
+    "hooks",
+    "command",
+    "comment"
+  ],
+  "variants": [],
+  "variant_note": "Single listing no variant selector; seller says max225g, no wallpaper/valuables/abovebed, one hook one object. Seller says new paint28days; brandUS FAQ says7days: comment defers to actual package and avoids inventing a universal wait time. Seller stock6 with purchase enabled at check; price and availability may change.",
+  "verification_status": "verified",
+  "verified_at": "2026-10-04T19:19:36.936432+00:00",
+  "verification_method": "Root read actual logged-in Affiliate link, canonical shop/item and embedded five SubIDs, full seller body, available variant and purchase-enabled stock.",
+  "disclosure": "ลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้",
+  "comment": "ถ้าจะเพิ่มจุดแขวนของเบา ลองอ่านรายละเอียด Command 17067 ร้าน บจก.เสรี ภู่พิสิฐ ก่อนครับ ร้านระบุพิกัดสูงสุด 225 กรัม และห้ามใช้กับวอลเปเปอร์หรือแขวนเหนือหัวเตียง ตรวจผิวผนัง น้ำหนักของ วิธีติดและวิธีถอดจากแพ็กจริงก่อนใช้ คำว่าไม่ต้องเจาะไม่ได้รับประกันผนังทุกแบบไม่มีรอย ภาพโพสต์เป็นฉากอธิบาย ไม่ใช่การทดลองตะขอรุ่นนี้\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/7KxUfz5Jci",
+  "proof_files": [
+    "audience_audit/affiliate/kram-command-third-link/modal.txt",
+    "audience_audit/affiliate/kram-command-third-link/product.txt",
+    "audience_audit/affiliate/kram-command-third-link/product.jpg"
+  ],
+  "price_in_comment": false
+}
