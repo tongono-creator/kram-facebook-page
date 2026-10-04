@@ -1,8 +1,12 @@
 {
   "951b2cc19c7ce3b175e52fb0aa2ed1145131518faac38afa4008c6c39b05f8c5": {
-    "state": "written_pending_readback",
+    "state": "verified",
     "channel": "kram_fb",
     "page_id": "116701184708556",
-    "updated_at": "2026-10-04T18:55:59.006201+00:00"
+    "updated_at": "2026-10-04T18:56:00.644563+00:00",
+    "readback_about": {
+      "present": true,
+      "value": "บ้านนี้มีพิรุธ! ชวนสังเกตปัญหาเล็กในบ้าน แล้วหาวิธีจัดพื้นที่และเลือกของให้เข้ากับชีวิตจริง"
+    }
   }
 }
