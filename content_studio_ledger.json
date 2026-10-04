@@ -73,11 +73,11 @@
     "package_sha256": "67bf8232cf50239764a68ae6d311ab2f00345644374a5f81b78e24fdba1266a1",
     "page_id": "116701184708556",
     "photo_id": "1036178979442478",
-    "post_id": null,
+    "post_id": "116701184708556_1036178979442478",
     "product_id": "5676435791",
     "scheduled_at": "2026-10-15T10:30:00+07:00",
-    "status": "publishing",
-    "updated_at": "2026-10-04T21:37:26.369728+00:00"
+    "status": "verified",
+    "updated_at": "2026-10-04T21:37:28.929889+00:00"
   },
   "2026-10-17_kram_fb": {
     "package_sha256": "69826c32b5b2813359ef9403548577ba88b0b9cfa9a1c8bef3ad8e7479125c9a",
