@@ -1,0 +1,14 @@
+{
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T16:41:43.430978+00:00",
+  "checks": {
+    "full_image_seen": true,
+    "mobile_seen": true,
+    "thai_readable": true,
+    "subject_correct": true,
+    "source_checked": true,
+    "affiliate_checked": true
+  },
+  "notes": "Root opened final 1080x1350 card and 360px mobile preview; Thai text legible, subject unobscured, AI disclosed. Caption and primary-source claims checked. Affiliate generated in logged-in account with page/date/series SubIDs; canonical item and actual choices inspected. No claim of using or testing this product, no price guarantee. ตรวจสีที่หน้าปลายทางแล้ว ไม่มีการรับรองว่าช่องใส่อุปกรณ์ของผู้อ่านได้ทุกชิ้น",
+  "status": "signed_approved"
+}
