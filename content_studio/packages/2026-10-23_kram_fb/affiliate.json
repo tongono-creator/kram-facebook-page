@@ -1,0 +1,45 @@
+{
+  "product_id": "18357675108",
+  "shop_id": "7557907",
+  "name": "กล่องแบ่งช่องลิ้นชักสีขาว — PunPunYang พันพันอย่าง",
+  "url": "https://s.shopee.co.th/60S7DfQzg0",
+  "destination_url": "https://shopee.co.th/product/7557907/18357675108",
+  "seller_name": "PunPunYang พันพันอย่าง",
+  "category": "organization",
+  "eligible_channels": [
+    "kram_fb",
+    "almost_fb"
+  ],
+  "subids": [
+    "kram",
+    "20261023",
+    "stock",
+    "dividerM",
+    "comment"
+  ],
+  "variants": [
+    "Size S (4 ใบ)-MT101",
+    "Size M (1 ใบ)-MT102",
+    "Size L (1 ใบ)-MT103",
+    "Size XL (1 ใบ)-MT104"
+  ],
+  "recommended_variant": "Size M (1 ใบ)-MT102",
+  "variant_note": "Root selected Size M and saw tick. Seller lists external dimensions M25.5x8x5cm and L34x11x5cm; S and XL disabled at inspection. Check drawer inner dimensions and item size; no universal fit guarantee.",
+  "verification_status": "verified",
+  "verified_at": "2026-10-04T21:15:34.002575+00:00",
+  "verification_method": "Root browser checked per-post destination and embedded SubIDs; captured short-link form checked locally",
+  "disclosure": "ลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้",
+  "comment": "ถ้าจะรวมฟองน้ำใหม่ที่ยังไม่ใช้หรือของสำรองชิ้นเล็ก ลองเช็กของที่มีทั้งบ้านก่อนครับ ลิงก์นี้เป็นกล่องสีขาว Size M รุ่น MT102 ร้านพันพันอย่าง หนึ่งใบ ร้านระบุขนาดภายนอก 25.5×8×5 ซม. วัดพื้นที่ลิ้นชักและของที่จะเก็บ เผื่อขอบกล่องที่กินพื้นที่ด้านในด้วย ถ้าของเดิมรวมวางให้เห็นได้ก็ยังไม่ต้องซื้อเพิ่ม เพจไม่ได้ทดลองรุ่นนี้\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/60S7DfQzg0",
+  "proof_files": [
+    "audience_audit/affiliate/kram-dividerM-oct23/modal.txt",
+    "audience_audit/affiliate/kram-dividerM-oct23/product.txt",
+    "affiliate_proofs/kram-drawer-product.txt",
+    "audience_audit/affiliate/almost-dividerM-oct09/product.jpg"
+  ],
+  "price_in_comment": false,
+  "root_cross_channel_review": {
+    "reviewed_at": "2026-10-04T21:15:34.002575+00:00",
+    "reviewer": "root-editor",
+    "notes": "Root personally read complete original sellerbody, actual Mphoto and freshselectedM tick8stock/buyenabled. Ordinary desk smallobjects only; external25.5x8x5cm not inner. Context test: distinguishing size definitions and home storage of small golf markers/pencils. Does not alter historical caption or imply product prevented event."
+  }
+}
