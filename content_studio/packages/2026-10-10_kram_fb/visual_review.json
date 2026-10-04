@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-10_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:56:03.048108+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "86b3e6da1671b5fe63022acadc1347c23ad8d06c5206546b537478aaba623cfb",
+    "mobile.png": "7e39a4705c9ea6dfeeac963252cd2fc1dace9109255d710c3be0e5578d4928e7"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root full caption explicitly hypothetical desk with charging/data cables; no invented experiment or mains wiring instructions. Root actual shop98576430/item5210757377 PJ_Electric. Selected CT-100 and50pieces with both ticks, stock18 and buy enabled. Seller body white nylon; selected product photo shows100mm total length/10x25mm tag. Not adhesive label; no independent load/temperature/strength/reusability certification. Actual fiveSubIDs and destination tracking verified. Actual matching SKU and comment checked from catalog and selected proof files; per-post link uses Root browser verification when provided.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}
