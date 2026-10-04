@@ -1,0 +1,111 @@
+{
+  "rocket_fb": {
+    "channel_key": "rocket_fb",
+    "name": "Rocket21",
+    "page_id": "111830598532037",
+    "repository": "rocket-facebook-page",
+    "platform": "facebook",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "military_books",
+      "tools",
+      "camping"
+    ],
+    "enabled": false,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/rocket"
+  },
+  "kram_fb": {
+    "channel_key": "kram_fb",
+    "name": "กรามค้าง",
+    "page_id": "116701184708556",
+    "repository": "kram-facebook-page",
+    "platform": "facebook",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "home",
+      "organization",
+      "tools"
+    ],
+    "enabled": true,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/kram-facebook-page"
+  },
+  "somtam_fb": {
+    "channel_key": "somtam_fb",
+    "name": "พริก 10 เม็ด",
+    "page_id": "554501167740603",
+    "repository": "somtam-facebook-page",
+    "platform": "facebook",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "kitchen",
+      "food",
+      "cooking_tools"
+    ],
+    "enabled": true,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/somtam-facebook-page"
+  },
+  "chowchow_fb": {
+    "channel_key": "chowchow_fb",
+    "name": "Chow Chow",
+    "page_id": "102319399434080",
+    "repository": "chowchow-facebook-page",
+    "platform": "facebook",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "dog",
+      "dog_walk",
+      "dog_enrichment",
+      "dog_grooming"
+    ],
+    "enabled": true,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/chowchow-facebook-page"
+  },
+  "jaw_x": {
+    "channel_key": "jaw_x",
+    "name": "Jaw Dropped",
+    "page_id": "pending-api-identity",
+    "repository": "x-bot",
+    "platform": "x",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "science",
+      "home",
+      "tools"
+    ],
+    "enabled": false,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/x-bot"
+  },
+  "tong_threads": {
+    "channel_key": "tong_threads",
+    "name": "tongono21",
+    "page_id": "26888368977456536",
+    "repository": "rocket-facebook-page",
+    "platform": "threads",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "home",
+      "organization",
+      "tools"
+    ],
+    "enabled": false,
+    "require_signature": true,
+    "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
+    "repository_slug": "tongono-creator/rocket"
+  }
+}

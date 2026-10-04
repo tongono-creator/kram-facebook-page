@@ -84,10 +84,18 @@ def _is_shopee_url(value: str) -> bool:
 
 
 def validate_product(product: Mapping[str, Any]) -> dict[str, str]:
+    product_input = product
     name, url = str(product.get("name", "")).strip(), str(product.get("url", "")).strip()
     if not name or not _is_shopee_url(url):
         raise ValueError("product requires a name and Shopee HTTPS URL")
-    return {"name": name, "url": url}
+    product = {"name": name, "url": url}
+    if "comment" in product_input:
+        comment = str(product_input["comment"]).strip()
+        links = URL_RE.findall(comment)
+        if links != [url] or DISCLOSURE not in comment:
+            raise ValueError("reviewed comment must contain its one product URL and disclosure")
+        product["comment"] = comment
+    return product
 
 
 @dataclass(frozen=True)
@@ -149,6 +157,8 @@ def select_product(post: Mapping[str, Any], config: Mapping[str, Any]) -> Select
 
 def build_comment(selection: Selection) -> str:
     product = selection.product
+    if product.get("comment"):
+        return product["comment"]
     if selection.reason == "fallback":
         lead = f"พิกัดสินค้าสำหรับผู้ติดตาม: {product['name']} — {product['url']}"
     else:

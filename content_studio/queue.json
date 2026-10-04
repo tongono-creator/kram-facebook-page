@@ -1,0 +1,5 @@
+{
+  "channel_key": "kram_fb",
+  "packages": [],
+  "policy": "Only packages with root-editor Ed25519 signatures; production subagents cannot release their own work."
+}

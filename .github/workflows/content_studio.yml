@@ -1,0 +1,48 @@
+name: Content Studio approved queue
+on:
+  schedule:
+    - cron: '13 12 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'audit reads identity/queue; publish consumes root-approved packages only'
+        type: choice
+        options: [audit, dry-run, publish]
+        default: audit
+concurrency:
+  group: content-studio-facebook
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  approved-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install studio dependencies
+        run: pip install 'requests>=2.32,<3' 'cryptography>=46,<47'
+      - name: Verify gate and recovery tests
+        run: python -m unittest discover -s content_studio/tests
+      - name: Configure state commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Audit or process reviewed queue
+        env:
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          STUDIO_STATE_BRANCH: main
+          STUDIO_MODE: ${{ inputs.mode || 'publish' }}
+        run: python content_studio/queue_runner.py --mode "$STUDIO_MODE" > content_studio_result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-studio-result
+          path: content_studio_result.json
+          retention-days: 30
