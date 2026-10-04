@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-12_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T18:06:07.120417+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "f68a2c503893d3c93fcb6ade1a434bec33667a294e8b885d77e467fc3f84db6e",
+    "mobile.png": "5397fe5f3c21ea8c79d07b935d3ce34d144028e47a794fbb09031c04efb149d5"
+  },
+  "notes": "Root actually opened saved 1080x1350 and 360px previews for each. Thai and Latin headline legible, contrast sufficient, AI/hypothetical labels visible. Main rack(s), three bottles/shelving, sauce bowls and measuring spoon, and oil vessels unobscured. Generic illustrations do not establish branded SKU performance. No approval of evidence or affiliate from this visual-only receipt. Root currentfullcaption hypotheticalfoldingrack storagevsuse footprint checked,no measuredtestclaimed. Root actual shop428440138/item13082096538 Dewalt&Stanley Mall badge, single5-30-815-THA tape5m, noselector, stock9buyenabled. Complete current sellerbody and actualphoto read. SellerLeverLook/LeverLock brand marking,5m/16ftroundedlabel no exactconversionclaimed. No calibratedprecision,Classcertification,durability/ergonomicperformance,authenticity,2yrwarranty independentlypromised. All4datesfollowedcanonical andexact5SubIDs. Householdmeasurement only, recordprintedunitandrepeatread; not spacecraft-navigation orsoftwareconverter. SamepageKram12to19exact7days,19to27eightdays;AlmostfirstSKUuse. Actual matching SKU and comment checked from catalog and selected proof files; per-post link uses Root browser verification when provided.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-27_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T18:24:46.074034+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "8a141f0a2ec8bfcd4e520f948331e8550aca1f1b8d8261b04fe98cb4ef2ac7c6",
+    "mobile.png": "acec9f55af8fed2945136327838e7a9f33504d6a13cbc9165f4e6bdf8c78a412"
+  },
+  "notes": "Root full/mobile seen. Transparent box and lid, strainer/steamer/broccoli, dog bed and relaxed seated human, separated generic recycling items/bins, curry ingredients, and dog/harness scene all complete and plausible. Main copy and AI labels legible; no device performance, diagnosis or exact product identity inferred. Sources/SKUs separate. Root currentfullcaption hypotheticalclearcontainer visibility vs item-specificstorage needschecked, medicines/food/chemicalreferactualproductinstructions. Root actual shop428440138/item13082096538 Dewalt&Stanley Mall badge, single5-30-815-THA tape5m, noselector, stock9buyenabled. Complete current sellerbody and actualphoto read. SellerLeverLook/LeverLock brand marking,5m/16ftroundedlabel no exactconversionclaimed. No calibratedprecision,Classcertification,durability/ergonomicperformance,authenticity,2yrwarranty independentlypromised. All4datesfollowedcanonical andexact5SubIDs. Householdmeasurement only, recordprintedunitandrepeatread; not spacecraft-navigation orsoftwareconverter. SamepageKram12to19exact7days,19to27eightdays;AlmostfirstSKUuse. Actual matching SKU and comment checked from catalog and selected proof files; per-post link uses Root browser verification when provided.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}
