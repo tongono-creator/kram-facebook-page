@@ -68,5 +68,13 @@
     "scheduled_at": "2026-10-11T10:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-10-04T21:03:06.362598+00:00"
+  },
+  "2026-10-17_kram_fb": {
+    "package_sha256": "69826c32b5b2813359ef9403548577ba88b0b9cfa9a1c8bef3ad8e7479125c9a",
+    "page_id": "116701184708556",
+    "product_id": "14499403259",
+    "scheduled_at": "2026-10-17T10:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-10-04T21:03:07.430343+00:00"
   }
 }
