@@ -5,16 +5,15 @@ Direct use of automatic function calling (AFC) in Models.generate_content is not
 Product: XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป ...
 [System Log] Converted Product JSON:
 {
-  "ประเภท": "เคสไอโฟน",
+  "ประเภท": "เคสมือถือ",
   "จุดเด่น": "จอ E-Ink เปลี่ยนรูปได้ผ่าน NFC",
   "รุ่น": "iPhone 14-18",
   "ราคา": 2250,
   "ชื่อสินค้า": "XTREM เคส iPhone 18/17/16/15/14 เปลี่ยนรูปได้ เคสเปลี่ยนรูป"
 }
-[gemini-flash-latest] caption rejected: ['fake_experience:กดสั่ง']
 [System Log] Caption approved on attempt 1!
-[System Log] Chosen Role: ข้อควรพิจารณา (R8)
-[System Log] Chosen Persona: เพื่อนชี้พิกัด (C)
+[System Log] Chosen Role: เทียบราคาและฟังก์ชัน (R2)
+[System Log] Chosen Persona: คนมองปัญหา (D)
 [System Log] Chosen Hook: เปิดด้วยสถานการณ์ที่สินค้านี้น่าจะเหมาะ
 [System Log] Chosen Style: เทียบข้อมูล
 Traceback (most recent call last):
