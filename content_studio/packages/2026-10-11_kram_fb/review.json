@@ -1,0 +1,15 @@
+{
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T20:33:20.409073+00:00",
+  "package_sha256": "a39060a9918fd437d1baffd0acf19b8456941208ac30cc00e741410f13ad1220",
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root full caption/evidence read, explicit hypothetical entryway, no empirical result, one-item return spot. Root actual shop167629790/item40660896442 maxcio_rocco. Selected22x30CM black3916 tick, stock36, buy enabled. Actual selected image29.8x21.8cm rounded nominal22x30; not verified internal dimensions. Body all6sizes depth2cm, PP, general multipurpose tray. No independent heat, food-contact, nonslip or load verification; recommend only dry key storage. Actual link and5SubIDs match redirect. Actual matching SKU and comment checked from catalog and selected proof files; per-post link uses Root browser verification when provided.",
+  "checks": {
+    "full_image_seen": true,
+    "mobile_seen": true,
+    "thai_readable": true,
+    "subject_correct": true,
+    "source_checked": true,
+    "affiliate_checked": true
+  },
+  "signature": "nj/7Ktm4BU+tjLs2NNzjMxsYmy8GRkfp3ururCrqLhYL2PcKE8MIdXGf2P6soRvQ9gqhaDPJNnSNQSp6MK9hBQ=="
+}

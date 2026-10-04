@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-11_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:56:03.048108+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "84436a3efeda6de8dbb2a584e69380ca0a9d504446a62a5a8169809ca9696d87",
+    "mobile.png": "4b9d15267f8e004fe51da963b744bd81f7ddf7c74a6f8bf280ae997a2f9ee857"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root full caption/evidence read, explicit hypothetical entryway, no empirical result, one-item return spot. Root actual shop167629790/item40660896442 maxcio_rocco. Selected22x30CM black3916 tick, stock36, buy enabled. Actual selected image29.8x21.8cm rounded nominal22x30; not verified internal dimensions. Body all6sizes depth2cm, PP, general multipurpose tray. No independent heat, food-contact, nonslip or load verification; recommend only dry key storage. Actual link and5SubIDs match redirect. Actual matching SKU and comment checked from catalog and selected proof files; per-post link uses Root browser verification when provided.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}
