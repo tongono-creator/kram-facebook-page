@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-07_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:56:03.048108+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "db1f5244abff7b4af2ddaef1306b3b5359b1652a66c188c2839ee5cffa607b0b",
+    "mobile.png": "452e7d59cfa92cc8dc4ba4212ae23d45cfc719d7de7a949ea1b545e883a13247"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root read full caption: explicitly hypothetical room layout with no invented fixed clearance or escape-route certification. Root saw actual full/mobile card and checked complete single GREJIG listing: Stadion seller, canonical shop/item ID, five tracked SubIDs and seller dimensions. Comment asks to measure actual door swing and keep walkway clear, no authenticity or stacking safety endorsement. Actual matching SKU and comment checked from approved_products proof.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}

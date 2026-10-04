@@ -2,7 +2,8 @@
   "channel_key": "kram_fb",
   "packages": [
     "packages/2026-10-05_kram",
-    "packages/2026-10-06_kram_fb"
+    "packages/2026-10-06_kram_fb",
+    "packages/2026-10-07_kram_fb"
   ],
   "policy": "Only packages with root-editor Ed25519 signatures; production subagents cannot release their own work."
 }
