@@ -1,0 +1,47 @@
+{
+  "product_id": "5676435791",
+  "shop_id": "51725169",
+  "name": "กระเป๋าจัดระเบียบสายชาร์จและอุปกรณ์อิเล็กทรอนิกส์ — NEO MART",
+  "url": "https://s.shopee.co.th/6fho2HXiIl",
+  "category": "organization",
+  "subids": [
+    "kram",
+    "20261026",
+    "cables",
+    "neo23",
+    "comment"
+  ],
+  "variants": [
+    "เทา / Gray",
+    "ดำ / Black",
+    "น้ำเงิน / Navy blue",
+    "แดง / Red"
+  ],
+  "variant_note": "ตรวจสีที่หน้าปลายทางแล้ว ไม่มีการรับรองว่าช่องใส่อุปกรณ์ของผู้อ่านได้ทุกชิ้น",
+  "eligible_channels": [
+    "kram_fb",
+    "almost_fb"
+  ],
+  "verified_at": "2026-10-04T21:35:59.998869+00:00",
+  "verification_status": "verified",
+  "verification_method": "Root browser checked per-post destination and embedded SubIDs; captured short-link form checked locally",
+  "destination_url": "https://shopee.co.th/product/51725169/5676435791",
+  "disclosure": "ลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้",
+  "comment": "ก่อนเปลี่ยนโต๊ะทำงานเป็นโต๊ะกินข้าว ลองรวมสายชาร์จและหัวชาร์จที่ถอดแล้วไว้เป็นชุดครับ รายการนี้เป็นกระเป๋าเก็บสายชาร์จและอุปกรณ์ชิ้นเล็กของ NEO MART เลือก ดำ / Black ตามตัวเลือกที่ตรวจไว้ ร้านระบุขนาด 23×16×3 ซม. มีช่องแบ่งและสายรัดด้านใน วัดสายหรือหัวชาร์จของคุณกับพื้นที่ใช้งานจริงก่อนซื้อ เก็บอุปกรณ์ที่ถอดใช้งานและเย็นแล้ว เพจไม่ได้ทดสอบการกันน้ำหรือกันกระแทก กระเป๋านี้ใช้รวมอุปกรณ์ชิ้นเล็ก ไม่ได้รับรองว่าใส่สมุดหรือของงานได้ทั้งหมด ถ้ากล่องเดิมทำหน้าที่นี้ได้ก็ยังไม่ต้องซื้อเพิ่ม\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/6fho2HXiIl",
+  "proof_files": [
+    "audience_audit/affiliate/kram-neo23-oct26/modal.txt",
+    "audience_audit/affiliate/kram-neo23-oct26/product.txt",
+    "audience_audit/affiliate/neo-black-refresh/product.txt",
+    "audience_audit/affiliate/almost-neo23-oct11/product.png"
+  ],
+  "price_in_comment": false,
+  "root_fresh_variant_review": {
+    "reviewed_at": "2026-10-04T21:35:59.998869+00:00",
+    "reviewer": "root-editor",
+    "notes": "Root fresh complete seller body and actual black-bag photograph checked, selectedดำ/Black tick10stock/buyenabled. NEO MART polyester cable/accessory bag seller size23x16x3cm, compartments/mesh/straps and zip/wristloop shown. Seller Thaiwaterproof vs Englishmildlysplash-resistant: no waterproof/immersion claim. No drop/shock, fire, battery-storage certification or guaranteed innerfit. Store cool disconnected cables/accessories, not charging in closed bag. Root exact allfour dated canonical51725169/5676435791 links and fiveutm_content fields checked. Almost ordinary physical cable-kit organization experiment; cannot prevent S3/Knight software failures.",
+    "proof_files": [
+      "audience_audit/affiliate/neo-black-refresh/product.txt",
+      "audience_audit/affiliate/almost-neo23-oct11/product.png"
+    ]
+  }
+}
