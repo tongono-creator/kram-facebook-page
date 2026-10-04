@@ -62,9 +62,11 @@
   "2026-10-11_kram_fb": {
     "package_sha256": "a39060a9918fd437d1baffd0acf19b8456941208ac30cc00e741410f13ad1220",
     "page_id": "116701184708556",
+    "photo_id": "1036146712779038",
+    "post_id": null,
     "product_id": "40660896442",
     "scheduled_at": "2026-10-11T10:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-10-04T20:33:49.543602+00:00"
+    "updated_at": "2026-10-04T20:34:00.513592+00:00"
   }
 }
