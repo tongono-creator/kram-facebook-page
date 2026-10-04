@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-06_kram_fb",
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-04T17:50:24.935724+00:00",
+  "full_image_seen": true,
+  "mobile_seen": true,
+  "visual_status": "passed",
+  "signature_status": "unsigned_pending_evidence_and_affiliate",
+  "hashes": {
+    "card.png": "c773be863daf7f53c706b0d9a8ffc949c112fa6a6dab023a37ba01da6d029156",
+    "mobile.png": "a267233992ce19692d47dba042dbcafd3552820d279022e5ac7da73266128c33"
+  },
+  "notes": "Root actually viewed both saved images. Thai legible; main subject visible and unobscured; no claimed real test; AI disclosure visible. Any minor crop of incidental background props is not used as proof of SKU. Root read full caption and evidence. Original hypothetical drawer scene, visibly AI and hypothetical, no empirical performance claims and no external factual citation required. Root inspected actual PunPunYang seller, Size M tick, external dimensions25.5x8x5cm, canonical product and all five actual embedded SubIDs; comment asks readers to measure inner drawer rather than guaranteeing fit. Different product from Oct5 pilot; global signed-plan cooldown must pass. Actual matching SKU and comment checked from approved_products proof.",
+  "source_checked": true,
+  "affiliate_checked": true,
+  "status": "signed_approved"
+}
