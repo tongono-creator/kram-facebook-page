@@ -1,0 +1,14 @@
+{
+  "payload": {
+    "channel": "kram_fb",
+    "page_id": "116701184708556",
+    "page_name": "กรามค้าง",
+    "about_before": {
+      "present": true,
+      "value": "“ข่าวแปลก ข่าวไวรัล อะไรเดือด ๆ เรารู้ก่อนเพื่อน!”"
+    },
+    "about_after": "บ้านนี้มีพิรุธ! ชวนสังเกตปัญหาเล็กในบ้าน แล้วหาวิธีจัดพื้นที่และเลือกของให้เข้ากับชีวิตจริง"
+  },
+  "payload_sha256": "951b2cc19c7ce3b175e52fb0aa2ed1145131518faac38afa4008c6c39b05f8c5",
+  "root_signature": "3bSBKhjTvhTphuQGjFYBZguF88saK5Ctd02h7eVax6N9LhEXxvBIGrJaTHX27FsIDyqxN+pmSQbylBTYWYkRDw=="
+}

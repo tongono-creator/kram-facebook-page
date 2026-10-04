@@ -1,0 +1,49 @@
+name: Root-signed Facebook About change
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run reads only; publish updates ONLY the root-signed About field'
+        type: choice
+        options: [dry-run, publish]
+        default: dry-run
+concurrency:
+  group: content-studio-facebook
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  signed-about:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install 'requests>=2.32,<3' 'cryptography>=46,<47'
+      - name: Verify signed profile safety and recovery tests
+        run: python -m unittest discover -s profile_tools/tests
+      - name: Configure durable ledger commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Apply or preview root-signed About only
+        env:
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          PROFILE_MODE: ${{ inputs.mode }}
+        run: |
+          if [ "$PROFILE_MODE" = "publish" ]; then
+            python profile_tools/profile_update.py --channel kram_fb --plan profile_tools/plans/kram_fb.json --publish --git-state > page_profile_update.json
+          else
+            python profile_tools/profile_update.py --channel kram_fb --plan profile_tools/plans/kram_fb.json --dry-run > page_profile_update.json
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: page-profile-update
+          path: page_profile_update.json
+          retention-days: 30
