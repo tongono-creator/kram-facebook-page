@@ -270,17 +270,20 @@ class Scheduler:
                 raise ScheduleError('Write outcome unknown; reconcile before retry') from None
             photo_id, post_id = response.get('id'), response.get('post_id')
             self.save(plan['id'], 'publishing', photo_id=photo_id, post_id=post_id)
-            if not photo_id or not post_id:
+            if not photo_id:
                 self.save(plan['id'], 'unknown')
                 raise ScheduleError('Photo response incomplete; reconcile before retry')
             # Store mapping immediately even if readback fails, then verify live photo and slot.
-            self.remember(plan, {'id': post_id, 'attachments': {'target': {'id': photo_id}}})
+            if post_id:
+                self.remember(plan, {'id': post_id, 'attachments': {'target': {'id': photo_id}}})
             scheduled = list(self.api.posts())
             match = self.match(plan, caption, scheduled)
             if not match:
                 self.save(plan['id'], 'unknown')
                 raise ScheduleError('Scheduled photo readback not verified; never retry blindly')
-            self.save(plan['id'], 'verified')
+            post_id = match['id']
+            self.remember(plan, match)
+            self.save(plan['id'], 'verified', post_id=post_id)
             results.append({'id': plan['id'], 'status': 'verified', 'post_id': post_id})
         return results
 
@@ -310,6 +313,8 @@ def main(argv=None):
     parser.add_argument('--git-state', action='store_true')
     parser.add_argument('--audit', action='store_true', help='Read-only live identity, full queue count and optional followers')
     args = parser.parse_args(argv)
+    if args.publish and not args.git_state:
+        raise ScheduleError('Publish requires --git-state so reservation and affiliate mapping reach the shared worker')
     channel = studio.read_json(args.channels).get(args.channel)
     if not channel:
         raise ScheduleError('Unknown configured channel')
@@ -329,7 +334,7 @@ def main(argv=None):
         api = FacebookApi(channel)
         identity = api.identity()
         if str(identity.get('id'))!=str(channel['page_id']) or identity.get('name')!=channel.get('page_name',channel.get('name')):
-            raise ScheduleError('Audit token belongs to a different page')
+            raise ScheduleError(f"Audit identity mismatch: id={identity.get('id')}, name={identity.get('name')}")
         print(json.dumps({'channel':args.channel,'identity':identity,'scheduled_count':len(list(api.posts())),
                           'followers_count':api.followers(),'checked_at':datetime.now(timezone.utc).isoformat()},ensure_ascii=False))
         return 0

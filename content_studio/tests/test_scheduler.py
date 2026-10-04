@@ -37,6 +37,18 @@ class FakeApi:
 
 
 class SchedulerTests(unittest.TestCase):
+    def test_photo_only_response_is_resolved_from_exact_live_photo_and_slot(self):
+        original = self.api.schedule
+        def photo_only(*args):
+            response = original(*args)
+            return {'id': response['id']}
+        self.api.schedule = photo_only
+        result = self.runner.run([self.package],publish=True)
+        self.assertEqual(result[0]['status'],'verified')
+        self.assertEqual(result[0]['post_id'],'123_456')
+        self.assertEqual(len(self.api.writes),1)
+        self.assertEqual(studio.read_json(self.runner.path)[studio.read_json(self.package/'manifest.json')['id']]['post_id'],'123_456')
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -242,6 +254,13 @@ class SchedulerTests(unittest.TestCase):
 
 
 class ApiSecurityTests(unittest.TestCase):
+    def test_cli_publish_without_shared_state_stops_before_any_api_or_file_read(self):
+        with patch.object(scheduler.FacebookApi, 'identity') as identity, patch.object(studio, 'read_json') as read:
+            with self.assertRaisesRegex(scheduler.ScheduleError, 'requires --git-state'):
+                scheduler.main(['--repo-root','unused','--channel','kram_fb','--packages','unused','--publish'])
+            identity.assert_not_called()
+            read.assert_not_called()
+
     def test_pagination_uses_cursor_and_bearer_never_next_token_url(self):
         with patch.dict(os.environ,{'PAGE_ACCESS_TOKEN':'TEST_SECRET_NOT_LIVE'}):
             api = scheduler.FacebookApi({'page_id':'123'})
