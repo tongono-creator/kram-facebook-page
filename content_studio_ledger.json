@@ -69,6 +69,14 @@
     "status": "verified",
     "updated_at": "2026-10-04T21:52:31.238659+00:00"
   },
+  "2026-10-12_kram_fb": {
+    "package_sha256": "29d0fdec53bfbc50e542819f2fdbf2d992b9e409576ffd1b938f7d8b5303f71e",
+    "page_id": "116701184708556",
+    "product_id": "13082096538",
+    "scheduled_at": "2026-10-12T10:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-10-04T21:52:32.315950+00:00"
+  },
   "2026-10-15_kram_fb": {
     "package_sha256": "67bf8232cf50239764a68ae6d311ab2f00345644374a5f81b78e24fdba1266a1",
     "page_id": "116701184708556",
