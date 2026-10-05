@@ -18,6 +18,7 @@ import tempfile
 import time
 from collections import Counter
 from dataclasses import dataclass
+from affiliate_post_policy import affiliate_skip_reason
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, Mapping
@@ -511,6 +512,10 @@ class AffiliateReconciler:
             reason = self._eligible(post, self.since)
             if reason:
                 skipped[reason] += 1
+                continue
+            policy_reason = affiliate_skip_reason(post, self.config)
+            if policy_reason:
+                skipped[policy_reason] += 1
                 continue
             post_id = str(post["id"])
             prior = self.state.get(self.platform, account, post_id)
