@@ -1,0 +1,57 @@
+name: Root same-post design correction
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'audit GET only; apply requires signed exact same-post plan; reconcile never calls Meta POST'
+        type: choice
+        options: [audit, apply, reconcile]
+        default: audit
+      plan:
+        description: 'Root-signed file under design_revision/plans; blank audits exact known post IDs'
+        type: string
+        required: false
+        default: ''
+concurrency:
+  group: content-studio-facebook
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install 'requests>=2.32,<3' 'cryptography>=46,<47'
+      - name: Offline safety tests
+        run: PYTHONPATH=design_revision python -m unittest discover -s design_revision/tests
+      - name: Configure durable state commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Exact known-post audit or Root correction
+        env:
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          REVISION_MODE: ${{ inputs.mode }}
+          REVISION_PLAN: ${{ inputs.plan }}
+        run: |
+          args=(--root . --channel kram_fb --mode "$REVISION_MODE")
+          if [ -n "$REVISION_PLAN" ]; then args+=(--plan "$REVISION_PLAN"); fi
+          if [ "$REVISION_MODE" != audit ]; then args+=(--git-state); fi
+          python design_revision/facebook_card_update.py "${args[@]}" > design_revision_result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: design-revision-result
+          path: |
+            design_revision_result.json
+            design_revision/ledger.json
+          retention-days: 30

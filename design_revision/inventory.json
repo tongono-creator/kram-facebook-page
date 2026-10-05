@@ -1,0 +1,137 @@
+[
+  {
+    "id": "2026-10-05_kram",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1035997442793965",
+    "caption_sha256": "8d6de3557f856ec5b1b4712af9676e4190eeef5b3ce810d984109eefa130f03e",
+    "scheduled_at": "2026-10-05T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-06_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036047752788934",
+    "caption_sha256": "32b46e9dc2a36f890c4d3b9e87d21b9c29c0bb8e8a976d2d54b6a25a97d7cc25",
+    "scheduled_at": "2026-10-06T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-07_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036084126118630",
+    "caption_sha256": "84632bc3b6ab97f87257b1c0c41510110400e85964dc700597ad2ee69cdf7362",
+    "scheduled_at": "2026-10-07T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-08_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036106099449766",
+    "caption_sha256": "9a96fdae5cd3869cad3ec813370ba2340fe9032bb468f1c7768bfeb1c9ffec93",
+    "scheduled_at": "2026-10-08T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-09_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036106216116421",
+    "caption_sha256": "784d2565d52385d0f47402d8d1da489a301f21574de11efb469539dca2359acd",
+    "scheduled_at": "2026-10-09T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-10_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036133636113679",
+    "caption_sha256": "2ce79640db78d1448a7659cb6ffe147bae05f11db748e0972ee05e30fff98b0a",
+    "scheduled_at": "2026-10-10T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-11_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036146712779038",
+    "caption_sha256": "78ae4848bce2efc27e69a1c6e5bb5c500eacc3431e7346ad6adaf9df2a258fa5",
+    "scheduled_at": "2026-10-11T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-12_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036186186108424",
+    "caption_sha256": "7cd58ca052b7bd2650a5e01f0a6f3c4c0e192b9d47079e0ce2e8d9bee17e7a5b",
+    "scheduled_at": "2026-10-12T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-15_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036178979442478",
+    "caption_sha256": "46bdcdbdeee2d57d6842602a62ce35c8c206a52d7d405027ac7685068554883f",
+    "scheduled_at": "2026-10-15T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-17_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036161286110914",
+    "caption_sha256": "651ab694551a2dd93b77f0b84d1cf945512792f51b1c83f45a8cbe5904a3ac61",
+    "scheduled_at": "2026-10-17T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-19_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036186286108414",
+    "caption_sha256": "e46004ee73ccc7e09b50758a28401a63cd13b74fb8c99a4953924c605ffcccaa",
+    "scheduled_at": "2026-10-19T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-23_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036171019443274",
+    "caption_sha256": "ac90c975a400e8efcf780c3299dce87eabdd0f88d04d78c65ed9fc96d222f568",
+    "scheduled_at": "2026-10-23T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-26_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036179062775803",
+    "caption_sha256": "a296169ba5a1bc5066add75ec9db99ba4ee75965fe0c28510bd53266cd7390d5",
+    "scheduled_at": "2026-10-26T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-27_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036186372775072",
+    "caption_sha256": "b83bdfab8129978fbec903c1346b375c8b9ebb150cc1137d16022587885e811d",
+    "scheduled_at": "2026-10-27T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  },
+  {
+    "id": "2026-10-31_kram_fb",
+    "channel": "kram_fb",
+    "post_id": "116701184708556_1036161356110907",
+    "caption_sha256": "79aa160bbdce91312d7db0d90c78c72f0cf64ddf47f06f5ccef734503b1f78d2",
+    "scheduled_at": "2026-10-31T10:30:00+07:00",
+    "known_release_proof": "live_release/kram_stanley_batch/content-studio-result/content_studio_result.json",
+    "kind": "root_signed_native_release"
+  }
+]
