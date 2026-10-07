@@ -46,5 +46,15 @@
         "1038520092541700"
       ]
     }
+  },
+  "oct07_newimg_2026-10-11_kram_fb": {
+    "state": "reserved_create",
+    "package_id": "oct07_newimg_2026-10-11_kram_fb",
+    "page_id": "116701184708556",
+    "plan_sha256": "15415c31a12c7d1fff0856edfe097aae34604a69ab6d4faa21e092f5ab3fa831",
+    "updated_at": "2026-10-07T13:45:48.389474+00:00",
+    "slot": 1791720000,
+    "caption_sha256": "90a3088545d0aa5c08a958d8eb94224b7449def24329917f4e51e190a91a8930",
+    "package_sha256": "3293a8f507d2db91c9ff5d7a03a1b90bd5c16299800ce3695de9c7a5034bb07a"
   }
 }
