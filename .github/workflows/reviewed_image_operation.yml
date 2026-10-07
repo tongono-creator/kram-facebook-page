@@ -1,0 +1,94 @@
+# TEMPLATE ONLY: Root must review/deploy this into the selected Page repository.
+name: Root reviewed IMAGE operation
+on:
+  workflow_dispatch:
+    inputs:
+      adapter:
+        description: Reviewed action family
+        required: true
+        type: choice
+        default: editorial
+        options: [editorial, replacement, surplus, inventory]
+      channel:
+        description: Exact confirmed channel key
+        required: true
+        type: string
+      plan:
+        description: Root signed file under design_revision/plans
+        required: false
+        type: string
+      mode:
+        description: Audit first; apply only after fresh Root review
+        required: true
+        type: choice
+        default: audit
+        options: [audit, apply, reconcile]
+permissions:
+  contents: write
+concurrency:
+  group: root-reviewed-image-operations
+  cancel-in-progress: false
+jobs:
+  reviewed-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests cryptography
+      - name: Configure durable review history
+        run: |
+          git config user.name 'root-editor-history'
+          git config user.email 'root-editor-history@users.noreply.github.com'
+      - name: Validate and execute one exact signed operation
+        env:
+          IMAGE_ADAPTER: ${{ inputs.adapter }}
+          IMAGE_CHANNEL: ${{ inputs.channel }}
+          IMAGE_PLAN: ${{ inputs.plan }}
+          IMAGE_MODE: ${{ inputs.mode }}
+          PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          ALMOST_PAGE_ACCESS_TOKEN: ${{ secrets.ALMOST_PAGE_ACCESS_TOKEN || secrets.KRAM_PAGE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess, sys
+          from pathlib import Path
+          helpers={'editorial':'design_revision/facebook_editorial_schedule.py',
+                   'replacement':'design_revision/facebook_future_replacement.py',
+                   'surplus':'design_revision/facebook_surplus_cancel.py',
+                   'inventory':'design_revision/facebook_image_inventory.py'}
+          adapter=os.environ.get('IMAGE_ADAPTER');mode=os.environ.get('IMAGE_MODE')
+          if adapter not in helpers or mode not in ('audit','apply','reconcile'):
+              raise SystemExit('Invalid reviewed adapter or mode')
+          command=[sys.executable,helpers[adapter],'--root','.', '--channel',os.environ['IMAGE_CHANNEL']]
+          if adapter=='inventory':
+              if mode!='audit':raise SystemExit('Inventory is GET-only audit')
+          else:
+              command.extend(['--plan',os.environ['IMAGE_PLAN'],'--mode',mode])
+              if mode in ('apply','reconcile'):command.append('--git-state')
+          result=subprocess.run(command,capture_output=True,text=True)
+          output=result.stdout.strip()
+          try:
+              value=json.loads(output)
+              if not isinstance(value,dict):raise ValueError()
+          except ValueError:
+              value={'status':'held','error':{'reason':'adapter_output_unavailable'}}
+          Path('reviewed_image_result.json').write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps({k:value.get(k) for k in ('status','post_id','new_post_id','external_writes_this_run','external_writes','error')},ensure_ascii=False))
+          # Do not echo unstructured stderr, subprocess command or environment.
+          raise SystemExit(result.returncode or (1 if value.get('status')=='held' else 0))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: root-reviewed-image-result
+          if-no-files-found: ignore
+          path: |
+            reviewed_image_result.json
+            design_revision/replacement_ledger.json
+            design_revision/surplus_cancel_ledger.json
+            design_revision/editorial_schedule_ledger.json
