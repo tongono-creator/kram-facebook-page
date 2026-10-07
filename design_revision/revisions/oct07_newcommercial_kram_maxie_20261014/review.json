@@ -1,0 +1,15 @@
+{
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-07T14:17:35.192796+00:00",
+  "package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae",
+  "notes": "Root actually viewed exact full1080x1350 and360px images, whole actual seller product photo; read final caption and source evidence and selected variant. Root logged-in Shopee verified canonical destination and five date-bound SubIDs. Full native queue GET confirmed old queues intact and spacing>=90min. Existing future selected lists empty, sales dates at least7days after current published history; one initial selected sales post per page, ceiling2. Existing sole worker comments only after real native post IDs verified. No personal-use or guaranteed-sales claims.",
+  "checks": {
+    "full_image_seen": true,
+    "mobile_seen": true,
+    "thai_readable": true,
+    "subject_correct": true,
+    "source_checked": true,
+    "affiliate_checked": true
+  },
+  "signature": "RUjNaw/+le4pSsZGAQ9+8LqV1J6rXzCVQfbW76+KGkIR5Ej5AermeM+ZpNpVZek6yLp2VdYpkNZFU79YoZW4BQ=="
+}

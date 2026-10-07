@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-10-07T13:49:42.064902+00:00",
+  "channel_key": "kram_fb",
+  "canonical_product_id": "167629790:40660896442",
+  "selected_variant": [
+    "24x34CM -ถาดดำ[3917]"
+  ],
+  "source": {
+    "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\product_cards\\kram_fb_maxie3917_v1\\source.webp",
+    "sha256": "be678afaa8f4d63e8fade62c9a66b9d65af238bc675f882374d3952d1ada565c",
+    "dimensions": [
+      450,
+      450
+    ],
+    "display_rect": {
+      "x": 0,
+      "y": 0,
+      "width": 450,
+      "height": 450
+    },
+    "scale": 1.9422222222222223,
+    "proof_path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\kram_maxie_listing_dom.txt",
+    "proof_sha256": "2bb9cd4a8abe1b1d70d2dcb048fdd841db7a285c7104661c02ab8656a5699934",
+    "ai_product_generated": false
+  },
+  "additional_proofs": [],
+  "native_html_frame_only": true,
+  "copy": [
+    "ของหายทุกเช้า?",
+    "รวมไว้ถาดเดียว"
+  ],
+  "product_label": "MAXIE 3917 · 24×34 ซม.",
+  "qa": {
+    "headlineFont": 100,
+    "headlineLineCount": 2,
+    "headlineFits": true,
+    "labelFits": true,
+    "photoCount": 1,
+    "fontsLoaded": true,
+    "decoded": true
+  },
+  "root_approved": false,
+  "root_full_mobile_visual_review_pending": true,
+  "live_mutations": false,
+  "price_shown": false,
+  "personal_test_claimed": false,
+  "artifacts": {
+    "card.html": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\product_cards\\kram_fb_maxie3917_v1\\card.html",
+      "sha256": "360b0248cbec190841a95091cd1722f2a134a5c62f452c2a486f38247e0d1589"
+    },
+    "card.png": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\product_cards\\kram_fb_maxie3917_v1\\card.png",
+      "sha256": "f97c191c132266823ff0232232d1b799aa804e0c6075ed55cbbb5e595fd7b13c"
+    },
+    "mobile.png": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\product_cards\\kram_fb_maxie3917_v1\\mobile.png",
+      "sha256": "c7276a3936963c7b115b2aee752aaa22e76c847706e79cecad894f1a69c2d731"
+    }
+  },
+  "original_photo_path": "C:\\Users\\tongo\\Downloads\\th-11134207-7ra0r-mct0ubadr2hqb5@resize_w450_nl.webp",
+  "original_photo_sha256": "be678afaa8f4d63e8fade62c9a66b9d65af238bc675f882374d3952d1ada565c",
+  "original_photo_byte_unchanged": true,
+  "source_photo_byte_identical": true,
+  "producer_actual_full_mobile_visual_review_completed": true,
+  "producer_visual_notes": "Viewed actual card.png and mobile.png. Exact two Thai hook lines readable at360px. Complete black3917 tray and original24x34cm/depth2cm dimension annotations remain intact. Correct3917/24x34cm product label, not unavailable3916. No price, episode or AI banner. Blue home treatment.",
+  "producer_review_path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\product_cards\\kram_fb_maxie3917_v1\\producer_review.json",
+  "producer_review_sha256": "08ba3855ecb1fb66470e314b57e86936556ae75edd66ef74f6fcb670fb1ba0c8"
+}

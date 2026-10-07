@@ -8,7 +8,7 @@ on:
         required: true
         type: choice
         default: editorial
-        options: [editorial, batch, inventory]
+        options: [editorial, batch, inventory, commercial]
       channel:
         description: Exact confirmed channel key
         required: true
@@ -57,7 +57,7 @@ jobs:
           python - <<'PY'
           import json, os, subprocess, sys
           from pathlib import Path
-          helpers={'editorial':'design_revision/facebook_editorial_schedule.py', 'batch':'design_revision/facebook_editorial_batch.py', 'inventory':'design_revision/facebook_image_inventory.py'}
+          helpers={'editorial':'design_revision/facebook_editorial_schedule.py', 'batch':'design_revision/facebook_editorial_batch.py', 'inventory':'design_revision/facebook_image_inventory.py', 'commercial':'design_revision/facebook_commercial_schedule.py'}
           adapter=os.environ.get('IMAGE_ADAPTER');mode=os.environ.get('IMAGE_MODE')
           if adapter not in helpers or mode not in ('audit','apply','reconcile'):
               raise SystemExit('Invalid reviewed adapter or mode')
@@ -75,7 +75,7 @@ jobs:
           except ValueError:
               value={'status':'held','error':{'reason':'adapter_output_unavailable'}}
           Path('reviewed_image_result.json').write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          print(json.dumps({k:value.get(k) for k in ('status','post_id','new_post_id','external_writes_this_run','external_writes','error')},ensure_ascii=False))
+          print(json.dumps({k:value.get(k) for k in ('status','post_id','photo_id','external_writes_this_run','external_writes','error')},ensure_ascii=False))
           # Do not echo unstructured stderr, subprocess command or environment.
           status=str(value.get('status',''))
           raise SystemExit(result.returncode or (1 if status.startswith('held') or status=='batch_held' else 0))
@@ -88,3 +88,4 @@ jobs:
           path: |
             reviewed_image_result.json
             design_revision/editorial_schedule_ledger.json
+            design_revision/commercial_schedule_ledger.json

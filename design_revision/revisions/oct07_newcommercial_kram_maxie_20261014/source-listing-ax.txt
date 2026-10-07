@@ -1,0 +1,419 @@
+- button "ข้ามไปที่เนื้อหาหลัก":
+  - generic: ข้ามไปที่เนื้อหาหลัก
+- banner:
+  - navigation:
+    - link "Seller Centre":
+      - /url: //seller.shopee.co.th
+    - link "เปิดร้านค้า":
+      - /url: /seller/signup
+    - link "ดาวน์โหลด":
+      - /url: /web/
+    - generic: ติดตามเราบน
+    - link "ติดตามเราบน Facebook":
+      - /url: https://facebook.com/ShopeeTH
+    - link "ติดตามเราบน Instagram!":
+      - /url: https://instagram.com/Shopee_TH
+    - link "ติดตามเราบน Line":
+      - /url: https://line.me/R/ti/p/@shopeeth
+    - list:
+      - link "9+ การแจ้งเตือน":
+        - /url: /user/notifications/order
+        - generic: 9+
+        - generic: การแจ้งเตือน
+      - link "ช่วยเหลือ":
+        - /url: https://help.shopee.co.th/th/s
+        - generic: ช่วยเหลือ
+      - button "ไทย":
+        - generic: ไทย
+      - button "profile tongono21":
+        - img "profile"
+        - generic: tongono21
+  - link "home":
+    - /url: /
+  - search:
+    - combobox "สัมผัส iPhone 18 Pro ใหม่ จากทุกมุมมอง"
+    - button "search":
+  - link "HDD Docking Station":
+    - /url: /search?keyword=hdd%20docking%20station
+  - link "Apple iPhone 17":
+    - /url: /search?keyword=apple%20iphone%2017
+  - link "HDD CCTV":
+    - /url: /search?keyword=hdd%20cctv
+  - link "iPhone 15 Pro Max":
+    - /url: /search?keyword=iphone%2015%20pro%20max
+  - link "Nas Storage":
+    - /url: /search?keyword=nas%20storage
+  - link "iPhone 16 Pro":
+    - /url: /search?keyword=iphone%2016%20pro
+  - link "PS5 Pro ศูนย์ไทย":
+    - /url: /search?keyword=ps5%20pro%20%E0%B8%A8%E0%B8%B9%E0%B8%99%E0%B8%A2%E0%B9%8C%E0%B9%84%E0%B8%97%E0%B8%A2
+  - link "SSD 2 TB":
+    - /url: /search?keyword=ssd%202%20tb
+  - link:
+    - /url: /search?keyword=new%20balance%20327
+    - text: New Balance 327
+  - link:
+    - /url: /search?keyword=i%20phone17
+    - text: I Phone17
+  - link:
+    - /url: /search?keyword=i9%2014900k
+    - text: I9 14900k
+  - link:
+    - /url: /search?keyword=hdd%201tb%20cctv
+    - text: HDD 1tb CCTV
+  - link:
+    - /url: /search?keyword=iphone%2013
+    - text: iPhone 13
+  - link:
+    - /url: /search?keyword=%E0%B8%A3%E0%B8%96%E0%B8%95%E0%B8%B1%E0%B8%94%E0%B8%AB%E0%B8%8D%E0%B9%89%E0%B8%B2%E0%B8%9A%E0%B8%B1%E0%B8%87%E0%B8%84%E0%B8%B1%E0%B8%9A%E0%B8%A7%E0%B8%B4%E0%B8%97%E0%B8%A2%E0%B8%B8
+    - text: รถตัดหญ้าบังคับวิทยุ
+  - link:
+    - /url: /search?keyword=iphone%2016
+    - text: iPhone 16
+  - link:
+    - /url: /search?keyword=orico%20docking%20station
+    - text: Orico Docking Station
+  - link:
+    - /url: /search?keyword=mac%20mini%206
+    - text: MAC Mini 6
+  - link:
+    - /url: /search?keyword=%E0%B8%81%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%81%E0%B8%87%20%E0%B9%83%E0%B8%99%20%E0%B8%A1%E0%B8%B8%E0%B8%81%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%9B%E0%B8%B1%E0%B8%94
+    - text: กางเกง ใน มุกลูกปัด
+  - link:
+    - /url: /search?keyword=hdd%2010tb
+    - text: HDD 10tb
+  - link:
+    - /url: /search?keyword=hisense%2043e7q
+    - text: Hisense 43e7q
+  - link:
+    - /url: /search?keyword=%E0%B8%95%E0%B8%A5%E0%B8%B1%E0%B8%9A%E0%B9%80%E0%B8%A1%E0%B8%95%E0%B8%A3%20stanley
+    - text: ตลับเมตร Stanley
+  - link:
+    - /url: /search?keyword=iphone%2018%20pro%20max
+    - text: iPhone 18 Pro Max
+  - link:
+    - /url: /search?keyword=%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%99%E0%B8%AD%E0%B8%99%E0%B8%AB%E0%B8%A1%E0%B8%B2%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88
+    - text: ที่นอนหมาใหญ่
+  - link:
+    - /url: /search?keyword=mac%20mini%20m5
+    - text: MAC Mini M5
+  - link:
+    - /url: /search?keyword=%E0%B8%8A%E0%B8%B8%E0%B8%94%E0%B9%80%E0%B8%81%E0%B9%89%E0%B8%B2%E0%B8%AD%E0%B8%B5%E0%B9%89%E0%B8%AA%E0%B8%99%E0%B8%B2%E0%B8%A1
+    - text: ชุดเก้าอี้สนาม
+  - link:
+    - /url: /search?keyword=apc%20ups
+    - text: APC Ups
+  - link:
+    - /url: /search?keyword=hhd%202%20tb
+    - text: Hhd 2 TB
+  - link:
+    - /url: /search?keyword=iphone%2017%20pro%20max
+    - text: iPhone 17 Pro Max
+  - link:
+    - /url: /search?keyword=hdd%208tb
+    - text: HDD 8tb
+  - link:
+    - /url: /search?keyword=%E0%B9%81%E0%B8%A3%E0%B8%A1%20ddr4%2016gb%203200mhz
+    - text: แรม DDR4 16gb 3200mhz
+  - link:
+    - /url: /search?keyword=%E0%B8%8A%E0%B8%B1%E0%B9%89%E0%B8%99%E0%B8%A7%E0%B8%B2%E0%B8%87%E0%B8%A3%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%97%E0%B9%89%E0%B8%B2
+    - text: ชั้นวางรองเท้า
+  - link:
+    - /url: /search?keyword=hdd%202tb%20wd
+    - text: HDD 2tb WD
+  - link:
+    - /url: /search?keyword=rtx%205050%20%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%AA%E0%B8%AD%E0%B8%87
+    - text: RTX 5050 มือสอง
+  - link:
+    - /url: /search?keyword=viper%20v3%20pro
+    - text: Viper V3 Pro
+  - link:
+    - /url: /search?keyword=mac%20mini%20m6
+    - text: MAC Mini M6
+  - link "Shopping Cart Icon Shopping Cart number of items in cart 18":
+    - /url: /cart
+    - img "Shopping Cart Icon"
+    - generic: Shopping Cart number of items in cart 18
+    - generic: "18"
+- main:
+  - link "Shopee":
+    - /url: /
+  - img "icon arrow right"
+  - link "เครื่องใช้ในบ้าน":
+    - /url: /เครื่องใช้ในบ้าน-cat.11044956
+  - img "icon arrow right"
+  - link "ห้องครัวและห้องอาหาร":
+    - /url: /ห้องครัวและห้องอาหาร-cat.11044956.11045176
+  - img "icon arrow right"
+  - link "จาน ชาม และเครื่องใช้บนโต๊ะอาหาร":
+    - /url: /จาน-ชาม-และเครื่องใช้บนโต๊ะอาหาร-cat.11044956.11045176.11045798
+  - img "icon arrow right"
+  - generic: 🔥ส่งฟรี🔥 ถาดพลาสติก MAXIE มี6ขนาด ถาดพลาสติกสี่เหลี่ยม ถาดอเนกประสงค์ ถาดเสิร์ฟ ถาดใส่ชา ถาดสไตล์ญี่ปุ่น ถาดมินิมอล ถาดร
+  - img "Product image 🔥ส่งฟรี🔥 ถาดพลาสติก MAXIE มี6ขนาด ถาดพลาสติกสี่เหลี่ยม ถาดอเนกประสงค์ ถาดเสิร์ฟ ถาดใส่ชา ถาดสไตล์ญี่ปุ่น ถาดมินิมอล ถาดร"
+  - button "icon arrow left bold":
+    - img "icon arrow left bold"
+  - button "icon arrow right bold":
+    - img "icon arrow right bold"
+  - generic: "แชร์:"
+  - button "Share on Messenger"
+  - button "Share on Facebook"
+  - button "Share on Pinterest"
+  - button "Share on Twitter"
+  - button "Favorite (567)":
+    - generic: Favorite (567)
+  - heading "🔥ส่งฟรี🔥 ถาดพลาสติก MAXIE มี6ขนาด ถาดพลาสติกสี่เหลี่ยม ถาดอเนกประสงค์ ถาดเสิร์ฟ ถาดใส่ชา ถาดสไตล์ญี่ปุ่น ถาดมินิมอล ถาดร" [level=1]
+  - button "4.9":
+    - generic: "4.9"
+  - button "744 รีวิว":
+    - generic: "744"
+    - generic: รีวิว
+  - generic: ขายแล้ว 10k+ ชิ้น
+  - img "icon help"
+  - button "รายงานสินค้า"
+  - generic: ฿82
+  - generic: ฿90
+  - generic: "-9%"
+  - heading "โค้ดส่วนลดร้านค้า" [level=2]
+  - generic: ลด ฿5
+  - generic: ลด ฿10
+  - generic: ลด ฿20
+  - generic: ลด ฿50
+  - heading "Bundle Deals" [level=2]
+  - generic: ซื้อ 5 ชิ้น ลด ฿5
+  - heading "การจัดส่ง" [level=2]
+  - img "fast green truck icon"
+  - generic: 9 ต.ค. - 11 ต.ค.
+  - generic: ส่งฟรี
+  - generic: รับโค้ดส่วนลด ฿30 หากได้รับสินค้าล่าช้า
+  - heading "ช้อปปี้การันตี" [level=2]
+  - img "service entrance icon"
+  - generic: เก็บเงินปลายทาง
+  - heading "ขนาดสินค้า" [level=2]
+  - button "10x20CM -ถาดดำ[3913]":
+    - generic: 10x20CM -ถาดดำ[3913]
+  - button "16x21CM -ถาดดำ[3914]":
+    - generic: 16x21CM -ถาดดำ[3914]
+  - button "18x24CM -ถาดดำ[3915]":
+    - generic: 18x24CM -ถาดดำ[3915]
+  - button "22x30CM -ถาดดำ[3916]" [disabled]:
+    - generic: 22x30CM -ถาดดำ[3916]
+  - button "24x34CM -ถาดดำ[3917]" [active]:
+    - generic: 24x34CM -ถาดดำ[3917]
+    - img "icon-tick-bold"
+  - button "29x40CM -ถาดดำ[3918]":
+    - generic: 29x40CM -ถาดดำ[3918]
+  - heading "จำนวน" [level=2]
+  - button "Decrease" [disabled]:
+  - spinbutton: "1"
+  - button "Increase":
+  - generic: มีสินค้าทั้งหมด 327 ชิ้น
+  - button "icon-add-to-cart เพิ่มไปยังรถเข็น":
+    - img "icon-add-to-cart"
+    - generic: เพิ่มไปยังรถเข็น
+  - button "ซื้อสินค้า"
+  - heading "Bundle Deals" [level=3]
+  - generic: ซื้อ 5 ชิ้น ลด ฿5
+  - link "ดูทั้งหมด":
+    - /url: /bundle-deal/498426895085658?fromItem=40660896442
+    - text: ดูทั้งหมด
+  - list "Bundle Deals":
+    - link "🔥ส่งฟรี🔥 SOKANY เครื่องสกัดน้ำผลไม้พร้อมแยกกาก กำลังสูง 800 W เครื่องคั้นน้ำผลไม้แยกกาก เครื่องคั้นน้ำผลไม้ [99 ] current price ฿955":
+      - /url: /product/167629790/2602255354?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20SOKANY%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%AA%E0%B8%81%E0%B8%B1%E0%B8%94%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%9C%E0%B8%A5%E0%B9%84%E0%B8%A1%E0%B9%89%E0%B8%9E%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B9%81%E0%B8%A2%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%81%20%E0%B8%81%E0%B8%B3%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%B9%E0%B8%87%20800%20W%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B8%B1%E0%B9%89%E0%B8%99%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%9C%E0%B8%A5%E0%B9%84%E0%B8%A1%E0%B9%89%E0%B9%81%E0%B8%A2%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%81%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B8%B1%E0%B9%89%E0%B8%99%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%9C%E0%B8%A5%E0%B9%84%E0%B8%A1%E0%B9%89%20%20%5B99%20%5D
+      - paragraph: 🔥ส่งฟรี🔥 SOKANY เครื่องสกัดน้ำผลไม้พร้อมแยกกาก กำลังสูง 800 W เครื่องคั้นน้ำผลไม้แยกกาก เครื่องคั้นน้ำผลไม้ [99 ]
+      - deletion: ฿1,099
+      - generic "current price"
+      - emphasis: ฿955
+    - link "🔥ส่งฟรี🔥 เครื่องชั่งดิจิตอล แสตนเลสแท้ใหม่10กิโล/ชั่งได้4หน่วยตวง (Stainless Steel scale) ตาชั่งดิจิตอล เครื่องชั่งอาหาร current price ฿178":
+      - /url: /product/167629790/2661049009?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%94%E0%B8%B4%E0%B8%88%E0%B8%B4%E0%B8%95%E0%B8%AD%E0%B8%A5%20%E0%B9%81%E0%B8%AA%E0%B8%95%E0%B8%99%E0%B9%80%E0%B8%A5%E0%B8%AA%E0%B9%81%E0%B8%97%E0%B9%89%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%8810%E0%B8%81%E0%B8%B4%E0%B9%82%E0%B8%A5%2F%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B9%84%E0%B8%94%E0%B9%894%E0%B8%AB%E0%B8%99%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B8%95%E0%B8%A7%E0%B8%87%20(Stainless%20Steel%20scale)%20%E0%B8%95%E0%B8%B2%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%94%E0%B8%B4%E0%B8%88%E0%B8%B4%E0%B8%95%E0%B8%AD%E0%B8%A5%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%8A%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%AB%E0%B8%B2%E0%B8%A3
+      - paragraph: 🔥ส่งฟรี🔥 เครื่องชั่งดิจิตอล แสตนเลสแท้ใหม่10กิโล/ชั่งได้4หน่วยตวง (Stainless Steel scale) ตาชั่งดิจิตอล เครื่องชั่งอาหาร
+      - deletion: ฿179
+      - generic "current price"
+      - emphasis: ฿178
+    - link "🔥ส่งฟรี🔥 ถาดอบขนม รูปเกาลัด MAXIE(มีให้เลือกซื้อ2ขนาด!) ถาดอบเค้ก current price ฿78":
+      - /url: /product/167629790/3077378948?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20%E0%B8%96%E0%B8%B2%E0%B8%94%E0%B8%AD%E0%B8%9A%E0%B8%82%E0%B8%99%E0%B8%A1%20%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%A5%E0%B8%B1%E0%B8%94%20MAXIE(%E0%B8%A1%E0%B8%B5%E0%B9%83%E0%B8%AB%E0%B9%89%E0%B9%80%E0%B8%A5%E0%B8%B7%E0%B8%AD%E0%B8%81%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD2%E0%B8%82%E0%B8%99%E0%B8%B2%E0%B8%94!)%20%E0%B8%96%E0%B8%B2%E0%B8%94%E0%B8%AD%E0%B8%9A%E0%B9%80%E0%B8%84%E0%B9%89%E0%B8%81
+      - paragraph: 🔥ส่งฟรี🔥 ถาดอบขนม รูปเกาลัด MAXIE(มีให้เลือกซื้อ2ขนาด!) ถาดอบเค้ก
+      - deletion: ฿100
+      - generic "current price"
+      - emphasis: ฿78
+    - link "🔥ส่งฟรี🔥 พิมพ์ขนมไหว้พระจันทร์ MAXIE มีให้เลือกซื้อ 8 แบบ! พิมพ์ขนมบัวหิมะ พิมพ์กดขนมไหว้พระจันทร์ พิมพ์กดขนม current price ฿48":
+      - /url: /product/167629790/3380171962?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20%E0%B8%9E%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B9%8C%E0%B8%82%E0%B8%99%E0%B8%A1%E0%B9%84%E0%B8%AB%E0%B8%A7%E0%B9%89%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B9%8C%20MAXIE%20%E0%B8%A1%E0%B8%B5%E0%B9%83%E0%B8%AB%E0%B9%89%E0%B9%80%E0%B8%A5%E0%B8%B7%E0%B8%AD%E0%B8%81%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%208%20%E0%B9%81%E0%B8%9A%E0%B8%9A!%20%E0%B8%9E%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B9%8C%E0%B8%82%E0%B8%99%E0%B8%A1%E0%B8%9A%E0%B8%B1%E0%B8%A7%E0%B8%AB%E0%B8%B4%E0%B8%A1%E0%B8%B0%20%E0%B8%9E%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B9%8C%E0%B8%81%E0%B8%94%E0%B8%82%E0%B8%99%E0%B8%A1%E0%B9%84%E0%B8%AB%E0%B8%A7%E0%B9%89%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B9%8C%20%E0%B8%9E%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B9%8C%E0%B8%81%E0%B8%94%E0%B8%82%E0%B8%99%E0%B8%A1
+      - paragraph: 🔥ส่งฟรี🔥 พิมพ์ขนมไหว้พระจันทร์ MAXIE มีให้เลือกซื้อ 8 แบบ! พิมพ์ขนมบัวหิมะ พิมพ์กดขนมไหว้พระจันทร์ พิมพ์กดขนม
+      - deletion: ฿49
+      - generic "current price"
+      - emphasis: ฿48
+    - link "🔥ส่งฟรี🔥 ชุดช้อนตวงพลาสติกรุ่น MAXIE 8IN1(สุดคุ้ม! กับอุปกรณ์ช้อนตวง12ชิ้นใน1ชุด)ช้อนตวงขนม ช้อนตวงส่วนผสม current price ฿61":
+      - /url: /product/167629790/3495093385?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20%E0%B8%8A%E0%B8%B8%E0%B8%94%E0%B8%8A%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%A7%E0%B8%87%E0%B8%9E%E0%B8%A5%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%B4%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B9%88%E0%B8%99%20MAXIE%208IN1(%E0%B8%AA%E0%B8%B8%E0%B8%94%E0%B8%84%E0%B8%B8%E0%B9%89%E0%B8%A1!%20%E0%B8%81%E0%B8%B1%E0%B8%9A%E0%B8%AD%E0%B8%B8%E0%B8%9B%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C%E0%B8%8A%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%A7%E0%B8%8712%E0%B8%8A%E0%B8%B4%E0%B9%89%E0%B8%99%E0%B9%83%E0%B8%991%E0%B8%8A%E0%B8%B8%E0%B8%94)%E0%B8%8A%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%A7%E0%B8%87%E0%B8%82%E0%B8%99%E0%B8%A1%20%E0%B8%8A%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%A7%E0%B8%87%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%9C%E0%B8%AA%E0%B8%A1
+      - paragraph: 🔥ส่งฟรี🔥 ชุดช้อนตวงพลาสติกรุ่น MAXIE 8IN1(สุดคุ้ม! กับอุปกรณ์ช้อนตวง12ชิ้นใน1ชุด)ช้อนตวงขนม ช้อนตวงส่วนผสม
+      - deletion: ฿100
+      - generic "current price"
+      - emphasis: ฿61
+    - link "🔥ส่งฟรี🔥 FLASH SALE เครื่องตีไข่ ฟรี!หัวตี 3 รูปแบบ เครื่องผสมอาหารแบบมือถือ Netmego N38D เครื่องตีแป้ง [e88] current price ฿344":
+      - /url: /product/167629790/3513143938?seoName=%F0%9F%94%A5%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%9F%E0%B8%A3%E0%B8%B5%F0%9F%94%A5%20FLASH%20SALE%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%95%E0%B8%B5%E0%B9%84%E0%B8%82%E0%B9%88%20%E0%B8%9F%E0%B8%A3%E0%B8%B5!%E0%B8%AB%E0%B8%B1%E0%B8%A7%E0%B8%95%E0%B8%B5%203%20%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B9%81%E0%B8%9A%E0%B8%9A%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%9C%E0%B8%AA%E0%B8%A1%E0%B8%AD%E0%B8%B2%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%96%E0%B8%B7%E0%B8%AD%20Netmego%20N38D%20%20%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%95%E0%B8%B5%E0%B9%81%E0%B8%9B%E0%B9%89%E0%B8%87%20%5Be88%5D
+      - paragraph: 🔥ส่งฟรี🔥 FLASH SALE เครื่องตีไข่ ฟรี!หัวตี 3 รูปแบบ เครื่องผสมอาหารแบบมือถือ Netmego N38D เครื่องตีแป้ง [e88]
+      - deletion: ฿350
+      - generic "current price"
+      - emphasis: ฿344
+  - link "icon head shot click here to visit shop":
+    - /url: /maxcio_rocco?categoryId=100636&entryPoint=ShopByPDP&itemId=40660896442
+    - img "icon head shot"
+    - img "click here to visit shop"
+  - generic: maxcio_rocco
+  - generic: เข้าสู่ระบบล่าสุดเมื่อ 5 นาที ที่ผ่านมา
+  - button "แชทเลย":
+    - generic: แชทเลย
+  - link "icon shop ดูร้านค้า":
+    - /url: /maxcio_rocco?categoryId=100636&entryPoint=ShopByPDP&itemId=40660896442
+    - img "icon shop"
+    - generic: ดูร้านค้า
+  - generic: คะแนน
+  - generic: 1.3m
+  - generic: อัตราการตอบกลับ
+  - generic: 99%
+  - generic: เข้าร่วมเมื่อ
+  - generic: 7 ปี ที่ผ่านมา
+  - link "รายการสินค้า 917":
+    - /url: /maxcio_rocco#product_list
+    - generic: รายการสินค้า
+    - generic: "917"
+  - generic: เวลาในการตอบกลับ
+  - generic: ภายในไม่กี่ชั่วโมง
+  - generic: ผู้ติดตาม
+  - generic: 427.4k
+- contentinfo:
+  - generic: ศูนย์ช่วยเหลือ
+  - list:
+    - link "Help Centre":
+      - /url: https://help.shopee.co.th/th/s
+      - generic: Help Centre
+    - link "สั่งซื้อสินค้าอย่างไร":
+      - /url: https://help.shopee.co.th/th/s/article/%E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%88%E0%B8%B0%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%83%E0%B8%99-Shopee-%E0%B8%95%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%97%E0%B8%B3%E0%B8%AD%E0%B8%A2%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%84%E0%B8%A3
+      - generic: สั่งซื้อสินค้าอย่างไร
+    - link "เริ่มขายสินค้าอย่างไร":
+      - /url: https://seller.shopee.co.th/edu/category?sub_cat_id=212
+      - generic: เริ่มขายสินค้าอย่างไร
+    - link "ช่องทางการชำระเงินใน Shopee":
+      - /url: https://help.shopee.co.th/th/s/article/%E0%B8%8A%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%8A%E0%B8%B3%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99%E0%B9%83%E0%B8%99-Shopee-%E0%B8%A1%E0%B8%B5%E0%B8%81%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%A0%E0%B8%97-1542966285804
+      - generic: ช่องทางการชำระเงินใน Shopee
+    - link "Shopee Coins":
+      - /url: https://help.shopee.co.th/th/s/topic/0TO6F000000Qz7XWAS/shopee-coins
+      - generic: Shopee Coins
+    - link "การจัดส่งสินค้า":
+      - /url: https://help.shopee.co.th/portal/category/46-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B9%88%E0%B8%87/782-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B3%E0%B8%AA%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD?page=1
+      - generic: การจัดส่งสินค้า
+    - link "การคืนเงินและคืนสินค้า":
+      - /url: https://help.shopee.co.th/portal/category/47-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B7%E0%B8%99%E0%B8%AA%E0%B8%B4%E0%B8%99%E0%B8%84%E0%B9%89%E0%B8%B2-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B7%E0%B8%99%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99/780-%E0%B8%82%E0%B8%B1%E0%B9%89%E0%B8%99%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B7%E0%B8%99%E0%B8%AA%E0%B8%B4%E0%B8%99%E0%B8%84%E0%B9%89%E0%B8%B2%2F-%E0%B8%84%E0%B8%B7%E0%B8%99%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99?page=1
+      - generic: การคืนเงินและคืนสินค้า
+    - link "การันตีโดย Shopee คืออะไร?":
+      - /url: https://help.shopee.co.th/th/s/article/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%B5%E0%B9%82%E0%B8%94%E0%B8%A2-Shopee-%E0%B8%84%E0%B8%B7%E0%B8%AD%E0%B8%AD%E0%B8%B0%E0%B9%84%E0%B8%A3-1542966291292
+      - generic: การันตีโดย Shopee คืออะไร?
+    - link "ติดต่อ Shopee":
+      - /url: https://help.shopee.co.th/portal/article/85193-%E0%B8%89%E0%B8%B1%E0%B8%99%E0%B8%88%E0%B8%B0%E0%B8%95%E0%B8%B4%E0%B8%94%E0%B8%95%E0%B9%88%E0%B8%AD-Shopee-%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%84%E0%B8%A3?previousPage=search%20recommendation%20bar
+      - generic: ติดต่อ Shopee
+  - generic: เกี่ยวกับ SHOPEE
+  - list:
+    - link "เกี่ยวกับเรา":
+      - /url: https://careers.shopee.com/about
+      - generic: เกี่ยวกับเรา
+    - link "โปรแกรม Affiliate":
+      - /url: https://shopee.co.th/m/affiliate-program
+      - generic: โปรแกรม Affiliate
+    - link "ร่วมงานกับเรา":
+      - /url: https://careers.shopee.com/jobs
+      - generic: ร่วมงานกับเรา
+    - link "นโยบาย":
+      - /url: https://help.shopee.co.th/portal/4/category/17578-%2525E0%2525B8%252599%2525E0%2525B9%252582%2525E0%2525B8%2525A2%2525E0%2525B8%25259A%2525E0%2525B8%2525B2%2525E0%2525B8%2525A2/17579-%2525E0%2525B8%252599%2525E0%2525B9%252582%2525E0%2525B8%2525A2%2525E0%2525B8%25259A%2525E0%2525B8%2525B2%2525E0%2525B8%2525A2%2525E0%2525B8%252582%2525E0%2525B8%2525AD%2525E0%2525B8%252587-Shopee?page=1
+      - generic: นโยบาย
+    - link "นโยบายความเป็นส่วนตัวของ Shopee":
+      - /url: https://help.shopee.co.th/portal/4/article/77248-%E0%B8%99%E0%B9%82%E0%B8%A2%E0%B8%9A%E0%B8%B2%E0%B8%A2%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B8%AA%E0%B9%88%E0%B8%A7%E0%B8%99%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%82%E0%B8%AD%E0%B8%87-Shopee?previousPage=secondary%20category
+      - generic: นโยบายความเป็นส่วนตัวของ Shopee
+    - link "Shopee Blog":
+      - /url: https://shopee.co.th/blog
+      - generic: Shopee Blog
+    - link "Shopee Mall":
+      - /url: https://shopee.co.th/mall/
+      - generic: Shopee Mall
+    - link "Seller Centre":
+      - /url: https://seller.shopee.co.th/
+      - generic: Seller Centre
+    - link "Flash Deals":
+      - /url: https://shopee.co.th/flash_sale/
+      - generic: Flash Deals
+    - link "ผู้ติดต่อออนไลน์":
+      - /url: mailto:media.th@shopee.com
+      - generic: ผู้ติดต่อออนไลน์
+  - generic: วิธีการชำระเงิน
+  - list:
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+  - generic: บริการจัดส่ง
+  - list:
+    - link "logo":
+      - /url: https://spx.co.th/th
+      - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+    - img "logo"
+  - generic: ติดตามเรา
+  - list:
+    - link "Facebook":
+      - /url: https://facebook.com/ShopeeTH
+      - generic: Facebook
+    - link "Instagram":
+      - /url: https://instagram.com/Shopee_TH
+      - generic: Instagram
+    - link "Line":
+      - /url: https://line.me/R/ti/p/@shopeeth
+      - generic: Line
+    - link "LinkedIn":
+      - /url: https://linkedin.com/company/shopee
+      - generic: LinkedIn
+  - generic: ดาวน์โหลดแอปพลิเคชั่น
+  - link "download_qr_code":
+    - /url: https://linkedin.com/company/shopee
+    - img "download_qr_code"
+  - link "app":
+    - /url: https://linkedin.com/company/shopee
+    - img "app"
+  - link "app":
+    - /url: https://linkedin.com/company/shopee
+    - img "app"
+  - link "app":
+    - /url: https://linkedin.com/company/shopee
+    - img "app"
+  - generic: © 2026 Shopee. All Rights Reserved
+  - generic: "Country & Region:"
+  - link "อาร์เจนตินา":
+    - /url: https://shopee.com.ar
+  - link "สิงคโปร์":
+    - /url: https://shopee.sg
+  - link "อินโดนีเซีย":
+    - /url: https://shopee.co.id
+  - link "ไทย":
+    - /url: https://shopee.co.th
+  - link "มาเลเซีย":
+    - /url: https://shopee.com.my
+  - link "เวียดนาม":
+    - /url: https://shopee.vn
+  - link "ฟิลิปปินส์":
+    - /url: https://shopee.ph
+  - link "บราซิล":
+    - /url: https://shopee.com.br
+  - link "เม็กซิโก":
+    - /url: https://shopee.com.mx
+  - link "ไต้หวัน":
+    - /url: https://shopee.tw

@@ -1,0 +1,32 @@
+{
+  "payload": {
+    "action": "schedule_new_commercial_product_photo",
+    "channel": "kram_fb",
+    "page_id": "116701184708556",
+    "page_name": "กรามค้าง",
+    "reviewed_at": "2026-10-07T14:17:35.145373+00:00",
+    "package_id": "oct07_newcommercial_kram_maxie_20261014",
+    "package_path": "design_revision/revisions/oct07_newcommercial_kram_maxie_20261014",
+    "package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae",
+    "mobile_path": "design_revision/revisions/oct07_newcommercial_kram_maxie_20261014/mobile.png",
+    "mobile_sha256": "c7276a3936963c7b115b2aee752aaa22e76c847706e79cecad894f1a69c2d731",
+    "actual_product_photo_path": "design_revision/revisions/oct07_newcommercial_kram_maxie_20261014/actual-product.webp",
+    "actual_product_photo_sha256": "be678afaa8f4d63e8fade62c9a66b9d65af238bc675f882374d3952d1ada565c",
+    "canonical_sku": "167629790/40660896442",
+    "tracking_variant_proof_path": "design_revision/revisions/oct07_newcommercial_kram_maxie_20261014/tracking.json",
+    "tracking_variant_proof_sha256": "acc271da8eb2cf1694c7f7d07ea8fe2dbd3d266e673035599ad7bd3e4b060d22",
+    "monthly_plan_path": "design_revision/monthly_commercial_operations_oct07.json",
+    "monthly_plan_sha256": "329ea1f5bc83deee7b1f319672f6511b15b4d1096aa5159a05241f7fccc35a0e",
+    "worker_before_sha256": "1cd5b3f12975a03626d6aa3b7eda4c82a6debcce2f81eb4fc1bbf5867356aa60",
+    "mapping_before_sha256": "0f02f4446be9280ff5fe88045e8495db7d45ff7902d5821ff58d993fbe4eae1f",
+    "monthly_sales_limit_after": 2,
+    "root_actual_product_photo_confirmed": true,
+    "root_variant_destination_subids_confirmed": true,
+    "root_existing_single_writer_confirmed": true,
+    "root_whole_page_7day_cooldown_confirmed": true,
+    "root_monthly_sales_plan_confirmed": true,
+    "root_enable_exact_selected_comment_after_native_verified": true
+  },
+  "payload_sha256": "b382094b92078110b7d365d39f4dccd8ca741724bb5f4f724831227af4f6be51",
+  "root_signature": "GxoPWQwwZZUahtPxDom5YIMgadkWVi+0Usm0Y4X+MpupRndWwViG3kkO9c70V9n2cmlU3yDFdYUX9NxBES9GBA=="
+}

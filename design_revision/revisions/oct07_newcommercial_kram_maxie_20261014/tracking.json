@@ -1,0 +1,23 @@
+{
+  "canonical_sku": "167629790/40660896442",
+  "affiliate_url": "https://s.shopee.co.th/2LYt8mQGBd",
+  "destination_url": "https://shopee.co.th/product/167629790/40660896442",
+  "observed_destination_url": "https://shopee.co.th/product/167629790/40660896442",
+  "subids": [
+    "kram",
+    "20261014",
+    "maxie3917",
+    "facebook",
+    "reviewA"
+  ],
+  "observed_utm_content": "kram-20261014-maxie3917-facebook-reviewA",
+  "variants": [
+    "24x34CM -ถาดดำ[3917]"
+  ],
+  "actual_product_photo_path": "actual-product.webp",
+  "root_actual_destination_variant_subids_verified": true,
+  "verified_at": "2026-10-07T13:48:34.202Z",
+  "actual_product_photo_sha256": "be678afaa8f4d63e8fade62c9a66b9d65af238bc675f882374d3952d1ada565c",
+  "source_tracking_proof_file": "source-tracking-proof.json",
+  "source_tracking_proof_sha256": "88c64f35ee9e6ff791b75ad66b2437a7736114862c7b5c7ab4df3642faeebce4"
+}

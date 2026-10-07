@@ -1,0 +1,8 @@
+{
+  "origin_main_commit": "cb6101593d1d4cac5938cbd0a8a89f842404fc5c",
+  "root_refresh_receipt_prefix": "cb61015",
+  "worker_before_sha256": "1cd5b3f12975a03626d6aa3b7eda4c82a6debcce2f81eb4fc1bbf5867356aa60",
+  "mapping_before_sha256": "0f02f4446be9280ff5fe88045e8495db7d45ff7902d5821ff58d993fbe4eae1f",
+  "source": "Root reported fetched/rebased worktrees; Git show origin/main read only",
+  "existing_worker_or_mapping_changed": false
+}

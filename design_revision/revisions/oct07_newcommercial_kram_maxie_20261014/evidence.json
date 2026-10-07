@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "url": "https://shopee.co.th/product/167629790/40660896442",
+      "claim": "Selected variant [\"24x34CM -ถาดดำ[3917]\"]. Caption claim review: {\"3916_disabled\": true, \"benefit_scope\": \"Proposed dry-item returnspot method, not tested findingtime/nonslip/load/foodheat performance.\", \"depth_source\": \"Root actual selectedphoto inspection + historical sellerbody allsizes2cm; selectedcurrentDOM lacks fullbody depth.\", \"listing_rating\": \"4.9\", \"listing_reviews_label\": \"744\", \"listing_sold_label\": \"10k+\", \"scope\": \"Listing header checkedOct7; aggregated variant scope/timewindow not established.\", \"selected3917_tick\": true, \"visible_stock_label\": \"327\"}",
+      "checked_at": "2026-10-07T14:15:00+00:00",
+      "source_file": "source-listing-ax.txt",
+      "source_sha256": "2bb9cd4a8abe1b1d70d2dcb048fdd841db7a285c7104661c02ab8656a5699934"
+    }
+  ],
+  "source_caption_audit_file": "source-caption-audit.json",
+  "source_caption_audit_sha256": "cc2564b74fd76fbbe0d4fb4b9191c67d6b8e21460e36354b84e0823506c29580",
+  "source_tracking_proof_file": "source-tracking-proof.json",
+  "source_tracking_proof_sha256": "88c64f35ee9e6ff791b75ad66b2437a7736114862c7b5c7ab4df3642faeebce4",
+  "actual_product_photo_file": "actual-product.webp",
+  "actual_product_photo_sha256": "be678afaa8f4d63e8fade62c9a66b9d65af238bc675f882374d3952d1ada565c",
+  "source_review_scope": "Root actual current listing/caption audit, not hands-on product testing; upstream audit flags are preserved as historical source."
+}
