@@ -168,15 +168,27 @@
     }
   },
   "oct07_newimg_2026-10-26_kram_fb": {
-    "state": "created_pending_readback",
+    "state": "verified",
     "package_id": "oct07_newimg_2026-10-26_kram_fb",
     "page_id": "116701184708556",
     "plan_sha256": "3dfd154efe4b7c206ccc6cff548ccb723fe90f4b9a335f83aaae67a8b83d0e7d",
-    "updated_at": "2026-10-07T13:46:58.134203+00:00",
+    "updated_at": "2026-10-07T13:47:06.113514+00:00",
     "slot": 1793016000,
     "caption_sha256": "3ea5a82b8687d8690ed8e38539b660ad2e278ea400f69436c8804aa73d53a702",
     "package_sha256": "e0576a16e06a2c39656c587962491b1c68494e6aa73ea65245d4dd77f56e03bb",
     "photo_id": "1038521235874919",
-    "new_post_id": null
+    "new_post_id": "116701184708556_1038521235874919",
+    "after": {
+      "post_id": "116701184708556_1038521235874919",
+      "is_published": false,
+      "schedule": {
+        "present": true,
+        "value": 1793016000
+      },
+      "message_sha256": "3ea5a82b8687d8690ed8e38539b660ad2e278ea400f69436c8804aa73d53a702",
+      "attachment_ids": [
+        "1038521235874919"
+      ]
+    }
   }
 }
