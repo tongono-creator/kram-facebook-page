@@ -75,6 +75,27 @@
       "name": "STANLEY 5-30-815-THA 5m tape measure",
       "url": "https://s.shopee.co.th/4qG9rua8OH"
     },
+    "1038550512538658": {
+      "affiliate_enabled": true,
+      "canonical_sku": "167629790/40660896442",
+      "comment": "ตัวเลือกที่คัดคือ 24x34CM -ถาดดำ[3917] ก่อนซื้อวัดพื้นที่วางและเช็กชื่อตัวเลือกอีกครั้งครับ\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/2LYt8mQGBd",
+      "name": "MAXIE ถาดดำ 3917 24×34 ซม.",
+      "product_id": "40660896442",
+      "root_package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae",
+      "scheduled_at": "2026-10-14T19:00:00+07:00",
+      "shop_id": "167629790",
+      "subids": [
+        "kram",
+        "20261014",
+        "maxie3917",
+        "facebook",
+        "reviewA"
+      ],
+      "url": "https://s.shopee.co.th/2LYt8mQGBd",
+      "variants": [
+        "24x34CM -ถาดดำ[3917]"
+      ]
+    },
     "116701184708556_1028671816859861": {
       "name": "ถุงคลุมเสื้อผ้า Deli",
       "url": "https://s.shopee.co.th/1gGwo5adCO"
@@ -155,12 +176,14 @@
       "url": "https://s.shopee.co.th/4qG9rua8OH"
     },
     "116701184708556_1038550512538658": {
+      "affiliate_enabled": true,
       "canonical_sku": "167629790/40660896442",
-      "shop_id": "167629790",
-      "product_id": "40660896442",
-      "name": "MAXIE ถาดดำ 3917 24×34 ซม.",
-      "url": "https://s.shopee.co.th/2LYt8mQGBd",
       "comment": "ตัวเลือกที่คัดคือ 24x34CM -ถาดดำ[3917] ก่อนซื้อวัดพื้นที่วางและเช็กชื่อตัวเลือกอีกครั้งครับ\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/2LYt8mQGBd",
+      "name": "MAXIE ถาดดำ 3917 24×34 ซม.",
+      "product_id": "40660896442",
+      "root_package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae",
+      "scheduled_at": "2026-10-14T19:00:00+07:00",
+      "shop_id": "167629790",
       "subids": [
         "kram",
         "20261014",
@@ -168,33 +191,10 @@
         "facebook",
         "reviewA"
       ],
-      "variants": [
-        "24x34CM -ถาดดำ[3917]"
-      ],
-      "affiliate_enabled": true,
-      "scheduled_at": "2026-10-14T19:00:00+07:00",
-      "root_package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae"
-    },
-    "1038550512538658": {
-      "canonical_sku": "167629790/40660896442",
-      "shop_id": "167629790",
-      "product_id": "40660896442",
-      "name": "MAXIE ถาดดำ 3917 24×34 ซม.",
       "url": "https://s.shopee.co.th/2LYt8mQGBd",
-      "comment": "ตัวเลือกที่คัดคือ 24x34CM -ถาดดำ[3917] ก่อนซื้อวัดพื้นที่วางและเช็กชื่อตัวเลือกอีกครั้งครับ\nลิงก์ Affiliate — เพจอาจได้รับค่าคอมมิชชันจากการซื้อผ่านลิงก์นี้\nhttps://s.shopee.co.th/2LYt8mQGBd",
-      "subids": [
-        "kram",
-        "20261014",
-        "maxie3917",
-        "facebook",
-        "reviewA"
-      ],
       "variants": [
         "24x34CM -ถาดดำ[3917]"
-      ],
-      "affiliate_enabled": true,
-      "scheduled_at": "2026-10-14T19:00:00+07:00",
-      "root_package_sha256": "e662e7a875295ae94870cb3df6e2b54e479549349884816daab9da5d0ca380ae"
+      ]
     }
   }
 }
