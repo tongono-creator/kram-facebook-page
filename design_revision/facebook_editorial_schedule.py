@@ -105,6 +105,9 @@ def _run(p,digest,channel,root,api,mode,sync):
     replacement_ledger=root/'design_revision/replacement_ledger.json'
     if replacement_ledger.exists() and any(x.get('page_id')==p['page_id'] and x.get('slot')==slot for x in shared.read(replacement_ledger).values()):
         raise shared.UpdateError('replacement_adapter_reserved_new_editorial_slot')
+    commercial_ledger=root/'design_revision/commercial_schedule_ledger.json'
+    if commercial_ledger.exists() and any(x.get('page_id')==p['page_id'] and x.get('slot')==slot for x in shared.read(commercial_ledger).values()):
+        raise shared.UpdateError('commercial_adapter_reserved_new_editorial_slot')
     if mode=='audit':return {'status':'verified_new_editorial_preview','package_id':key,'slot':slot,'external_writes_this_run':0}
     save('reserved_create',slot=slot,caption_sha256=shared.sha(caption.encode()),package_sha256=p['package_sha256'])
     package,caption,slot=package_check(p,p['channel'],channel,root)

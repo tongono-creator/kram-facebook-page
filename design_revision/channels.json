@@ -1,10 +1,20 @@
 {
   "kram_fb": {
-    "platform": "facebook",
+    "channel_key": "kram_fb",
     "name": "กรามค้าง",
     "page_id": "116701184708556",
+    "repository": "kram-facebook-page",
+    "platform": "facebook",
+    "timezone": "Asia/Bangkok",
+    "token_env": "PAGE_ACCESS_TOKEN",
+    "allowed_categories": [
+      "home",
+      "organization",
+      "tools"
+    ],
+    "enabled": true,
+    "require_signature": true,
     "editor_public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAXpGllY0WdysBzqTWBJ7evbAz13J/DUuGnlrfhzgr4Kg=\n-----END PUBLIC KEY-----\n",
-    "repository_slug": "tongono-creator/kram-facebook-page",
-    "token_env": "PAGE_ACCESS_TOKEN"
+    "repository_slug": "tongono-creator/kram-facebook-page"
   }
 }

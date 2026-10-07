@@ -1,0 +1,29 @@
+{
+  "entries": [],
+  "fictional": true,
+  "checked_at": "2026-10-04T16:43:01+00:00",
+  "editorial_note": "ข้อสังเกตและคำแนะนำแยกจากข้ออ้างที่แหล่งต้นทางรองรับ ไม่ใช่ประสบการณ์ใช้สินค้าของแอดมิน",
+  "limitations": [],
+  "oct07_caption_source_check": {
+    "package_id": "oct07_newimg_2026-10-08_kram_fb",
+    "source_draft_id": "2026-10-08_kram_fb",
+    "channel_key": "kram_fb",
+    "caption": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\new_image_packages\\oct07_newimg_2026-10-08_kram_fb\\caption.txt",
+      "exists": true,
+      "sha256": "4204c51ac29378833e577ff134e2273774040fe7a1f9c57cf5f1aff8c1ae420b"
+    },
+    "checked_on": "2026-10-07",
+    "primary_source_access_method": "hypothetical_editorial_no_empirical_claim",
+    "claim_checked": "Household decision criteria presented as a hypothetical illustration, not measured product performance or a tested result.",
+    "limits": "External source validation is not applicable to invented scene. Root must verify every depicted-object assertion; new lead removes image-specific placement claim onOct11.",
+    "caption_source_urls": [],
+    "all_caption_sources_primary_except_named_participant_interview": true,
+    "original_caption_path": "D:\\Projects\\page-content-studio\\packages\\2026-10-08_kram_fb\\caption.txt",
+    "original_signed_package_modified": false,
+    "new_lead_reframing": true,
+    "root_visual_and_final_caption_approval": false
+  },
+  "source_evidence_wrapper_file": "source-evidence-wrapper.json",
+  "source_evidence_wrapper_sha256": "71723a6e7d3d27237d63bb32c1a450a1265f086fa979e108967503384a115af0"
+}

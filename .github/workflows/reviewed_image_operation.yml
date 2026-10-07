@@ -8,7 +8,7 @@ on:
         required: true
         type: choice
         default: editorial
-        options: [editorial, replacement, surplus, inventory]
+        options: [editorial, batch, inventory]
       channel:
         description: Exact confirmed channel key
         required: true
@@ -57,10 +57,7 @@ jobs:
           python - <<'PY'
           import json, os, subprocess, sys
           from pathlib import Path
-          helpers={'editorial':'design_revision/facebook_editorial_schedule.py',
-                   'replacement':'design_revision/facebook_future_replacement.py',
-                   'surplus':'design_revision/facebook_surplus_cancel.py',
-                   'inventory':'design_revision/facebook_image_inventory.py'}
+          helpers={'editorial':'design_revision/facebook_editorial_schedule.py', 'batch':'design_revision/facebook_editorial_batch.py', 'inventory':'design_revision/facebook_image_inventory.py'}
           adapter=os.environ.get('IMAGE_ADAPTER');mode=os.environ.get('IMAGE_MODE')
           if adapter not in helpers or mode not in ('audit','apply','reconcile'):
               raise SystemExit('Invalid reviewed adapter or mode')
@@ -80,7 +77,8 @@ jobs:
           Path('reviewed_image_result.json').write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           print(json.dumps({k:value.get(k) for k in ('status','post_id','new_post_id','external_writes_this_run','external_writes','error')},ensure_ascii=False))
           # Do not echo unstructured stderr, subprocess command or environment.
-          raise SystemExit(result.returncode or (1 if value.get('status')=='held' else 0))
+          status=str(value.get('status',''))
+          raise SystemExit(result.returncode or (1 if status.startswith('held') or status=='batch_held' else 0))
           PY
       - uses: actions/upload-artifact@v4
         if: always()
@@ -89,6 +87,4 @@ jobs:
           if-no-files-found: ignore
           path: |
             reviewed_image_result.json
-            design_revision/replacement_ledger.json
-            design_revision/surplus_cancel_ledger.json
             design_revision/editorial_schedule_ledger.json

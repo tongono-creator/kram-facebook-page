@@ -1,0 +1,36 @@
+{
+  "status": "LOCAL_NEW_PACKAGE_EVIDENCE_NOT_APPROVAL",
+  "source_package_evidence_path": "D:\\Projects\\page-content-studio\\packages\\2026-10-17_kram_fb\\evidence.json",
+  "source_package_evidence_sha256": "7744a926b3f0aa5881afecc2747a2a0855cf1c962d825a75c278a819866bde81",
+  "original_evidence": {
+    "entries": [],
+    "fictional": true,
+    "scene_is_hypothetical": true,
+    "checked_at": "2026-10-04T17:21:10+00:00",
+    "editorial_note": "ข้อสังเกตและคำแนะนำแยกจากข้ออ้างที่แหล่งต้นทางรองรับ ภาพเป็นฉากอธิบายสมมติ ไม่ใช่ประสบการณ์ใช้สินค้าหรือผลทดลองของแอดมิน",
+    "limitations": [
+      "ไม่กล่าวโทษคนในบ้านหรืออ้างข้อมูลคนที่ใช้ล่าสุด"
+    ]
+  },
+  "oct07_caption_source_check": {
+    "package_id": "oct07_newimg_2026-10-17_kram_fb",
+    "source_draft_id": "2026-10-17_kram_fb",
+    "channel_key": "kram_fb",
+    "caption": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\new_image_packages\\oct07_newimg_2026-10-17_kram_fb\\caption.txt",
+      "exists": true,
+      "sha256": "ca223b66671a8bdbc0217274bf24441e43d5fee45b0f66f1e74d8e61cdf4e8b6"
+    },
+    "checked_on": "2026-10-07",
+    "primary_source_access_method": "hypothetical_editorial_no_empirical_claim",
+    "claim_checked": "Household decision criteria presented as a hypothetical illustration, not measured product performance or a tested result.",
+    "limits": "External source validation is not applicable to invented scene. Root must verify every depicted-object assertion; new lead removes image-specific placement claim onOct11.",
+    "caption_source_urls": [],
+    "all_caption_sources_primary_except_named_participant_interview": true,
+    "original_caption_path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\caption_overrides\\2026-10-17_kram_fb.txt",
+    "original_signed_package_modified": false,
+    "new_lead_reframing": true,
+    "root_visual_and_final_caption_approval": false
+  },
+  "external_writes": 0
+}

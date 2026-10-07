@@ -1,0 +1,15 @@
+{
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-10-07T13:34:37.475622+00:00",
+  "package_sha256": "7f0999c05062522ec62c5a1947644f626ecd611b937b4727f058f6512823c82a",
+  "notes": "Root actually viewed full1080x1350 and360px mobile bytes, read final caption and recorded primary-source audit/fiction disclosure, verified native account identity and complete queue slot separation>=90minutes. New post only; old images/queues untouched. Explicit affiliate opt-out.",
+  "checks": {
+    "full_image_seen": true,
+    "mobile_seen": true,
+    "thai_readable": true,
+    "subject_correct": true,
+    "source_checked": true,
+    "affiliate_checked": true
+  },
+  "signature": "6BsO2FjnttXYGMs3kfdgGxv9OugUAM70KtPA8YDBevqRKe1x9o3+NhxgU1f38DLjWO0/xG37MURSuoOUu9VAAw=="
+}

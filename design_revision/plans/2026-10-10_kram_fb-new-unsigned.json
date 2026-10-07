@@ -1,0 +1,22 @@
+{
+  "payload": {
+    "action": "schedule_new_editorial_image",
+    "channel": "kram_fb",
+    "page_id": "116701184708556",
+    "page_name": "กรามค้าง",
+    "reviewed_at": "2026-10-07T13:34:35.773093+00:00",
+    "package_id": "oct07_newimg_2026-10-10_kram_fb",
+    "package_path": "design_revision/revisions/oct07_newimg_2026-10-10_kram_fb",
+    "package_sha256": "8f7b9ce26e63b458ec9a62681b61638f23b90c77d6ecb83d86757c4c08dcf30d",
+    "mobile_path": "design_revision/revisions/oct07_newimg_2026-10-10_kram_fb/mobile.png",
+    "mobile_sha256": "32d1e849f83a24b46385f051f7f47262b2b4186e92bf22f84f29433a9b54f848",
+    "monthly_plan_path": "design_revision/monthly_operations_oct07.json",
+    "monthly_plan_sha256": "07609401083ea07ec7eb2a0e80bf013b304b132439d514fb7963d7d08ca5db43",
+    "root_full_mobile_confirmed": true,
+    "root_monthly_plan_confirmed": true,
+    "root_new_slot_confirmed": true,
+    "root_optional_affiliate_policy_confirmed": true
+  },
+  "payload_sha256": "c7c2dc084e98ba9fc07eb367a23f4454c2f422308145e33ef44f0c29f970f699",
+  "root_signature": "IRDFy3eYNJRKeeokTIEQCSBtS4Mb7/zk3ETLvLfQRj3Z3P7b4LXXU/cS91i74vsr5VNTkMBgFeraERfJIg4WCg=="
+}

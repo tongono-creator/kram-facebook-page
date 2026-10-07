@@ -1,0 +1,50 @@
+{
+  "payload": {
+    "action": "schedule_new_editorial_batch",
+    "channel": "kram_fb",
+    "page_id": "116701184708556",
+    "page_name": "กรามค้าง",
+    "reviewed_at": "2026-10-07T13:34:35.773093+00:00",
+    "plans": [
+      {
+        "path": "design_revision/plans/2026-10-08_kram_fb-new-unsigned.json",
+        "plan_sha256": "b8a371d0c698a96ef20774b74db8bfd04be192c7b4c1534f7162f46d6dc1e05c"
+      },
+      {
+        "path": "design_revision/plans/2026-10-10_kram_fb-new-unsigned.json",
+        "plan_sha256": "244d8f047dff4be3c291b285c35d3f4947d7d7c36dde88e5a63837d3d873bd45"
+      },
+      {
+        "path": "design_revision/plans/2026-10-11_kram_fb-new-unsigned.json",
+        "plan_sha256": "cc1db7b50284687e1e575045777a884d462d76c3640578e7c98388cd21aa4f70"
+      },
+      {
+        "path": "design_revision/plans/2026-10-12_kram_fb-new-unsigned.json",
+        "plan_sha256": "63f5daae0bf4006ca8e6e37f1b2c99c7f52a0e6939e6c1cbaf542135e0ccccf2"
+      },
+      {
+        "path": "design_revision/plans/2026-10-15_kram_fb-new-unsigned.json",
+        "plan_sha256": "28b50cdbfc0919620a8a7748d5c2d2d9e7452046fb96d42d96dcc288f1b6fb38"
+      },
+      {
+        "path": "design_revision/plans/2026-10-17_kram_fb-new-unsigned.json",
+        "plan_sha256": "f9f6dd731467ce0c2ca849e8ee6845dc419b4389a1f735e81558a5ea216ac4a6"
+      },
+      {
+        "path": "design_revision/plans/2026-10-23_kram_fb-new-unsigned.json",
+        "plan_sha256": "0efb2925797ed2f50fee58655b91c0d6fc0bf5400b1fbd45da3cb4ef1727252c"
+      },
+      {
+        "path": "design_revision/plans/2026-10-26_kram_fb-new-unsigned.json",
+        "plan_sha256": "a7f215eca0d09869f7d03fae90f6b0784d9fe6378882e1a723204f2cc070025f"
+      },
+      {
+        "path": "design_revision/plans/2026-10-31_kram_fb-new-unsigned.json",
+        "plan_sha256": "627d1e6bffc8e9dd1abb7716535db3acd8738bd24d10e321512689be4d8cd245"
+      }
+    ],
+    "root_batch_new_posts_only_confirmed": true
+  },
+  "payload_sha256": "0912c643616fdfb33616847878917cc4faf800ac61539059a0132997db7ca82d",
+  "root_signature": "Cbq060KjiXogqgYDwItiPBi/oEMZE8koO32kJlfFBSeYSRVGWuXm0NxUmpbcxmqaCq7g7jtsCY9woYr1LnlJAA=="
+}

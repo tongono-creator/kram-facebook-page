@@ -1,0 +1,32 @@
+{
+  "entries": [],
+  "fictional": true,
+  "scene_is_hypothetical": true,
+  "checked_at": "2026-10-04T17:21:10+00:00",
+  "editorial_note": "ข้อสังเกตและคำแนะนำแยกจากข้ออ้างที่แหล่งต้นทางรองรับ ภาพเป็นฉากอธิบายสมมติ ไม่ใช่ประสบการณ์ใช้สินค้าหรือผลทดลองของแอดมิน",
+  "limitations": [
+    "ไม่อ้างทดสอบลดน้ำหนัก ไม่ระบุเงื่อนไขสายการบินหรือผลลดปริมาตรเป็นตัวเลข"
+  ],
+  "oct07_caption_source_check": {
+    "package_id": "oct07_newimg_2026-10-15_kram_fb",
+    "source_draft_id": "2026-10-15_kram_fb",
+    "channel_key": "kram_fb",
+    "caption": {
+      "path": "D:\\Projects\\page-content-studio\\design_revision_oct07\\new_image_packages\\oct07_newimg_2026-10-15_kram_fb\\caption.txt",
+      "exists": true,
+      "sha256": "25b4c6a062f3d46f5aa989bb20c273e464e24219a73a9a81893955d68531200f"
+    },
+    "checked_on": "2026-10-07",
+    "primary_source_access_method": "hypothetical_editorial_no_empirical_claim",
+    "claim_checked": "Household decision criteria presented as a hypothetical illustration, not measured product performance or a tested result.",
+    "limits": "External source validation is not applicable to invented scene. Root must verify every depicted-object assertion; new lead removes image-specific placement claim onOct11.",
+    "caption_source_urls": [],
+    "all_caption_sources_primary_except_named_participant_interview": true,
+    "original_caption_path": "D:\\Projects\\page-content-studio\\packages\\2026-10-15_kram_fb\\caption.txt",
+    "original_signed_package_modified": false,
+    "new_lead_reframing": true,
+    "root_visual_and_final_caption_approval": false
+  },
+  "source_evidence_wrapper_file": "source-evidence-wrapper.json",
+  "source_evidence_wrapper_sha256": "3a5c61ed650f5ef944561169df5dcbef930a2fcd77fedcb4525c0d6d1bc3ed4a"
+}
