@@ -1,10 +1,10 @@
 {
   "oct07_newcommercial_kram_maxie_20261014": {
-    "state": "native_verified_pending_mapping",
+    "state": "enabling_verified_exact_mapping",
     "plan_sha256": "b382094b92078110b7d365d39f4dccd8ca741724bb5f4f724831227af4f6be51",
     "package_id": "oct07_newcommercial_kram_maxie_20261014",
     "page_id": "116701184708556",
-    "updated_at": "2026-10-07T14:24:28.420790+00:00",
+    "updated_at": "2026-10-07T14:24:29.648264+00:00",
     "slot": 1791979200,
     "caption_sha256": "c93b833f6a29e2bbc3d513b397adacd7a7d8d03a0241fbb3b8e904bb95bce3c4",
     "canonical_sku": "167629790/40660896442",
@@ -41,6 +41,12 @@
       "attachment_ids": [
         "1038550512538658"
       ]
-    }
+    },
+    "aliases": [
+      "1038550512538658",
+      "116701184708556_1038550512538658"
+    ],
+    "worker_after_sha256": "e5329dea77b8764749a3d49f3492282dcd24b93db8e67ebcad4d85f8d861d090",
+    "mapping_after_sha256": "54f6dbfbabfd729c4ca0a9b27b886b61201ad79c494e53949ad2fd8de710d24e"
   }
 }
