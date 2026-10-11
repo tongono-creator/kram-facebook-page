@@ -26,8 +26,20 @@ def check(resp, step):
     return data
 
 
+def report(video_id):
+    st = check(requests.get(f"https://graph.facebook.com/{API}/{video_id}",
+                            params={"fields": "published,scheduled_publish_time,status,description", "access_token": TOKEN},
+                            timeout=30), "report")
+    print("REPORT:", video_id, "published=", st.get("published"), "scheduled=", st.get("scheduled_publish_time"),
+          "status=", st.get("status", {}).get("video_status"), "caption=", (st.get("description") or "")[:40])
+
+
 def main():
-    reels = f"https://graph.facebook.com/{API}/{PAGE_ID}/video_reels"
+    if VIDEO_URL.startswith("check:"):        # check:<id>,<id>,... -> just report
+        for vid in VIDEO_URL[6:].split(","):
+            report(vid.strip())
+        return
+    reels =f"https://graph.facebook.com/{API}/{PAGE_ID}/video_reels"
     start = check(requests.post(reels, data={"upload_phase": "start", "access_token": TOKEN}, timeout=60), "start")
     video_id = start["video_id"]
     print("video_id:", video_id)
@@ -53,6 +65,7 @@ def main():
             sys.exit(f"processing error: {status}")
         if vs == "ready" and PUBLISH_AT:
             print("SCHEDULED:", video_id, "at", PUBLISH_AT)
+            report(video_id)
             return
         if vs == "ready" and pub == "complete":
             print("PUBLISHED:", "https://www.facebook.com" + st.get("permalink_url", ""))
