@@ -9,6 +9,10 @@ on:
       caption:
         description: Reel caption
         required: true
+      publish_at:
+        description: Optional unix time to schedule (empty = publish now)
+        required: false
+        default: ""
 
 jobs:
   post:
@@ -24,4 +28,5 @@ jobs:
           KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
           VIDEO_URL: ${{ inputs.video_url }}
           CAPTION: ${{ inputs.caption }}
+          PUBLISH_AT: ${{ inputs.publish_at }}
         run: python post_reel.py
