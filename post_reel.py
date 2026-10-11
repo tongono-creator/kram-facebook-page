@@ -1,6 +1,6 @@
-"""Post a video as a Facebook Reel on the Kram page (manual workflow_dispatch).
+"""Post (or schedule) a video as a Facebook Reel on the Kram page (manual workflow_dispatch).
 
-env: KRAM_PAGE_ACCESS_TOKEN, VIDEO_URL (public mp4), CAPTION
+env: KRAM_PAGE_ACCESS_TOKEN, VIDEO_URL (public mp4), CAPTION, PUBLISH_AT (optional unix time -> scheduled)
 """
 import os
 import sys
@@ -13,6 +13,7 @@ PAGE_ID = "116701184708556"
 TOKEN = os.environ["KRAM_PAGE_ACCESS_TOKEN"]
 VIDEO_URL = os.environ["VIDEO_URL"]
 CAPTION = os.environ.get("CAPTION", "")
+PUBLISH_AT = os.environ.get("PUBLISH_AT", "").strip()
 
 
 def check(resp, step):
@@ -35,21 +36,27 @@ def main():
                        headers={"Authorization": f"OAuth {TOKEN}", "file_url": VIDEO_URL}, timeout=300)
     print("upload:", check(up, "upload"))
 
-    fin = check(requests.post(reels, data={
-        "upload_phase": "finish", "video_id": video_id, "video_state": "PUBLISHED",
-        "description": CAPTION, "access_token": TOKEN}, timeout=120), "finish")
-    print("finish:", fin)
+    finish = {"upload_phase": "finish", "video_id": video_id, "description": CAPTION, "access_token": TOKEN}
+    if PUBLISH_AT:
+        finish.update(video_state="SCHEDULED", scheduled_publish_time=PUBLISH_AT)
+    else:
+        finish.update(video_state="PUBLISHED")
+    print("finish:", check(requests.post(reels, data=finish, timeout=120), "finish"))
 
     for _ in range(40):
         st = check(requests.get(f"https://graph.facebook.com/{API}/{video_id}",
                                 params={"fields": "status,permalink_url", "access_token": TOKEN}, timeout=30), "status")
         status = st.get("status", {})
-        print("status:", status.get("video_status"), status.get("publishing_phase", {}).get("status"))
-        if status.get("video_status") == "ready" and status.get("publishing_phase", {}).get("status") == "complete":
+        vs, pub = status.get("video_status"), status.get("publishing_phase", {}).get("status")
+        print("status:", vs, pub)
+        if vs == "error":
+            sys.exit(f"processing error: {status}")
+        if vs == "ready" and PUBLISH_AT:
+            print("SCHEDULED:", video_id, "at", PUBLISH_AT)
+            return
+        if vs == "ready" and pub == "complete":
             print("PUBLISHED:", "https://www.facebook.com" + st.get("permalink_url", ""))
             return
-        if status.get("video_status") == "error":
-            sys.exit(f"processing error: {status}")
         time.sleep(15)
     print("still processing after 10 min — check the page:", video_id)
 
