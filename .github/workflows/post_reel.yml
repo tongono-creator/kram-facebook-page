@@ -1,0 +1,27 @@
+name: Post Reel (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: Public URL of the mp4 (e.g. a GitHub release asset)
+        required: true
+      caption:
+        description: Reel caption
+        required: true
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Post reel
+        env:
+          KRAM_PAGE_ACCESS_TOKEN: ${{ secrets.KRAM_PAGE_ACCESS_TOKEN }}
+          VIDEO_URL: ${{ inputs.video_url }}
+          CAPTION: ${{ inputs.caption }}
+        run: python post_reel.py
