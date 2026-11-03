@@ -15,7 +15,8 @@
     "packages/2026-10-26_kram_fb",
     "packages/2026-10-12_kram_fb",
     "packages/2026-10-19_kram_fb",
-    "packages/2026-10-27_kram_fb"
+    "packages/2026-10-27_kram_fb",
+    "packages/2026-11-03_kram_shopee_ugc"
   ],
   "policy": "Only packages with root-editor Ed25519 signatures; production subagents cannot release their own work."
 }

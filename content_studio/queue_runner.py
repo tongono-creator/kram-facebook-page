@@ -6,10 +6,24 @@ import subprocess
 from pathlib import Path
 import scheduler
 import studio
+import re
+
+
+def select_packages(queue, package_id=None):
+    paths = queue.get('packages', [])
+    if not package_id:
+        return paths
+    if not re.fullmatch(r'[a-zA-Z0-9_-]{1,100}', package_id):
+        raise studio.GateError('Invalid exact package ID')
+    selected = [p for p in paths if p == 'packages/' + package_id]
+    if len(selected) != 1:
+        raise studio.GateError('Exact package must appear once in reviewed queue')
+    return selected
 
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--mode',choices=['audit','dry-run','publish'],default='audit')
+    parser.add_argument('--package-id', help='Optional exact reviewed queue package; preserve all other packages')
     args=parser.parse_args()
     root=Path(__file__).resolve().parent
     repo=root.parent
@@ -21,7 +35,7 @@ def main():
     if args.mode=='audit':
         return scheduler.main(['--repo-root',str(repo),'--channel',key,'--channels',str(root/'channels.json'),'--audit'])
     packages=[]
-    for relative in queue.get('packages',[]):
+    for relative in select_packages(queue, args.package_id):
         package=(root/relative).resolve()
         if not package.is_relative_to((root/'packages').resolve()):
             raise studio.GateError('Queue package outside approved package directory')

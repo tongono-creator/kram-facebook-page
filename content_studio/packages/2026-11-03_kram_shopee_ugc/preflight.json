@@ -1,0 +1,23 @@
+{
+  "package_id": "2026-11-03_kram_shopee_ugc",
+  "scheduled_at": "2026-11-03T22:30:00+07:00",
+  "source_imagegen_sha256": "3ca882ae2ebaeab79f9d12a85fb4128f3f604beef9a5f65b3455ae9177d4940e",
+  "card_sha256": "5eb4da19c863c85bc9ee813c32c2222e06df00ca748a02072c3aa95d6c685c6f",
+  "tracking_checked_at": "2026-11-03T14:11:03.081845+00:00",
+  "tracking": [
+    "kh01-20261103-cablebag-kram-photo4"
+  ],
+  "queue_audit_run": 41650811847,
+  "existing_queue_ids": [
+    "116701184708556_1045848078475568",
+    "116701184708556_1041880678872308",
+    "116701184708556_1041880415539001"
+  ],
+  "closest_queue_gap_seconds": 75600,
+  "cooldown_last_known_same_sku": "2026-10-26T10:30:00+07:00; native published-preserved node 116701184708556_1036179062775803",
+  "old_queue_modified": false,
+  "user_approved_image": true,
+  "root_final_size_visual_review_pending": false,
+  "native_writes": 0,
+  "root_signed_approval_verified": true
+}
