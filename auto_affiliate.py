@@ -476,6 +476,8 @@ class AffiliateReconciler:
             return "repost"
         if not post.get("published", True):
             return "unpublished"
+        if any(_is_shopee_url(url.rstrip(".,);]")) for url in URL_RE.findall(str(post.get("text", "")))):
+            return "product_link_in_post"
         if not post.get("created_at") or parse_timestamp(str(post["created_at"])) < since:
             return "before_since"
         return None
