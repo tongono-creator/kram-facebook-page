@@ -178,5 +178,13 @@
     "scheduled_at": "2026-11-05T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:14:04.757123+00:00"
+  },
+  "20261106_kram_ugc_grejig": {
+    "package_sha256": "d9f4640e3ab8d0fcd87a3d68265568495d594271d7661f5a6d7cd382383bf853",
+    "page_id": "116701184708556",
+    "product_id": "2128129326",
+    "scheduled_at": "2026-11-06T21:00:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:14:05.937026+00:00"
   }
 }
