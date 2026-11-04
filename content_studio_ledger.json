@@ -292,9 +292,11 @@
   "20261118_kram_ugc_laundrybag": {
     "package_sha256": "de786b6c9306c7ff1e7215b6d2d228762b5af8ec21c7cdeefd748fa43363b2f9",
     "page_id": "116701184708556",
+    "photo_id": "1065298516530524",
+    "post_id": null,
     "product_id": "42606505532",
     "scheduled_at": "2026-11-18T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:15:31.158729+00:00"
+    "updated_at": "2026-11-04T13:15:35.189275+00:00"
   }
 }
