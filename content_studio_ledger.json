@@ -258,5 +258,13 @@
     "scheduled_at": "2026-11-13T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:15:05.011704+00:00"
+  },
+  "20261114_kram_ugc_sinkcaddy": {
+    "package_sha256": "aaec3a1df7c858f0862bc96724f7089ec52b153cb6f57338ce081dcd9ee50cda",
+    "page_id": "116701184708556",
+    "product_id": "26611540923",
+    "scheduled_at": "2026-11-14T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:15:06.275153+00:00"
   }
 }
