@@ -238,5 +238,13 @@
     "scheduled_at": "2026-11-11T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:14:50.002625+00:00"
+  },
+  "20261112_kram_ugc_cablechannel": {
+    "package_sha256": "b5427a559c60fad1f668654b36f98747f8d09507820a58a9f2db6c25ce9fc3c9",
+    "page_id": "116701184708556",
+    "product_id": "40711024905",
+    "scheduled_at": "2026-11-12T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:14:51.522094+00:00"
   }
 }
