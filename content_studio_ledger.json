@@ -212,9 +212,11 @@
   "20261109_kram_ugc_markertie": {
     "package_sha256": "45e67bce513eaf3583695fcd7f6ee15530f57e95767e2ccb00d8788f05effd0e",
     "page_id": "116701184708556",
+    "photo_id": "1065297583197284",
+    "post_id": null,
     "product_id": "5210757377",
     "scheduled_at": "2026-11-09T21:00:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:14:28.709500+00:00"
+    "updated_at": "2026-11-04T13:14:32.154447+00:00"
   }
 }
