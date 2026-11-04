@@ -312,9 +312,11 @@
   "20261122_kram_ugc_lintroller": {
     "package_sha256": "8e6afbd37ec5fccdedd6e703164b38377f1a4986ec9b18260050316e9ef6d60f",
     "page_id": "116701184708556",
+    "photo_id": "1065298716530504",
+    "post_id": null,
     "product_id": "20481037193",
     "scheduled_at": "2026-11-22T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:15:47.103186+00:00"
+    "updated_at": "2026-11-04T13:15:50.671440+00:00"
   }
 }
