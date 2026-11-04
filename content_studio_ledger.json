@@ -223,10 +223,10 @@
     "package_sha256": "ec9f3a2ee7a72f7029c3581c9c31bbb11f7092635b4136979a4a010f11aad612",
     "page_id": "116701184708556",
     "photo_id": "1065297679863941",
-    "post_id": null,
+    "post_id": "116701184708556_1065297679863941",
     "product_id": "25882703521",
     "scheduled_at": "2026-11-10T20:30:00+07:00",
-    "status": "publishing",
-    "updated_at": "2026-11-04T13:14:40.187954+00:00"
+    "status": "verified",
+    "updated_at": "2026-11-04T13:14:42.085047+00:00"
   }
 }
