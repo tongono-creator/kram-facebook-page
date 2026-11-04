@@ -278,5 +278,13 @@
     "scheduled_at": "2026-11-15T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:15:22.035590+00:00"
+  },
+  "20261116_kram_ugc_bagclip": {
+    "package_sha256": "4274838a8707bc6fe8c3794f7c6468a8b2ab8a41a2492b21c50ad1043893f673",
+    "page_id": "116701184708556",
+    "product_id": "27270686516",
+    "scheduled_at": "2026-11-16T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:15:23.429452+00:00"
   }
 }
