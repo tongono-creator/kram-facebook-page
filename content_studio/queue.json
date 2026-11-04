@@ -16,7 +16,26 @@
     "packages/2026-10-12_kram_fb",
     "packages/2026-10-19_kram_fb",
     "packages/2026-10-27_kram_fb",
-    "packages/2026-11-03_kram_shopee_ugc"
+    "packages/2026-11-03_kram_shopee_ugc",
+    "packages/20261104_kram_ugc_maxie",
+    "packages/20261105_kram_ugc_divider",
+    "packages/20261106_kram_ugc_grejig",
+    "packages/20261107_kram_ugc_command",
+    "packages/20261108_kram_ugc_basket",
+    "packages/20261109_kram_ugc_markertie",
+    "packages/20261110_kram_ugc_brush",
+    "packages/20261111_kram_ugc_storagebag",
+    "packages/20261112_kram_ugc_cablechannel",
+    "packages/20261113_kram_ugc_tissue",
+    "packages/20261114_kram_ugc_sinkcaddy",
+    "packages/20261115_kram_ugc_fridgebin",
+    "packages/20261116_kram_ugc_bagclip",
+    "packages/20261118_kram_ugc_laundrybag",
+    "packages/20261120_kram_ugc_hanger",
+    "packages/20261122_kram_ugc_lintroller",
+    "packages/20261125_kram_ugc_trashbag",
+    "packages/20261127_kram_ugc_siliconemat",
+    "packages/20261129_kram_ugc_cloth"
   ],
   "policy": "Only packages with root-editor Ed25519 signatures; production subagents cannot release their own work."
 }

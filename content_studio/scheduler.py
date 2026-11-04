@@ -175,6 +175,8 @@ class Scheduler:
             self.sync([self.path])
 
     def remember(self, plan, post):
+        if plan.get('link_placement') == 'caption':
+            return
         product = studio.read_json(Path(plan['package_dir'])/'affiliate.json')
         data = studio.read_json(self.mapping) if self.mapping.exists() else {}
         entries = data.setdefault('facebook', {})

@@ -1,0 +1,15 @@
+{
+  "reviewer": "root-editor",
+  "reviewed_at": "2026-11-04T13:08:39.327348+00:00",
+  "package_sha256": "db494f4353c3db5c25fd05d4044aee26f367a42e67e1058c35fa9156cb1fba1b",
+  "notes": "Reviewed generated full image and final 360px mobile preview against selected seller product; checked Thai text and current Shopee affiliate redirect including SubIDs. User asked for URL in post and removed explanatory disclosures.",
+  "checks": {
+    "full_image_seen": true,
+    "mobile_seen": true,
+    "thai_readable": true,
+    "subject_correct": true,
+    "source_checked": true,
+    "affiliate_checked": true
+  },
+  "signature": "xkLJ08Aykej2WOl5MnGzdyPxL80pS8ZhrvTeqzVgs513wFIXbKs+X8qnV3XKF9h7PZm/IJx0jkBzAvUAwWIdAw=="
+}

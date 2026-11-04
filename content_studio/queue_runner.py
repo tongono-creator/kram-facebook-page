@@ -24,6 +24,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--mode',choices=['audit','dry-run','publish'],default='audit')
     parser.add_argument('--package-id', help='Optional exact reviewed queue package; preserve all other packages')
+    parser.add_argument('--batch-id', help='Optional exact reviewed batch under content_studio/batches')
     args=parser.parse_args()
     root=Path(__file__).resolve().parent
     repo=root.parent
@@ -34,8 +35,18 @@ def main():
         raise studio.GateError('Unknown queue channel')
     if args.mode=='audit':
         return scheduler.main(['--repo-root',str(repo),'--channel',key,'--channels',str(root/'channels.json'),'--audit'])
+    if args.package_id and args.batch_id:
+        raise studio.GateError('Choose a package or a batch, not both')
+    paths = select_packages(queue, args.package_id)
+    if args.batch_id:
+        if not re.fullmatch(r'[a-zA-Z0-9_-]{1,100}', args.batch_id):
+            raise studio.GateError('Invalid exact batch ID')
+        batch = studio.read_json(root/'batches'/(args.batch_id+'.json'))
+        paths = batch.get('packages', [])
+        if not paths or len(paths) != len(set(paths)) or any(x not in queue['packages'] for x in paths):
+            raise studio.GateError('Batch must contain unique exact queued packages')
     packages=[]
-    for relative in select_packages(queue, args.package_id):
+    for relative in paths:
         package=(root/relative).resolve()
         if not package.is_relative_to((root/'packages').resolve()):
             raise studio.GateError('Queue package outside approved package directory')

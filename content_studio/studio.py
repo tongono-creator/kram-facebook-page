@@ -80,7 +80,8 @@ def validate_package(package_dir, channel_config, now=None, allow_elapsed=False)
     caption = (package/'caption.txt').read_text(encoding='utf-8').strip()
     if not caption:
         raise GateError('Empty caption')
-    if manifest['visual_type']=='ai_editorial' and 'AI' not in caption:
+    inline = manifest.get('link_placement') == 'caption'
+    if manifest['visual_type']=='ai_editorial' and 'AI' not in caption and not inline:
         raise GateError('AI illustration disclosure missing')
     if manifest['product_id'] != affiliate.get('product_id'):
         raise GateError('Affiliate product does not match manifest')
@@ -98,12 +99,16 @@ def validate_package(package_dir, channel_config, now=None, allow_elapsed=False)
         raise GateError('Product verification is missing, future-dated or stale')
     if affiliate.get('verification_status', 'verified') != 'verified':
         raise GateError('pending_product_missing: destination/variant not verified')
-    comment = str(affiliate.get('comment',''))
-    links = re.findall(r'https?://[^\s<>]+', comment)
-    if links != [affiliate['url']]:
-        raise GateError('Comment must contain exactly its approved product URL')
-    if DISCLOSURE not in comment or affiliate.get('disclosure') != DISCLOSURE:
-        raise GateError('Affiliate disclosure must appear in the comment')
+    if inline:
+        if re.findall(r'https?://[^\s<>]+', caption) != [affiliate['url']]:
+            raise GateError('Caption must contain exactly its approved product URL')
+    else:
+        comment = str(affiliate.get('comment',''))
+        links = re.findall(r'https?://[^\s<>]+', comment)
+        if links != [affiliate['url']]:
+            raise GateError('Comment must contain exactly its approved product URL')
+        if DISCLOSURE not in comment or affiliate.get('disclosure') != DISCLOSURE:
+            raise GateError('Affiliate disclosure must appear in the comment')
     entries = evidence.get('entries')
     if not isinstance(entries, list) or not entries:
         # Clearly marked fictional scenarios may use an editorial evidence note.

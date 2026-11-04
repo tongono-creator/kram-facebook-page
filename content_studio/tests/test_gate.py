@@ -153,6 +153,14 @@ class EditorialGateTests(unittest.TestCase):
         self.assertEqual(result["id"], "test-first")
         self.assertEqual(result["page_id"], self.channel["page_id"])
 
+    def test_inline_product_link_must_match_approved_url(self):
+        self.patch('manifest.json', link_placement='caption')
+        product = self.read(self.package, 'affiliate.json')
+        (self.package / 'caption.txt').write_text('สินค้า\n' + product['url'], encoding='utf-8')
+        validate_package(self.package, self.channel, now=NOW)
+        (self.package / 'caption.txt').write_text('สินค้า\nhttps://s.shopee.co.th/other', encoding='utf-8')
+        self.assert_gate_rejects()
+
     def test_required_files_cannot_disappear(self):
         for filename in (
             "manifest.json", "caption.txt", "card.png", "affiliate.json", "evidence.json"

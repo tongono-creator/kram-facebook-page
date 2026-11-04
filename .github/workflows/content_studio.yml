@@ -13,6 +13,10 @@ on:
         description: 'Optional exact approved package ID; blank processes the existing queue'
         type: string
         required: false
+      batch_id:
+        description: 'Optional exact batch ID; process only its reviewed packages'
+        type: string
+        required: false
 concurrency:
   group: content-studio-facebook
   cancel-in-progress: false
@@ -21,7 +25,7 @@ permissions:
 jobs:
   approved-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,9 +48,11 @@ jobs:
           STUDIO_STATE_BRANCH: main
           STUDIO_MODE: ${{ inputs.mode || 'publish' }}
           STUDIO_PACKAGE_ID: ${{ inputs.package_id }}
+          STUDIO_BATCH_ID: ${{ inputs.batch_id }}
         run: |
           args=(--mode "$STUDIO_MODE")
           if [ -n "$STUDIO_PACKAGE_ID" ]; then args+=(--package-id "$STUDIO_PACKAGE_ID"); fi
+          if [ -n "$STUDIO_BATCH_ID" ]; then args+=(--batch-id "$STUDIO_BATCH_ID"); fi
           python content_studio/queue_runner.py "${args[@]}" > content_studio_result.json
       - uses: actions/upload-artifact@v4
         if: always()
