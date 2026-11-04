@@ -162,9 +162,11 @@
   "20261104_kram_ugc_maxie": {
     "package_sha256": "556a3312133237a13cec488ea476ccdd85ab64cb8f8847324b1f025783d07515",
     "page_id": "116701184708556",
+    "photo_id": "1065296996530676",
+    "post_id": null,
     "product_id": "40660896442",
     "scheduled_at": "2026-11-04T21:00:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:13:50.930404+00:00"
+    "updated_at": "2026-11-04T13:13:55.481985+00:00"
   }
 }
