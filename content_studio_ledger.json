@@ -332,9 +332,11 @@
   "20261127_kram_ugc_siliconemat": {
     "package_sha256": "db494f4353c3db5c25fd05d4044aee26f367a42e67e1058c35fa9156cb1fba1b",
     "page_id": "116701184708556",
+    "photo_id": "1065298973197145",
+    "post_id": null,
     "product_id": "22140131611",
     "scheduled_at": "2026-11-27T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:16:00.496620+00:00"
+    "updated_at": "2026-11-04T13:16:04.685043+00:00"
   }
 }
