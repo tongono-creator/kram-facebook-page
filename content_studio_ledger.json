@@ -303,10 +303,10 @@
     "package_sha256": "cc26bb1006ce6bd3b63f2ac1bd3fdd5a3d5d193a1d7a2bf657f529118a9b8113",
     "page_id": "116701184708556",
     "photo_id": "1065298643197178",
-    "post_id": null,
+    "post_id": "116701184708556_1065298643197178",
     "product_id": "29050803169",
     "scheduled_at": "2026-11-20T20:30:00+07:00",
-    "status": "publishing",
-    "updated_at": "2026-11-04T13:15:43.842714+00:00"
+    "status": "verified",
+    "updated_at": "2026-11-04T13:15:45.862659+00:00"
   }
 }
