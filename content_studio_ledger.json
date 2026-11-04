@@ -168,5 +168,13 @@
     "scheduled_at": "2026-11-04T21:00:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:13:57.295309+00:00"
+  },
+  "20261105_kram_ugc_divider": {
+    "package_sha256": "8446376c70d594327cd9a5f0b7ae87b199ee347a79760cd233da5f0f3df26524",
+    "page_id": "116701184708556",
+    "product_id": "18357675108",
+    "scheduled_at": "2026-11-05T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:13:58.496522+00:00"
   }
 }
