@@ -208,5 +208,13 @@
     "scheduled_at": "2026-11-08T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:14:27.396434+00:00"
+  },
+  "20261109_kram_ugc_markertie": {
+    "package_sha256": "45e67bce513eaf3583695fcd7f6ee15530f57e95767e2ccb00d8788f05effd0e",
+    "page_id": "116701184708556",
+    "product_id": "5210757377",
+    "scheduled_at": "2026-11-09T21:00:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:14:28.709500+00:00"
   }
 }
