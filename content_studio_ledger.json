@@ -322,9 +322,11 @@
   "20261125_kram_ugc_trashbag": {
     "package_sha256": "c4eefe3e759221a78be029a5b4a14d2046a4243f5e22f0310f12d36d7598ace2",
     "page_id": "116701184708556",
+    "photo_id": "1065298833197159",
+    "post_id": null,
     "product_id": "5953807265",
     "scheduled_at": "2026-11-25T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:15:53.895749+00:00"
+    "updated_at": "2026-11-04T13:15:57.364159+00:00"
   }
 }
