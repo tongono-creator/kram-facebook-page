@@ -228,5 +228,13 @@
     "scheduled_at": "2026-11-10T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:14:42.085047+00:00"
+  },
+  "20261111_kram_ugc_storagebag": {
+    "package_sha256": "c4e5703abed94ff722db79e074529d56d78eabb27d15838a20fafa3c641aa919",
+    "page_id": "116701184708556",
+    "product_id": "28509490851",
+    "scheduled_at": "2026-11-11T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:14:43.459845+00:00"
   }
 }
