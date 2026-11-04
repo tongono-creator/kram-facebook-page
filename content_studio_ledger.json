@@ -192,9 +192,11 @@
   "20261107_kram_ugc_command": {
     "package_sha256": "e1cda8ddd37bb3524108e53873e2e9d8f227474f945a59b2b5369ee524cae780",
     "page_id": "116701184708556",
+    "photo_id": "1065297369863972",
+    "post_id": null,
     "product_id": "26906586893",
     "scheduled_at": "2026-11-07T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:14:14.041664+00:00"
+    "updated_at": "2026-11-04T13:14:18.472143+00:00"
   }
 }
