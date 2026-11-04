@@ -268,5 +268,13 @@
     "scheduled_at": "2026-11-14T20:30:00+07:00",
     "status": "verified",
     "updated_at": "2026-11-04T13:15:14.532794+00:00"
+  },
+  "20261115_kram_ugc_fridgebin": {
+    "package_sha256": "bc68d6d6c5869a458360836c9b0f710f115d18b07d242f91c31d35b32e7fc348",
+    "page_id": "116701184708556",
+    "product_id": "3071744914",
+    "scheduled_at": "2026-11-15T20:30:00+07:00",
+    "status": "publishing",
+    "updated_at": "2026-11-04T13:15:15.759439+00:00"
   }
 }
