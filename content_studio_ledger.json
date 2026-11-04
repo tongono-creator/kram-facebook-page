@@ -252,9 +252,11 @@
   "20261113_kram_ugc_tissue": {
     "package_sha256": "9971ce8c6cba778d0362cb423c433913c3251874015ab5c78cc7a1b3e70f9054",
     "page_id": "116701184708556",
+    "photo_id": "1065297969863912",
+    "post_id": null,
     "product_id": "43227036852",
     "scheduled_at": "2026-11-13T20:30:00+07:00",
     "status": "publishing",
-    "updated_at": "2026-11-04T13:14:58.862001+00:00"
+    "updated_at": "2026-11-04T13:15:02.756516+00:00"
   }
 }
